@@ -1,3 +1,4 @@
+import { readBundle } from "../lib/bundles.js";
 import {
   type DownloadableSkill,
   DuplicateSkillNameError,
@@ -16,8 +17,8 @@ import type { RuntimeContext } from "../types.js";
 import { resolveSourceRoot } from "./download.js";
 
 export interface UpdateOptions {
+  bundle?: string;
   check?: boolean;
-  dryRun?: boolean;
   override?: boolean;
   source?: string;
   skills?: string[];
@@ -138,6 +139,13 @@ async function prepareUpdateGroup(
 export async function runUpdate(context: RuntimeContext, options: UpdateOptions = {}) {
   const lock = await readSkillLock(context.homeDir);
   const selectedNames = new Set(options.skills ?? []);
+
+  if (options.bundle) {
+    const bundle = await readBundle(context.homeDir, options.bundle);
+    for (const skill of bundle.skills) {
+      selectedNames.add(skill);
+    }
+  }
   const entries = Object.entries(lock.skills).filter(([name, entry]) => {
     if (selectedNames.size > 0 && !selectedNames.has(name)) {
       return false;
@@ -216,7 +224,7 @@ export async function runUpdate(context: RuntimeContext, options: UpdateOptions 
           }
         }
 
-        if (options.check || options.dryRun) {
+        if (options.check) {
           for (const line of formatUpdateStatusLines(name, "update-available")) {
             context.write(line);
           }

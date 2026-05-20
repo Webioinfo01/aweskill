@@ -39,19 +39,14 @@ function formatBundleLines(title: string, bundles: { name: string; skills: strin
     return [title, "(none)"];
   }
 
-  const preview = verbose ? bundles : bundles.slice(0, DEFAULT_PREVIEW_COUNT);
-  const lines = [`${title}: ${bundles.length} total`];
-  if (!verbose && bundles.length > preview.length) {
-    lines.push(`Showing first ${preview.length} bundles (use --verbose to show all)`);
+  if (!verbose) {
+    return [`${title}: ${bundles.length} total (use --verbose to show skills)`, ...bundles.map((bundle) => bundle.name)];
   }
-  for (const bundle of preview) {
-    const skillsPreview = verbose ? bundle.skills : bundle.skills.slice(0, DEFAULT_PREVIEW_COUNT);
-    const suffix =
-      !verbose && bundle.skills.length > skillsPreview.length
-        ? `, ... (+${bundle.skills.length - skillsPreview.length} more)`
-        : "";
+
+  const lines = [`${title}: ${bundles.length} total`];
+  for (const bundle of bundles) {
     lines.push(
-      `  - ${bundle.name}: ${bundle.skills.length} skills${skillsPreview.length > 0 ? ` -> ${skillsPreview.join(", ")}${suffix}` : " -> (empty)"}`,
+      `  - ${bundle.name}: ${bundle.skills.length} skills${bundle.skills.length > 0 ? ` -> ${bundle.skills.join(", ")}` : " -> (empty)"}`,
     );
   }
   return lines;

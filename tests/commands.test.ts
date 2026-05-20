@@ -722,7 +722,7 @@ describe("commands", () => {
     expect(lines.join("\n")).not.toContain("Suspicious store entries detected:");
   });
 
-  it("lists bundles with preview by default and full details with --verbose", async () => {
+  it("lists bundles with names by default and full details with --verbose", async () => {
     const workspace = await createTempWorkspace();
     const lines: string[] = [];
     const program = createProgram({
@@ -742,8 +742,8 @@ describe("commands", () => {
     await program.parseAsync(["node", "aweskill", "bundle", "add", "science", "pymc"], { from: "node" });
 
     await program.parseAsync(["node", "aweskill", "bundle", "list"], { from: "node" });
-    expect(lines.join("\n")).toContain("Bundles in central repo: 1 total");
-    expect(lines.join("\n")).toContain("science: 3 skills -> biopython, pymc, scanpy");
+    expect(lines.join("\n")).toContain("science");
+    expect(lines.join("\n")).not.toContain("skills ->");
 
     lines.length = 0;
     await program.parseAsync(["node", "aweskill", "bundle", "list", "--verbose"], { from: "node" });
@@ -762,8 +762,8 @@ describe("commands", () => {
     });
 
     await program.parseAsync(["node", "aweskill", "bundle", "template", "list"], { from: "node" });
-    expect(lines.join("\n")).toContain("Bundle templates:");
-    expect(lines.join("\n")).toContain("Showing first");
+    expect(lines.join("\n")).toContain("superpowers");
+    expect(lines.join("\n")).not.toContain("skills ->");
 
     lines.length = 0;
     await program.parseAsync(["node", "aweskill", "bundle", "template", "list", "--verbose"], { from: "node" });

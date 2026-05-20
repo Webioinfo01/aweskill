@@ -8,6 +8,7 @@ import {
   runBundleDelete,
   runBundleRemoveSkill,
   runBundleShow,
+  runBundleTemplateShow,
 } from "../commands/bundle.js";
 import { runClean } from "../commands/clean.js";
 import { runDisable } from "../commands/disable.js";
@@ -132,16 +133,16 @@ function addUpdateCommand(parent: Command, context: RuntimeContext, title: strin
     .command("update")
     .argument("[skill...]")
     .description("Update tracked central-store skills from their recorded sources")
+    .option("--bundle <name>", "update all skills in a bundle")
     .option("--check", "check for updates without modifying files", false)
-    .option("--dry-run", "show update actions without modifying files", false)
     .option("--source <source>", "only update skills from a source")
     .option("--override", "discard local changes and overwrite from source", false)
     .action(async (skillNames, options) => {
       await runFramedCommand(title, async () =>
         runUpdate(context, {
+          bundle: options.bundle,
           skills: skillNames,
           check: options.check,
-          dryRun: options.dryRun,
           source: options.source,
           override: options.override,
         }),
@@ -184,7 +185,7 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
   bundle
     .command("list")
     .description("List bundles in the central store")
-    .option("--verbose", "show all bundles instead of a short preview", false)
+    .option("--verbose", "show all bundles with their skills", false)
     .action(async (options) => {
       await runListBundles(context, { verbose: options.verbose });
     });
@@ -231,9 +232,16 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
   bundleTemplate
     .command("list")
     .description("List available built-in bundle templates")
-    .option("--verbose", "show all bundle templates instead of a short preview", false)
+    .option("--verbose", "show all bundle templates with their skills", false)
     .action(async (options) => {
       await runListTemplateBundles(context, { verbose: options.verbose });
+    });
+  bundleTemplate
+    .command("show")
+    .argument("<name>")
+    .description("Show template bundle contents")
+    .action(async (name) => {
+      await runBundleTemplateShow(context, name);
     });
   bundleTemplate
     .command("import")

@@ -11,6 +11,15 @@ import { normalizeNameList } from "../lib/path.js";
 import { getTemplateBundlesDir } from "../lib/templates.js";
 import type { RuntimeContext } from "../types.js";
 
+export async function runBundleTemplateShow(context: RuntimeContext, bundleName: string) {
+  const templateBundlesDir = await getTemplateBundlesDir();
+  const bundles = await Promise.all(
+    parseNames(bundleName).map((name) => readBundleFromDirectory(templateBundlesDir, name)),
+  );
+  context.write(bundles.map((bundle) => `${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`).join("\n"));
+  return bundles;
+}
+
 function parseNames(value: string | string[]): string[] {
   return normalizeNameList(value);
 }
