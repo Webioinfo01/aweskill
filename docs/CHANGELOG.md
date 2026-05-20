@@ -1,5 +1,35 @@
 # change log
 
+## v0.3.4
+
+`v0.3.4` adds bundle-aware update, improves CLI help clarity, and introduces new update options for managing tracked skills. Since `v0.3.3`, the `update` command supports `--bundle` to update all skills in a bundle at once, `bundle list` and `bundle template list` now default to name-only output with `--verbose` for full details, and a new `bundle template show` command displays template contents. The `update` command also gains `--prune` to remove tracking for missing skills and `--verbose` for detailed source diagnostics.
+
+### Bundle-aware update
+
+Added `--bundle <name>` flag to `aweskill update` so users can update all skills in a bundle with one command. The bundle is validated against the central store before processing.
+
+### Simplified bundle list output
+
+`bundle list` and `bundle template list` now show only bundle names by default, with a hint to use `--verbose` for full skill details. This makes the default output easier to parse in scripts.
+
+### New update options
+
+Added `--prune` to remove tracking entries for skills missing from the local central store, and `--verbose` to show detailed source diagnostics for source-missing skills. Removed the redundant `--dry-run` flag (use `--check` instead).
+
+### Import vs install clarity
+
+Updated command descriptions and added FAQ entries in both English and Chinese READMEs to clearly explain the difference between `store import` (local files, no source tracking by default) and `store install` (GitHub/sciskill, source tracking enabled by default).
+
+### Highlights
+
+- Added `--bundle` flag to `aweskill update`
+- Simplified `bundle list` and `bundle template list` default output to names only
+- Added `bundle template show` command
+- Added `--prune` and `--verbose` options to `update`
+- Removed redundant `--dry-run` flag
+- Clarified import vs install difference in CLI help and FAQ
+- Updated droma-metaai template with correct skill names
+
 ## v0.3.3
 
 `v0.3.3` hardens the core lock and type infrastructure, adds competitive research, and revises the project's engineering guidelines. Since `v0.3.2`, lock file writes are now atomic, a TypeScript typecheck step guards CI, the scanner filters out `.system` directories, and path safety helpers are centralized. The engineering principles have been renamed to "Engineering Taste" and expanded. The README comparison table was reorganized and competitive research on SkillClaw, SkillNexus, and Vibe-Skills was added.
