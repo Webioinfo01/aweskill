@@ -167,6 +167,19 @@ Yes. `aweskill` ships built-in management skills for `aweskill` and `aweskill-do
 - **Update** tracked installs from their recorded sources while protecting local central-store edits
 - **Project** the same managed skills into Codex, Claude Code, Cursor, Gemini CLI, and other agents
 
+### What is the difference between `import` and `install`?
+
+Both commands add skills to the central store, but serve different purposes:
+
+| | `store import` | `store install` |
+|---|---|---|
+| **Primary use** | Local files, agent directory scanning | GitHub repos, sciskill IDs |
+| **Source tracking** | Off by default (use `--track-source` to enable) | On by default |
+| **Key flags** | `--scan`, `--keep-source`, `--link-source` | `--skill`, `--all`, `--ref`, `--as` |
+| **Typical command** | `aweskill store import ./my-skill` | `aweskill store install owner/repo` |
+
+Use `import` when bringing in local skills or scanning existing agent directories. Use `install` when pulling from GitHub or sciskill with automatic source tracking for future updates.
+
 </details>
 
 ## Comparison
@@ -486,7 +499,7 @@ Top-level convenience commands are available for high-frequency search and track
 | `aweskill store import --scan [--global\|--project [dir]] [--agent <agent>] [--keep-source\|--link-source] [--override]` | Import the current scan results for a chosen scope and agent set; scanned agent paths link back to aweskill by default |
 | `aweskill store find <query> [--provider <skills-sh\|sciskill\|local>] [--local] [--limit <n>] [--domain <domain>] [--stage <stage>]` | Search `skills.sh` and `sciskill` by default, or search the local central store with `--local` / `--provider local`; remote results print installable `source` values or discover-only notes, while local results print skill paths and `store show` hints |
 | `aweskill store install <source> [--list] [--skill <name>] [--all] [--ref <ref>] [--as <name>] [--override]` | Install skills from a local path, GitHub source, or `sciskill:<skill-id>` into the central store and record them for future `store update` runs |
-| `aweskill store update [skill...] [--check] [--dry-run] [--source <source>] [--override]` | Check or refresh tracked skills from their recorded source while treating the central store copy as the protected local state |
+| `aweskill store update [skill...] [--check] [--prune] [--source <source>] [--override] [--verbose]` | Check or refresh tracked skills from their recorded source while treating the central store copy as the protected local state; `--prune` removes tracking for local-store entries that were already deleted |
 | `aweskill store list [--verbose]` | List skills in the central store |
 | `aweskill store show <skill> [--summary\|--raw\|--path]` | Show a central-store skill summary by default, print the full `SKILL.md`, or print only the `SKILL.md` path |
 | `aweskill store remove <skill> [--force]` | Remove one skill from the central store and clean any tracked lock entry for that skill |

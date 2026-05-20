@@ -44,7 +44,7 @@ function addImportCommand(parent: Command, context: RuntimeContext, title: strin
   parent
     .command("import")
     .argument("[path]")
-    .description("Import one skill or a skills root directory")
+    .description("Import local skills without source tracking (use install for GitHub/sciskill with auto-tracking)")
     .option("--scan", "import scanned skills", false)
     .option("--global", "scan global scope when used with --scan (default when no scope flag given)")
     .option("--project [dir]", "scan project scope when used with --scan; uses cwd when dir is omitted")
@@ -107,7 +107,7 @@ function addInstallCommand(parent: Command, context: RuntimeContext, title: stri
   parent
     .command("install")
     .argument("<source>")
-    .description("Install skills from a local path, GitHub source, or sciskill:<skill-id> into the central store")
+    .description("Install skills from GitHub, sciskill:<skill-id>, or local path with source tracking for updates")
     .option("--list", "list downloadable skills without installing", false)
     .option("--skill <skill>", "repeat or use comma list; select skills to install", collectAgents)
     .option("--all", "install all skills from the source", false)
@@ -135,16 +135,20 @@ function addUpdateCommand(parent: Command, context: RuntimeContext, title: strin
     .description("Update tracked central-store skills from their recorded sources")
     .option("--bundle <name>", "update all skills in a bundle")
     .option("--check", "check for updates without modifying files", false)
+    .option("--prune", "remove tracking for skills that are missing from the local central store", false)
     .option("--source <source>", "only update skills from a source")
     .option("--override", "discard local changes and overwrite from source", false)
+    .option("--verbose", "show detailed source diagnostics for missing upstream skills", false)
     .action(async (skillNames, options) => {
       await runFramedCommand(title, async () =>
         runUpdate(context, {
           bundle: options.bundle,
           skills: skillNames,
           check: options.check,
+          prune: options.prune,
           source: options.source,
           override: options.override,
+          verbose: options.verbose,
         }),
       );
     });

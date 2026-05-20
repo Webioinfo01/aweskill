@@ -158,6 +158,19 @@ npm install -g ./aweskill-<version>.tgz
 - **Update**：按记录的来源刷新已追踪安装，同时保护中央仓库里的本地修改
 - **Project**：把同一批托管 Skill 投影到 Codex、Claude Code、Cursor、Gemini CLI 等 Agent
 
+### `import` 和 `install` 有什么区别？
+
+两个命令都会把 Skill 加入中央仓库，但用途不同：
+
+| | `store import` | `store install` |
+|---|---|---|
+| **主要用途** | 本地文件、扫描 Agent 目录 | GitHub 仓库、sciskill ID |
+| **来源追踪** | 默认关闭（用 `--track-source` 开启） | 默认开启 |
+| **核心参数** | `--scan`、`--keep-source`、`--link-source` | `--skill`、`--all`、`--ref`、`--as` |
+| **典型命令** | `aweskill store import ./my-skill` | `aweskill store install owner/repo` |
+
+导入本地 Skill 或扫描已有 Agent 目录时用 `import`；从 GitHub 或 sciskill 拉取并自动记录来源以便后续更新时用 `install`。
+
 </details>
 
 ## 对比
@@ -477,7 +490,7 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 | `aweskill store import --scan [--global\|--project [dir]] [--agent <agent>] [--keep-source\|--link-source] [--override]` | 按指定 scope 和 Agent 集合导入当前扫描结果；扫描到的 Agent 路径默认会回写为 aweskill 托管投影 |
 | `aweskill store find <query> [--provider <skills-sh\|sciskill\|local>] [--local] [--limit <n>] [--domain <domain>] [--stage <stage>]` | 默认搜索 `skills.sh` 和 `sciskill`，也可用 `--local` / `--provider local` 只搜索本地中央仓库；远程结果输出可安装 `source` 或 discover-only 提示，本地结果输出 Skill 路径和 `store show` 提示 |
 | `aweskill store install <source> [--list] [--skill <name>] [--all] [--ref <ref>] [--as <name>] [--override]` | 从本地路径、GitHub 来源或 `sciskill:<skill-id>` 安装 Skill 到中央仓库，并为后续 `store update` 建立追踪记录 |
-| `aweskill store update [skill...] [--check] [--dry-run] [--source <source>] [--override]` | 从已记录的来源检查或刷新已追踪 Skill，并把中央仓库中的副本当作受保护的本地状态 |
+| `aweskill store update [skill...] [--check] [--prune] [--source <source>] [--override] [--verbose]` | 从已记录的来源检查或刷新已追踪 Skill，并把中央仓库中的副本当作受保护的本地状态；`--prune` 会清理本地已删除 Skill 的追踪记录 |
 | `aweskill store list [--verbose]` | 列出中央仓库中的 Skill |
 | `aweskill store show <skill> [--summary\|--raw\|--path]` | 默认输出中央仓库 Skill 的摘要，也可以输出完整 `SKILL.md` 或只输出 `SKILL.md` 路径 |
 | `aweskill store remove <skill> [--force]` | 从中央仓库删除一个 Skill，并同步清理该 Skill 的 tracked lock 记录 |

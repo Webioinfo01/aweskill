@@ -2321,7 +2321,7 @@ describe("commands", () => {
 
     const topLevelHelp = program.helpInformation();
     expect(topLevelHelp).toContain("sciskill:<skill-id>");
-    expect(topLevelHelp).toContain("GitHub source,");
+    expect(topLevelHelp).toContain("GitHub");
 
     const installCommand = program.commands.find((command) => command.name() === "install");
     expect(installCommand?.helpInformation()).toContain("git branch or tag to install from (GitHub sources only)");
@@ -2432,6 +2432,28 @@ describe("commands", () => {
     ).resolves.toContain("Tracked v2");
   });
 
+  it("update prunes tracked entries for skills missing from the local store", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+    const sourceSkill = path.join(workspace.rootDir, "source", "pruned-local");
+    await writeSkill(sourceSkill, "Pruned Local v1");
+    await program.parseAsync(["node", "aweskill", "store", "install", sourceSkill], { from: "node" });
+    await rm(getSkillPath(workspace.homeDir, "pruned-local"), { recursive: true, force: true });
+
+    lines.length = 0;
+    await program.parseAsync(["node", "aweskill", "store", "update", "pruned-local", "--prune"], { from: "node" });
+
+    const lock = await readSkillLock(workspace.homeDir);
+    expect(lock.skills["pruned-local"]).toBeUndefined();
+    expect(lines.join("\n")).toContain("Pruned pruned-local from update tracking.");
+  });
+
   it("update skips cloning GitHub sources when the remote tree SHA is unchanged", async () => {
     const workspace = await createTempWorkspace();
     const lines: string[] = [];
@@ -2475,7 +2497,7 @@ describe("commands", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it("update reports the tracked skill as missing when the locked subpath no longer exists", async () => {
+  it("update summarizes source-missing skills and shows a verbose command for their details", async () => {
     const workspace = await createTempWorkspace();
     const lines: string[] = [];
     const program = createProgram({
@@ -2486,7 +2508,8 @@ describe("commands", () => {
     });
     const sourceRoot = path.join(workspace.rootDir, "source");
     await writeSkill(path.join(sourceRoot, "old", "moved"), "Moved v1");
-    await program.parseAsync(["node", "aweskill", "store", "install", sourceRoot, "--skill", "moved"], {
+    await writeSkill(path.join(sourceRoot, "old", "compress"), "Compress v1");
+    await program.parseAsync(["node", "aweskill", "store", "install", sourceRoot, "--skill", "moved,compress"], {
       from: "node",
     });
 
@@ -2495,12 +2518,46 @@ describe("commands", () => {
     await writeSkill(path.join(sourceRoot, "skills", "moved"), "Moved v2");
 
     lines.length = 0;
-    await program.parseAsync(["node", "aweskill", "store", "update", "moved"], { from: "node" });
+    await program.parseAsync(["node", "aweskill", "store", "update"], { from: "node" });
 
-    expect(lines.join("\n")).toContain("Failed to check moved: source no longer contains this skill.");
+    expect(lines.join("\n")).toContain("Source-missing tracked skills: 2");
+    expect(lines.join("\n")).toContain("  - compress");
+    expect(lines.join("\n")).toContain("  - moved");
+    expect(lines.join("\n")).toContain("aweskill store update --verbose compress moved");
+    expect(lines.join("\n")).not.toContain("source:");
     await expect(readFile(path.join(getSkillPath(workspace.homeDir, "moved"), "SKILL.md"), "utf8")).resolves.toContain(
       "Moved v1",
     );
+  });
+
+  it("update --verbose reports recorded source details for source-missing skills", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+    const sourceRoot = path.join(workspace.rootDir, "source");
+    await writeSkill(path.join(sourceRoot, "old", "compress"), "Compress v1");
+    await program.parseAsync(["node", "aweskill", "store", "install", sourceRoot, "--skill", "compress"], {
+      from: "node",
+    });
+    await rm(path.join(sourceRoot, "old"), { recursive: true, force: true });
+
+    lines.length = 0;
+    await program.parseAsync(["node", "aweskill", "store", "update", "compress", "--verbose"], { from: "node" });
+
+    const output = lines.join("\n");
+    expect(output).toContain("Source-missing tracked skills: 1");
+    expect(output).toContain("- compress");
+    expect(output).toContain(`source: ${sourceRoot}`);
+    expect(output).toContain(`url: file://${sourceRoot}`);
+    expect(output).toContain("subpath: old/compress");
+    expect(output).toContain(`aweskill store install ${sourceRoot} --list`);
+    expect(output).toContain("aweskill store remove compress --force");
+    expect(output).toContain(`aweskill store install ${sourceRoot} --skill <new-skill-name>`);
   });
 
   it("update reports duplicate source paths after falling back to a full-source scan with no locked subpath", async () => {
@@ -2561,7 +2618,8 @@ describe("commands", () => {
     lines.length = 0;
     await program.parseAsync(["node", "aweskill", "store", "update", "caveman-compress"], { from: "node" });
 
-    expect(lines.join("\n")).toContain("Failed to check caveman-compress: source no longer contains this skill.");
+    expect(lines.join("\n")).toContain("Source-missing tracked skills: 1");
+    expect(lines.join("\n")).toContain("  - caveman-compress");
     expect(lines.join("\n")).not.toContain("Duplicate skill names found in source:");
   });
 
