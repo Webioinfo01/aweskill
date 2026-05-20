@@ -10,7 +10,9 @@ describe("update helpers", () => {
     },
     {
       reason: "missing-local-skill",
-      expected: ["Missing local skill: caveman. Use --override to reinstall it from source."],
+      expected: [
+        "Missing local skill: caveman. Use --override to reinstall it from source, or --prune to stop tracking it.",
+      ],
     },
     {
       reason: "up-to-date",

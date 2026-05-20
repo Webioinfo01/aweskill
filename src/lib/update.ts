@@ -15,7 +15,9 @@ export function formatUpdateStatusLines(name: string, reason: UpdateStatusReason
     case "source-missing-skill":
       return [`Failed to check ${name}: source no longer contains this skill.`];
     case "missing-local-skill":
-      return [`Missing local skill: ${name}. Use --override to reinstall it from source.`];
+      return [
+        `Missing local skill: ${name}. Use --override to reinstall it from source, or --prune to stop tracking it.`,
+      ];
     case "up-to-date":
       return [`Up to date: ${name}.`];
     case "local-changes-detected":
