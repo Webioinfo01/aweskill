@@ -40,7 +40,10 @@ function formatBundleLines(title: string, bundles: { name: string; skills: strin
   }
 
   if (!verbose) {
-    return [`${title}: ${bundles.length} total (use --verbose to show skills)`, ...bundles.map((bundle) => bundle.name)];
+    return [
+      `${title}: ${bundles.length} total (use --verbose to show skills)`,
+      ...bundles.map((bundle) => bundle.name),
+    ];
   }
 
   const lines = [`${title}: ${bundles.length} total`];
