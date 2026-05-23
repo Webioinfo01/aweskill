@@ -9,9 +9,9 @@
     <a href="https://aweskill.webioinfo.top/">Website</a>
   </p>
   <p>
-    <a href="https://github.com/mugpeng/aweskill/releases"><img src="https://img.shields.io/badge/version-0.3.4-7C3AED?style=flat-square" alt="Version"></a>
-    <a href="https://github.com/mugpeng/aweskill"><img src="https://img.shields.io/badge/node-%E2%89%A520-0EA5E9?style=flat-square" alt="Node"></a>
-    <a href="https://github.com/mugpeng/aweskill/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-22C55E?style=flat-square" alt="License"></a>
+    <a href="https://github.com/Webioinfo01/aweskill/releases"><img src="https://img.shields.io/badge/version-0.3.4-7C3AED?style=flat-square" alt="Version"></a>
+    <a href="https://github.com/Webioinfo01/aweskill"><img src="https://img.shields.io/badge/node-%E2%89%A520-0EA5E9?style=flat-square" alt="Node"></a>
+    <a href="https://github.com/Webioinfo01/aweskill/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-22C55E?style=flat-square" alt="License"></a>
     <a href="https://aweskill.webioinfo.top/"><img src="https://img.shields.io/badge/website-aweskill.webioinfo.top-7C3AED?style=flat-square" alt="Website"></a>
   </p>
   <p>
@@ -20,7 +20,7 @@
     <img src="https://img.shields.io/badge/projection-symlink-1f2328?style=flat-square" alt="Projection mode">
 		<img src="https://img.shields.io/badge/OS-windows%20%26%20macOS-0078D4?style=flat-square" alt="Windows and macOS">
     <img src="https://img.shields.io/npm/dt/aweskill?style=flat-square" alt="npm downloads">
-    <img src="https://img.shields.io/github/stars/mugpeng/aweskill?style=flat-square" alt="GitHub stars">
+    <img src="https://img.shields.io/github/stars/Webioinfo01/aweskill?style=flat-square" alt="GitHub stars">
     <img src="https://img.shields.io/badge/platform-local%20CLI-334155?style=flat-square" alt="Local CLI">
   </p>
 </div>
@@ -45,7 +45,7 @@ You can install `aweskill` yourself, or ask an AI coding agent to do it for you.
 If you are working inside Codex, Claude Code, Cursor, Gemini CLI, or another coding agent, tell it:
 
 ```text
-Read https://github.com/mugpeng/aweskill/blob/main/README.ai.md and follow it to install aweskill for this agent.
+Read https://github.com/Webioinfo01/aweskill/blob/main/README.ai.md and follow it to install aweskill for this agent.
 ```
 
 The agent will install the CLI, initialize the store, and project the built-in skills. After restarting the agent, it can use aweskill directly from natural-language requests.
@@ -89,7 +89,7 @@ npm install -g .
 To try the latest development features before they are released:
 
 ```bash
-npm install -g mugpeng/aweskill#dev
+npm install -g Webioinfo01/aweskill#dev
 ```
 
 The `dev` branch contains in-progress changes and may be unstable. Use the npm release for production.
