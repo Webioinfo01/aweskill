@@ -39,7 +39,6 @@ Store-only commands stay under `store`, including:
 
 - `store init`
 - `store where`
-- `store import`
 - `store scan`
 - `store backup`
 - `store restore`
@@ -84,14 +83,15 @@ Mutating agent commands should default to the detected installed agent set for t
 
 ### Import Behavior
 
-- `store scan --import` defaults to relinking scanned paths unless `--keep-source` is passed
-- `store scan --import` and `store import --scan` accept the same `--global|--project [dir]` and `--agent <agent>` filters used by agent-side commands
-- `store import <path>` defaults to keeping the source path in place
-- `--link-source` replaces the source path with an aweskill-managed projection after importing
-- `--keep-source` leaves the source path in place after importing
-- `--keep-source` and `--link-source` are mutually exclusive and should error when both are passed
+- `store scan` discovers skills in agent directories without importing (dry-run)
+- `store scan --import` imports discovered skills into the central store
+- `store scan` accepts `--global|--project [dir]` and `--agent <agent>` filters
+- `--override` overwrites existing skills in the store
+- `--verbose` shows skill names and paths in scan output
+- source paths are always kept in place (no symlink replacement)
 - when a source path is a symlink, `aweskill` copies from the resolved real path and may emit a warning
 - broken symlinks during batch import are reported while other items continue
+- single-skill local installs use `store install <path>` with automatic source tracking
 
 ### Backup and Restore
 

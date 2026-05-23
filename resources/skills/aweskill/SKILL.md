@@ -14,7 +14,7 @@ Match the user's intent to a task domain, then follow the workflow below.
 | User intent | Domain | First command |
 |---|---|---|
 | "Find a skill for X", "search skills", "install from GitHub" | Source Lifecycle | `aweskill find <query>` |
-| "Import my local skills", "what's in the store", "remove a skill from the store" | Store Work | `aweskill store list --verbose` |
+| "Scan and import local skills", "what's in the store", "remove a skill from the store" | Store Work | `aweskill store list --verbose` |
 | "Create a bundle", "add skills to a bundle", "show bundle contents" | Bundle Work | `aweskill bundle list --verbose` |
 | "Give Codex skill X", "project a bundle to Cursor", "remove a projection" | Projection Work | `aweskill agent list --verbose` |
 | "Update aweskill itself", "upgrade the CLI" | Self-Update | `aweskill self-update --check` |
@@ -102,17 +102,17 @@ aweskill store list --verbose
 # Inspect one managed skill
 aweskill store show <skill>
 
-# Import a standalone skill or skills root
-aweskill store import <path>
-aweskill store import <path> --keep-source     # keep source path in place
-aweskill store import <path> --link-source     # replace source with aweskill-managed projection
-aweskill store import <path> --track-source    # record import path for future updates
-aweskill store import <path> --override        # overwrite existing files
+# Scan agent skill directories (dry-run: only discover)
+aweskill store scan
+aweskill store scan --verbose                  # show skill names and paths
+aweskill store scan --scope project            # scan project scope only
+aweskill store scan --agent claude             # scan specific agent only
 
-# Scan agent skill directories and optionally import
-aweskill store scan --verbose
-aweskill store scan --import                   # scan and import discovered skills
-aweskill store scan --import --keep-source     # scan, import, keep originals
+# Scan and import discovered skills
+aweskill store scan --import                   # import all discovered skills (replaces with symlinks)
+aweskill store scan --import --override        # overwrite existing files
+aweskill store scan --import --keep-source     # keep originals instead of replacing with symlinks
+aweskill store scan --import --verbose         # import with detailed output
 
 # Remove a skill from the central store
 aweskill store remove <skill>

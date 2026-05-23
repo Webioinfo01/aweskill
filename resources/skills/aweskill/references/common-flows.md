@@ -5,8 +5,7 @@
 ```bash
 aweskill store init
 aweskill store where --verbose
-aweskill store scan
-aweskill store import --scan
+aweskill store scan --import
 ```
 
 Use when central store is not initialized and agent skill directories already exist.
@@ -48,23 +47,6 @@ aweskill update pr-review
 ```
 
 Use `--override` only when local central-store edits should be replaced.
-
-## Import One Standalone Skill
-
-```bash
-aweskill store import /path/to/skill
-```
-
-Add `--link-source` only when source path should be replaced by an aweskill-managed projection.
-
-## Import a Whole Skills Root
-
-```bash
-aweskill store import /path/to/skills-root
-aweskill store list --verbose
-```
-
-Use when source directory contains multiple skills.
 
 ## Create and Inspect a Bundle
 

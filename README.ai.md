@@ -81,14 +81,32 @@ aweskill agent list --global --agent <agent-id>
 
 Expected output should show `aweskill` and `aweskill-doctor` as `linked`.
 
-### 7. Tell the user to restart
+### 7. Ask about existing skills migration
 
-After projection, the agent needs to be restarted to pick up the new skills. Tell the user:
+Ask the user:
+
+> You may already have skills in your agent directories (e.g. `.claude/skills/`). Would you like me to scan and import them into the aweskill central store?
+
+If the user agrees:
+
+```bash
+aweskill store scan --import
+```
+
+If the user is speaking Chinese:
+
+> 你可能已经在 agent 目录（如 `.claude/skills/`）中有一些 skills。要不要我扫描并导入到 aweskill 中央仓库？
+
+Skip this step if the user explicitly says they are starting fresh or declines.
+
+### 8. Tell the user to restart
+
+After projection (and optional migration), the agent needs to be restarted to pick up the new skills. Tell the user:
 
 > aweskill is installed. Please restart this agent to activate the aweskill and aweskill-doctor skills. After restart, you can ask me things like:
 >
-> - "Find a useful Python data-analysis skill and install it into aweskill."
-> - "What can I do with aweskill?"
+> - “Find a useful Python data-analysis skill and install it into aweskill.”
+> - “What can I do with aweskill?”
 
 If the user is speaking Chinese, use this version instead:
 

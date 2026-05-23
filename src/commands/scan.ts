@@ -40,18 +40,13 @@ export async function runScan(
   options: {
     import?: boolean;
     override?: boolean;
-    verbose?: boolean;
     keepSource?: boolean;
-    linkSource?: boolean;
+    verbose?: boolean;
     scope: Scope;
     agents?: string[];
     projectDir?: string;
   },
 ) {
-  if (options.keepSource && options.linkSource) {
-    throw new Error("Choose either --keep-source or --link-source, not both.");
-  }
-
   const candidates = await scanSkills({
     homeDir: context.homeDir,
     scope: options.scope,
@@ -61,40 +56,33 @@ export async function runScan(
 
   context.write(formatScanSummary(candidates, options.verbose));
 
-  if (options.import) {
-    const linkSource = !options.keepSource;
-    const result = await importScannedSkills({
-      homeDir: context.homeDir,
-      candidates,
-      override: options.override,
-      linkSource,
-    });
-    for (const warning of result.warnings) {
-      context.write(`Warning: ${warning}`);
-    }
-    for (const error of result.errors) {
-      context.error(`Error: ${error}`);
-    }
-    context.write(`Imported ${result.imported.length} skills`);
-    if (result.overwritten.length > 0) {
-      context.write(`Overwritten ${result.overwritten.length} existing skills: ${result.overwritten.join(", ")}`);
-    }
-    if (result.skipped.length > 0) {
-      context.write(
-        `Skipped ${result.skipped.length} existing skills (use --override to overwrite): ${result.skipped.join(", ")}`,
-      );
-    }
-    if (result.missingSources > 0) {
-      context.write(`Missing source files: ${result.missingSources}`);
-    }
-    if (linkSource) {
-      context.write(`Replaced ${result.linkedSources.length} scanned source paths with aweskill-managed projections.`);
-    } else {
-      context.write(
-        "Source paths were kept in place. Re-run without --keep-source to replace scanned agent skills with aweskill-managed projections.",
-      );
-    }
-    return { candidates, ...result };
+  if (!options.import) {
+    return candidates;
   }
-  return candidates;
+
+  const result = await importScannedSkills({
+    homeDir: context.homeDir,
+    candidates,
+    override: options.override,
+    linkSource: !options.keepSource,
+  });
+  for (const warning of result.warnings) {
+    context.write(`Warning: ${warning}`);
+  }
+  for (const error of result.errors) {
+    context.error(`Error: ${error}`);
+  }
+  context.write(`Imported ${result.imported.length} skills`);
+  if (result.overwritten.length > 0) {
+    context.write(`Overwritten ${result.overwritten.length} existing skills: ${result.overwritten.join(", ")}`);
+  }
+  if (result.skipped.length > 0) {
+    context.write(
+      `Skipped ${result.skipped.length} existing skills (use --override to overwrite): ${result.skipped.join(", ")}`,
+    );
+  }
+  if (result.missingSources > 0) {
+    context.write(`Missing source files: ${result.missingSources}`);
+  }
+  return { candidates, ...result };
 }

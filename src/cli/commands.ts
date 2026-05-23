@@ -16,7 +16,7 @@ import { runDownload } from "../commands/download.js";
 import { runEnable } from "../commands/enable.js";
 import { runFind } from "../commands/find.js";
 import { runFixSkills } from "../commands/fix-skills.js";
-import { runImport } from "../commands/import.js";
+
 import { runInit } from "../commands/init.js";
 import { runListBundles, runListSkills, runListTemplateBundles } from "../commands/list.js";
 import { runRecover } from "../commands/recover.js";
@@ -39,43 +39,6 @@ import {
   runFramedCommand,
   writeSupportedAgents,
 } from "./helpers.js";
-
-function addImportCommand(parent: Command, context: RuntimeContext, title: string): void {
-  parent
-    .command("import")
-    .argument("[path]")
-    .description("Import local skills without source tracking (use install for GitHub/sciskill with auto-tracking)")
-    .option("--scan", "import scanned skills", false)
-    .option("--global", "scan global scope when used with --scan (default when no scope flag given)")
-    .option("--project [dir]", "scan project scope when used with --scan; uses cwd when dir is omitted")
-    .option(
-      "--agent <agent>",
-      'repeat or use comma list; defaults to all; run "aweskill agent supported" to see supported ids',
-      collectAgents,
-    )
-    .option("--keep-source", "keep the source path in place after importing", false)
-    .option("--link-source", "replace the source path with an aweskill-managed projection after importing", false)
-    .option("--track-source", "record the explicit local import path for future store update runs", false)
-    .option("--override", "overwrite existing files when importing", false)
-    .action(async (sourcePath, options) => {
-      const isProject = options.project !== undefined;
-      const scope: Scope = isProject ? "project" : "global";
-      const projectDir = isProject && typeof options.project === "string" ? options.project : undefined;
-      await runFramedCommand(title, async () =>
-        runImport(context, {
-          sourcePath,
-          scan: options.scan,
-          scope,
-          agents: options.agent ?? [],
-          projectDir,
-          override: options.override,
-          keepSource: options.keepSource,
-          linkSource: options.linkSource,
-          trackSource: options.trackSource,
-        }),
-      );
-    });
-}
 
 function addFindCommand(parent: Command, context: RuntimeContext, title: string): void {
   parent
@@ -399,9 +362,9 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
       'repeat or use comma list; defaults to all; run "aweskill agent supported" to see supported ids',
       collectAgents,
     )
-    .option("--import", "scan and then import the discovered skills into the central store", false)
-    .option("--keep-source", "when used with --import, keep the source path in place after importing", false)
-    .option("--override", "when used with --import, overwrite existing files while importing", false)
+    .option("--import", "import discovered skills into the central store", false)
+    .option("--override", "overwrite existing files while importing", false)
+    .option("--keep-source", "keep original files in place instead of replacing with symlinks", false)
     .option("--verbose", "show scanned skill details instead of per-agent totals", false)
     .action(async (options) => {
       const isProject = options.project !== undefined;
@@ -413,13 +376,12 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
           agents: options.agent ?? [],
           projectDir,
           import: options.import,
-          keepSource: options.keepSource,
           override: options.override,
+          keepSource: options.keepSource,
           verbose: options.verbose,
         }),
       );
     });
-  addImportCommand(store, context, " aweskill store import ");
   addInstallCommand(store, context, " aweskill store install ");
   addUpdateCommand(store, context, " aweskill store update ");
   addFindCommand(store, context, " aweskill store find ");

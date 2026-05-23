@@ -158,18 +158,18 @@ npm install -g ./aweskill-<version>.tgz
 - **Update**：按记录的来源刷新 tracked install，同时保护中央仓库里的本地修改
 - **Project**：把同一批托管 skill 投影到 Codex、Claude Code、Cursor、Gemini CLI 等 agent
 
-### `import` 和 `install` 有什么区别？
+### `scan` 和 `install` 有什么区别？
 
 两个命令都会把 skill 加入中央仓库，但用途不同：
 
-| | `store import` | `store install` |
+| | `store scan --import` | `store install` |
 |---|---|---|
-| **主要用途** | 本地文件、扫描 agent 目录 | GitHub 仓库、sciskill ID |
-| **来源追踪** | 默认关闭（用 `--track-source` 开启） | 默认开启 |
-| **核心参数** | `--scan`、`--keep-source`、`--link-source` | `--skill`、`--all`、`--ref`、`--as` |
-| **典型命令** | `aweskill store import ./my-skill` | `aweskill store install owner/repo` |
+| **主要用途** | 从 agent 目录批量发现 | 从 GitHub、本地路径或 sciskill 安装单个 skill |
+| **来源追踪** | 无（一次性导入） | 有（自动记录，支持 `update`） |
+| **核心参数** | `--override`、`--verbose`、`--scope`、`--agent` | `--skill`、`--all`、`--ref`、`--as` |
+| **典型命令** | `aweskill store scan --import` | `aweskill store install owner/repo` |
 
-导入本地 skill 或扫描已有 agent 目录时用 `import`；从 GitHub 或 sciskill 拉取并自动记录来源以便后续更新时用 `install`。
+初始设置时用 `scan --import` — 从已有 agent 目录发现并导入 skill。后续管理用 `install` — 安装单个 skill 并记录来源以便更新。
 
 </details>
 
@@ -276,10 +276,6 @@ aweskill store scan
 # 把扫描到的 agent skill 导入中央仓库
 aweskill store scan --import
 
-# 导入一个 skills 根目录或单个 skill
-aweskill store import ~/.agents/skills
-# aweskill store import /path/to/my-skill --link-source
-
 # 创建 bundle
 aweskill bundle create frontend
 aweskill bundle add frontend my-skill
@@ -340,26 +336,26 @@ aweskill agent add bundle frontend --global --agent codex
 
 ## 常见工作流
 
-### 把现有 skill 导入中央仓库
+### 扫描并导入 skill 到中央仓库
 
 ```bash
-# 从现有 agent skill 目录导入
-aweskill store import ~/.agents/skills
+# 扫描 agent skill 目录（只发现，不导入）
+aweskill store scan
 
-# 导入外部 skill 目录，并保留原目录不变
-aweskill store import ~/Downloads/pr-review
-
-# 导入外部 skill 目录，并把原目录替换成 aweskill 托管投影
-aweskill store import ~/Downloads/pr-review --link-source
-
-# 导入外部 skill 目录，并为后续 store update 建立本地来源追踪
-aweskill store import ~/Downloads/pr-review --track-source
-
-# 导入扫描到的 agent skill，默认回写成 aweskill 托管投影
+# 扫描并导入所有发现的 skill
 aweskill store scan --import
 
-# 导入扫描到的 agent skill，但保留原 agent 目录不变
+# 扫描并导入，显示详细输出
+aweskill store scan --import --verbose
+
+# 扫描并导入，覆盖已有的 skill
+aweskill store scan --import --override
+
+# 扫描并导入，保留原始文件（不替换为软链接）
 aweskill store scan --import --keep-source
+
+# 只扫描特定 agent
+aweskill store scan --import --agent claude
 ```
 
 ### 查找、安装并更新已追踪 skill
@@ -471,7 +467,7 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 
 ## 命令面
 
-核心命令：`store init`、`store where`、`store import`、`bundle create`、`agent add`、`doctor clean`
+核心命令：`store init`、`store where`、`store scan`、`bundle create`、`agent add`、`doctor clean`
 
 高频搜索和 tracked-source 流程也提供顶层命令：`aweskill find`、`aweskill install`、`aweskill update`。
 
@@ -485,9 +481,7 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 | `aweskill store where [--verbose]` | 显示 `~/.aweskill` 位置，并汇总核心 store 目录 |
 | `aweskill store backup [archive] [--skills-only]` | 归档中央仓库；默认同时包含 skills 和 bundles |
 | `aweskill store restore <archive> [--override] [--skills-only]` | 从备份归档或已解包目录恢复 |
-| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--keep-source] [--override] [--verbose]` | 按指定 scope 和 agent 集合扫描支持的 agent skill 目录；加上 `--import` 会立即把扫描结果导入中央仓库 |
-| `aweskill store import <path> [--keep-source\|--link-source] [--track-source] [--override]` | 导入单个 skill 或整个 skills 根目录；外部路径默认保留原目录，`--track-source` 可为显式本地导入建立后续 `store update` 追踪 |
-| `aweskill store import --scan [--global\|--project [dir]] [--agent <agent>] [--keep-source\|--link-source] [--override]` | 按指定 scope 和 agent 集合导入当前扫描结果；扫描到的 agent 路径默认会回写为 aweskill 托管投影 |
+| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--override] [--keep-source] [--verbose]` | 扫描支持的 agent skill 目录；加上 `--import` 会把发现的 skill 导入中央仓库 |
 | `aweskill store find <query> [--provider <skills-sh\|sciskill\|local>] [--local] [--limit <n>] [--domain <domain>] [--stage <stage>]` | 默认搜索 `skills.sh` 和 `sciskill`，也可用 `--local` / `--provider local` 只搜索本地中央仓库；远程结果输出可安装 `source` 或 discover-only 提示，本地结果输出 skill 路径和 `store show` 提示 |
 | `aweskill store install <source> [--list] [--skill <name>] [--all] [--ref <ref>] [--as <name>] [--override]` | 从本地路径、GitHub source 或 `sciskill:<skill-id>` 安装 skill 到中央仓库，并为后续 `store update` 建立追踪记录 |
 | `aweskill store update [skill...] [--check] [--prune] [--source <source>] [--override] [--verbose]` | 从已记录的 source 检查或刷新 tracked skill，并把中央仓库中的副本当作受保护的本地状态；`--prune` 会清理本地已删除 skill 的追踪记录 |
@@ -550,8 +544,8 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 - `aweskill-doctor`：异常诊断和修复，覆盖 broken projections、重复 skills、suspicious entries 和 sync cleanup
 
 ```bash
-aweskill store import resources/skills/aweskill
-aweskill store import resources/skills/aweskill-doctor
+aweskill store install resources/skills/aweskill
+aweskill store install resources/skills/aweskill-doctor
 ```
 
 skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。

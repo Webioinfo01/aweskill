@@ -167,18 +167,18 @@ Yes. `aweskill` ships built-in management skills for `aweskill` and `aweskill-do
 - **Update** tracked installs from their recorded sources while protecting local central-store edits
 - **Project** the same managed skills into Codex, Claude Code, Cursor, Gemini CLI, and other agents
 
-### What is the difference between `import` and `install`?
+### What is the difference between `scan` and `install`?
 
 Both commands add skills to the central store, but serve different purposes:
 
-| | `store import` | `store install` |
+| | `store scan --import` | `store install` |
 |---|---|---|
-| **Primary use** | Local files, agent directory scanning | GitHub repos, sciskill IDs |
-| **Source tracking** | Off by default (use `--track-source` to enable) | On by default |
-| **Key flags** | `--scan`, `--keep-source`, `--link-source` | `--skill`, `--all`, `--ref`, `--as` |
-| **Typical command** | `aweskill store import ./my-skill` | `aweskill store install owner/repo` |
+| **Primary use** | Batch discovery from agent directories | Single skill from GitHub, local path, or sciskill |
+| **Source tracking** | No (one-time import) | Yes (automatic, enables `update`) |
+| **Key flags** | `--override`, `--verbose`, `--scope`, `--agent` | `--skill`, `--all`, `--ref`, `--as` |
+| **Typical command** | `aweskill store scan --import` | `aweskill store install owner/repo` |
 
-Use `import` when bringing in local skills or scanning existing agent directories. Use `install` when pulling from GitHub or sciskill with automatic source tracking for future updates.
+Use `scan --import` for initial setup — discover and import skills from existing agent directories. Use `install` for ongoing management — install individual skills with source tracking for future updates.
 
 </details>
 
@@ -285,10 +285,6 @@ aweskill store scan
 # Scan and import discovered agent skills into the central store
 aweskill store scan --import
 
-# Import a skills root or a single skill
-aweskill store import ~/.agents/skills
-# aweskill store import /path/to/my-skill --link-source
-
 # Create a bundle
 aweskill bundle create frontend
 aweskill bundle add frontend my-skill
@@ -349,26 +345,26 @@ Discovery and install sources:
 
 ## Common Workflows
 
-### Import skills into the central store
+### Scan and import skills into the central store
 
 ```bash
-# Import skills from an existing agent-managed skills directory
-aweskill store import ~/.agents/skills
+# Scan agent skill directories (dry-run: only discover)
+aweskill store scan
 
-# Import a standalone skill folder and keep the original directory unchanged
-aweskill store import ~/Downloads/pr-review
-
-# Import a standalone skill folder and replace the source with an aweskill-managed projection
-aweskill store import ~/Downloads/pr-review --link-source
-
-# Import a standalone skill folder and track it for future store update runs
-aweskill store import ~/Downloads/pr-review --track-source
-
-# Import scanned agent skills and relink their source paths by default
+# Scan and import all discovered skills
 aweskill store scan --import
 
-# Import scanned agent skills but keep the original agent directories unchanged
+# Scan and import with detailed output
+aweskill store scan --import --verbose
+
+# Scan and import, overwriting existing skills
+aweskill store scan --import --override
+
+# Scan and import, keeping originals instead of replacing with symlinks
 aweskill store scan --import --keep-source
+
+# Scan specific agent only
+aweskill store scan --import --agent claude
 ```
 
 ### Find, install, and update tracked skills
@@ -480,7 +476,7 @@ See [docs/fix-skills-categories.md](docs/fix-skills-categories.md) for full deta
 
 ## Command Surface
 
-Core commands: `store init`, `store where`, `store import`, `bundle create`, `agent add`, `doctor clean`
+Core commands: `store init`, `store where`, `store scan`, `bundle create`, `agent add`, `doctor clean`
 
 Top-level convenience commands are available for high-frequency search and tracked-source flows: `aweskill find`, `aweskill install`, and `aweskill update`.
 
@@ -494,9 +490,7 @@ Top-level convenience commands are available for high-frequency search and track
 | `aweskill store where [--verbose]` | Show the `~/.aweskill` location and summarize core store directories |
 | `aweskill store backup [archive] [--skills-only]` | Archive the central store; by default includes both skills and bundles |
 | `aweskill store restore <archive> [--override] [--skills-only]` | Restore from a backup archive or unpacked backup directory |
-| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--keep-source] [--override] [--verbose]` | Scan supported agent skill directories for a chosen scope and agent set; add `--import` to immediately import scan results into the central store |
-| `aweskill store import <path> [--keep-source\|--link-source] [--track-source] [--override]` | Import a skill or an entire skills root; external paths keep their source by default, and `--track-source` records explicit local imports for future `store update` runs |
-| `aweskill store import --scan [--global\|--project [dir]] [--agent <agent>] [--keep-source\|--link-source] [--override]` | Import the current scan results for a chosen scope and agent set; scanned agent paths link back to aweskill by default |
+| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--override] [--keep-source] [--verbose]` | Scan supported agent skill directories; add `--import` to import discovered skills into the central store |
 | `aweskill store find <query> [--provider <skills-sh\|sciskill\|local>] [--local] [--limit <n>] [--domain <domain>] [--stage <stage>]` | Search `skills.sh` and `sciskill` by default, or search the local central store with `--local` / `--provider local`; remote results print installable `source` values or discover-only notes, while local results print skill paths and `store show` hints |
 | `aweskill store install <source> [--list] [--skill <name>] [--all] [--ref <ref>] [--as <name>] [--override]` | Install skills from a local path, GitHub source, or `sciskill:<skill-id>` into the central store and record them for future `store update` runs |
 | `aweskill store update [skill...] [--check] [--prune] [--source <source>] [--override] [--verbose]` | Check or refresh tracked skills from their recorded source while treating the central store copy as the protected local state; `--prune` removes tracking for local-store entries that were already deleted |
@@ -559,8 +553,8 @@ Top-level convenience commands are available for high-frequency search and track
 - `aweskill-doctor`: diagnosis and repair for broken projections, duplicate skills, suspicious entries, and sync cleanup
 
 ```bash
-aweskill store import resources/skills/aweskill
-aweskill store import resources/skills/aweskill-doctor
+aweskill store install resources/skills/aweskill
+aweskill store install resources/skills/aweskill-doctor
 ```
 
 See [docs/DESIGN.md](docs/DESIGN.md) for skill directory structure and design principles.

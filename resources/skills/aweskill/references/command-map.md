@@ -5,9 +5,8 @@
 - Find aweskill home and core directories -> `aweskill store where --verbose`
 - See what is already in central store -> `aweskill store list --verbose`
 - Inspect one managed local skill -> `aweskill store show <skill>`
-- Discover agent-side skills before import -> `aweskill store scan [--global|--project [dir]] [--agent <id>] --verbose`
-- Import scanned agent skills -> `aweskill store import --scan [--global|--project [dir]] [--agent <id>]`
-- Import external skill folder -> `aweskill store import <path>`
+- Discover agent-side skills -> `aweskill store scan [--global|--project [dir]] [--agent <id>] --verbose`
+- Scan and import agent skills -> `aweskill store scan --import [--global|--project [dir]] [--agent <id>] [--override]`
 - Remove one central-store skill -> `aweskill store remove <skill>`
 
 ## Self-Update

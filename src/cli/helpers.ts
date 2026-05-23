@@ -128,7 +128,7 @@ export function assertLegacySkillCommandRemoved(args: string[]): void {
     throw new Error('Top-level command "skill" was removed. Use "aweskill store ..." instead.');
   }
   if (args[0] === "import") {
-    throw new Error('Top-level command "import" was removed. Use "aweskill store import ..." instead.');
+    throw new Error('Top-level command "import" was removed. Use "aweskill store scan --import" instead.');
   }
 }
 
