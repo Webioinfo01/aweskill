@@ -1,5 +1,26 @@
 # change log
 
+## v0.3.5
+
+`v0.3.5` removes the standalone `store import` command and consolidates skill importing into `store scan --import`, providing a single unified workflow for discovering and importing skills from agent directories. Since `v0.3.4`, the `import` command and its source-tracking options (`--link-source`, `--track-source`) have been removed, the `scan` command options have been simplified, and all documentation and tests have been updated to reflect the new workflow.
+
+### Unified scan --import workflow
+
+The standalone `store import` command has been removed. Use `store scan --import` instead, which discovers skills from agent directories and imports them in a single step. This eliminates the confusion between `import` and `install` by giving each command a clear, distinct purpose: `scan --import` for batch discovery, `install` for individual tracked installs.
+
+### Simplified scan options
+
+Removed `--link-source` and `--track-source` flags from the scan command. The `--keep-source` flag now clearly means "keep original files in place instead of replacing with symlinks." Option descriptions have been tightened for clarity.
+
+### Highlights
+
+- Removed standalone `store import` command
+- Consolidated import functionality into `store scan --import`
+- Removed `--link-source` and `--track-source` options
+- Simplified `--keep-source` and `--override` option descriptions
+- Updated all documentation to reference `scan --import` workflow
+- Updated tests to use new command paths
+
 ## v0.3.4
 
 `v0.3.4` adds bundle-aware update, improves CLI help clarity, and introduces new update options for managing tracked skills. Since `v0.3.3`, the `update` command supports `--bundle` to update all skills in a bundle at once, `bundle list` and `bundle template list` now default to name-only output with `--verbose` for full details, and a new `bundle template show` command displays template contents. The `update` command also gains `--prune` to remove tracking for missing skills and `--verbose` for detailed source diagnostics.
