@@ -2527,8 +2527,6 @@ describe("commands", () => {
     expect(lines.join("\n")).toContain("Removed remove-tracked");
   });
 
-
-
   it("scan --import reports broken symlink sources and finishes with a missing count", async () => {
     const workspace = await createTempWorkspace();
     const lines: string[] = [];

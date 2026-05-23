@@ -17,6 +17,7 @@ Match the user's intent to a task domain, then follow the workflow below.
 | "Scan and import local skills", "what's in the store", "remove a skill from the store" | Store Work | `aweskill store list --verbose` |
 | "Create a bundle", "add skills to a bundle", "show bundle contents" | Bundle Work | `aweskill bundle list --verbose` |
 | "Give Codex skill X", "project a bundle to Cursor", "remove a projection" | Projection Work | `aweskill agent list --verbose` |
+| "Update a skill", "refresh skills", "更新技能" | Source Lifecycle | `aweskill update --check` |
 | "Update aweskill itself", "upgrade the CLI" | Self-Update | `aweskill self-update --check` |
 | "Something is broken", "skill not showing up", "duplicate skills" | Escalate | Hand off to `$aweskill-doctor` |
 
