@@ -88,7 +88,8 @@ Mutating agent commands should default to the detected installed agent set for t
 - `store scan` accepts `--global|--project [dir]` and `--agent <agent>` filters
 - `--override` overwrites existing skills in the store
 - `--verbose` shows skill names and paths in scan output
-- source paths are always kept in place (no symlink replacement)
+- by default, `--import` replaces source paths with symlinks pointing to the central store
+- `--keep-source` keeps original files in place instead of replacing with symlinks
 - when a source path is a symlink, `aweskill` copies from the resolved real path and may emit a warning
 - broken symlinks during batch import are reported while other items continue
 - single-skill local installs use `store install <path>` with automatic source tracking
