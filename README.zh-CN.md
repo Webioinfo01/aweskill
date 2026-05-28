@@ -6,7 +6,8 @@
   <p>
     <a href="./README.md">English</a> ·
     <strong>简体中文</strong> ·
-    <a href="https://aweskill.webioinfo.top/">官网</a>
+    <a href="https://aweskill.webioinfo.top/">官网</a> ·
+    <a href="https://we.webioinfo.top/">Webioinfo</a>
   </p>
   <p>
     <a href="https://github.com/Webioinfo01/aweskill/releases"><img src="https://img.shields.io/badge/version-0.3.5-7C3AED?style=flat-square" alt="Version"></a>
