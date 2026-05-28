@@ -48,6 +48,29 @@
 
 - **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — AI 在生物学、生物信息学和生物医学研究中应用的精选综述。由 awescholar 驱动。
 
+### 为你的项目添加 aweskill badge
+
+如果你的项目使用了 aweskill 并且想要表示支持，可以在 README 中添加以下 badge：
+
+| Badge | 用途 |
+|-------|------|
+| `aweskill-badge.svg` | aweskill 自身使用 |
+| `aweskill-badge2.svg` | 供 companion 项目使用 |
+
+以 `aweskill-badge2.svg` 为例：
+
+```html
+<a href="https://github.com/Webioinfo01/aweskill">
+  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
+</a>
+```
+
+放在 README 标题中，例如：
+
+```markdown
+# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
+```
+
 ## 安装
 
 你可以自己安装 `aweskill`，也可以让 AI 编码 agent 帮你安装。

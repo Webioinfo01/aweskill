@@ -27,6 +27,8 @@
 </div>
 
 
+
+
 > Like npm for local AI agent skills: one install, many coding agents.
 
 `aweskill` is a local skill package manager for AI agents such as Codex, Claude Code, Cursor, Gemini CLI, Qwen Code, Windsurf, OpenCode, and more.
@@ -47,6 +49,29 @@ Instead of copying the same `SKILL.md` folders into every tool by hand, `aweskil
 ### Project Collections
 
 - **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — A curated survey of AI applications in biology, bioinformatics, and biomedical research. Powered by awescholar.
+
+### Add the aweskill badge to your project
+
+If your project uses aweskill and you'd like to show support, add one of these badges to your README:
+
+| Badge | Preview |
+|-------|---------|
+| `aweskill-badge.svg` | Used by aweskill itself |
+| `aweskill-badge2.svg` | For companion projects |
+
+Example using `aweskill-badge2.svg`:
+
+```html
+<a href="https://github.com/Webioinfo01/aweskill">
+  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
+</a>
+```
+
+Place it in your README title, e.g.:
+
+```markdown
+# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
+```
 
 ## Install
 
