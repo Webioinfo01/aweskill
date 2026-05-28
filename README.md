@@ -37,6 +37,17 @@ Instead of copying the same `SKILL.md` folders into every tool by hand, `aweskil
 
 > **Website:** [aweskill.webioinfo.top](https://aweskill.webioinfo.top/) — project homepage with install guides and agent compatibility overview.
 
+## Powered by aweskill
+
+### AI Tools
+
+- **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI-agent-operable scientific literature discovery and curation. Search, annotate, filter, and report on academic papers.
+- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Session bookmark manager for Claude Code and Codex. Bookmark, categorize, and restore sessions with aweswitch profiles.
+
+### Project Collections
+
+- **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — A curated survey of AI applications in biology, bioinformatics, and biomedical research. Powered by awescholar.
+
 ## Install
 
 You can install `aweskill` yourself, or ask an AI coding agent to do it for you.

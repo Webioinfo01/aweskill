@@ -37,6 +37,17 @@
 
 > **项目网站：**[aweskill.webioinfo.top](https://aweskill.webioinfo.top/) — 包含安装指南和 Agent 兼容性概览。
 
+## aweskill 驱动的项目
+
+### AI 工具
+
+- **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展。搜索、标注、筛选和报告学术论文。
+- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Claude Code 和 Codex 的会话书签管理器。收藏、分类、恢复会话，支持 aweswitch 配置。
+
+### 项目收集
+
+- **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — AI 在生物学、生物信息学和生物医学研究中应用的精选综述。由 awescholar 驱动。
+
 ## 安装
 
 你可以自己安装 `aweskill`，也可以让 AI 编码 agent 帮你安装。
