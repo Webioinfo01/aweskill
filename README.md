@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./logo.png" alt="aweskill" width="760">
-  <h1>aweskill: Skill Package Manager for AI Agents <a href="https://aweskill.webioinfo.top/"><img src="./logo/aweskill-badge.svg" alt="aweskill"></a></h1>
+  <h1>aweskill: Skill Package Manager for AI Agents <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge.svg" alt="aweskill"></a></h1>
   <p><strong>A CLI-first skill package manager that AI agents can operate themselves.</strong></p>
   <p>Install, update, bundle, and project skills across Codex, Claude Code, Cursor, Gemini CLI, Qwen Code, Windsurf, and more.</p>
   <p>

@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./logo.png" alt="aweskill" width="760">
-  <h1>aweskill：面向 AI Agents 的 Skill 包管理器 <a href="https://aweskill.webioinfo.top/"><img src="./logo/aweskill-badge.svg" alt="aweskill"></a></h1>
+  <h1>aweskill：面向 AI Agents 的 Skill 包管理器 <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge.svg" alt="aweskill"></a></h1>
   <p><strong>以 CLI 为核心的 Skill 包管理器，AI agent 也能自己调用和维护。</strong></p>
   <p>在 Codex、Claude Code、Cursor、Gemini CLI、Qwen Code、Windsurf 等工具之间安装、更新、打包并投影 skills。</p>
   <p>
