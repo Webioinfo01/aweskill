@@ -57,7 +57,7 @@ Read https://github.com/mugpeng/aweskill/blob/main/README.ai.md and follow it to
 - 验证投影结果
 - 提醒你重启，让新 Skills 正式生效
 
-![AI coding agent 按照 README.ai.md 安装 aweskill 并启用内置管理 Skills 的示例截图。](aweskill-agent-install-demo.png)
+![AI coding agent 按照 README.ai.md 安装 aweskill 并启用内置管理 Skills 的示例截图。](../image/aweskill-agent-install-demo.png)
 
 重启之后，你就不必记住每一条命令了。直接用自然语言问 Agent 就行。
 

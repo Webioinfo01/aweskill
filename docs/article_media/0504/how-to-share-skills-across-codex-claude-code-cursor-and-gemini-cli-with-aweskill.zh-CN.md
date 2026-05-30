@@ -150,7 +150,7 @@ aweskill agent add bundle daily-coding --global --agent cursor
 Read https://github.com/mugpeng/aweskill/blob/main/README.ai.md and follow it to install aweskill.
 ```
 
-![AI coding agent 按照 README.ai.md 安装 aweskill 并启用内置管理 skills 的示例截图。](aweskill-agent-install-demo.png)
+![AI coding agent 按照 README.ai.md 安装 aweskill 并启用内置管理 skills 的示例截图。](../image/aweskill-agent-install-demo.png)
 
 一次流程里，agent 就能完成 CLI 安装、central store 初始化、当前运行环境识别、`aweskill` 和 `aweskill-doctor` 投影，并在最后提醒你重启，让新 skills 正式生效。
 

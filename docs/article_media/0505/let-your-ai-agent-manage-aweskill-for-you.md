@@ -57,7 +57,7 @@ The protocol tells the agent to:
 - verify the projection
 - ask you to restart so the new Skills become active
 
-![Example of an AI coding agent following README.ai.md to install aweskill and activate the built-in management skills.](aweskill-agent-install-demo.png)
+![Example of an AI coding agent following README.ai.md to install aweskill and activate the built-in management skills.](../image/aweskill-agent-install-demo.png)
 
 After that restart, you no longer have to remember every command. You can ask the agent in plain language.
 
