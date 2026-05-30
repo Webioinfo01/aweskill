@@ -1,5 +1,17 @@
 # change log
 
+## v0.3.6
+
+`v0.3.6` is a docs and polish release. Since `v0.3.5`, the README has been refreshed with a "Powered by aweskill" section, badge graphics, and org links. A minor test cleanup removes trailing blank lines. No functional changes to the CLI.
+
+### Highlights
+
+- Add "Powered by aweskill" section with AI tools and project collaborations
+- Add aweskill badge to README titles
+- Add Webioinfo org link to README
+- Fix: remove trailing blank lines in test file
+- Update scan import behavior in DESIGN.md
+
 ## v0.3.5
 
 `v0.3.5` removes the standalone `store import` command and consolidates skill importing into `store scan --import`, providing a single unified workflow for discovering and importing skills from agent directories. Since `v0.3.4`, the `import` command and its source-tracking options (`--link-source`, `--track-source`) have been removed, the `scan` command options have been simplified, and all documentation and tests have been updated to reflect the new workflow.
