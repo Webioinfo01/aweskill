@@ -7,8 +7,10 @@ skills:
   - baoyu-danger-gemini-web
   - baoyu-danger-x-to-markdown
   - baoyu-diagram
+  - baoyu-electron-extract
   - baoyu-format-markdown
   - baoyu-image-cards
+  - baoyu-image-gen
   - baoyu-imagine
   - baoyu-infographic
   - baoyu-markdown-to-html
@@ -18,4 +20,7 @@ skills:
   - baoyu-slide-deck
   - baoyu-translate
   - baoyu-url-to-markdown
+  - baoyu-wechat-summary
+  - baoyu-xhs-images
   - baoyu-youtube-transcript
+  - release-skills
