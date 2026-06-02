@@ -9,7 +9,7 @@ After completing this protocol:
 1. `aweskill` CLI is installed globally via npm
 2. The aweskill central store is initialized at `~/.aweskill/skills/`
 3. The built-in skills `aweskill` and `aweskill-doctor` are projected into the current agent's skill directory
-4. After the user restarts this agent, it can use aweskill commands from natural-language requests
+4. After the user verifies the new skills are available (invoke skills via `/` or `$` to check), it can use aweskill commands from natural-language requests
 
 ## Language Behavior
 
@@ -99,18 +99,18 @@ If the user is speaking Chinese:
 
 Skip this step if the user explicitly says they are starting fresh or declines.
 
-### 8. Tell the user to restart
+### 8. Verify skills are available
 
-After projection (and optional migration), the agent needs to be restarted to pick up the new skills. Tell the user:
+After projection (and optional migration), tell the user to invoke skills (`/` in Claude Code, `$` in Codex, or the equivalent in other agents) and check if the new skills (e.g. `aweskill`, `aweskill-doctor`) appear in the list. If they do, the skills are ready to use immediately. If not, the user should restart the agent.
 
-> aweskill is installed. Please restart this agent to activate the aweskill and aweskill-doctor skills. After restart, you can ask me things like:
+> aweskill is installed. Invoke skills (type `/` or `$` depending on your agent) and look for `aweskill` — if it appears, you're good to go. If not, restart the agent. Then you can ask me things like:
 >
 > - “Find a useful Python data-analysis skill and install it into aweskill.”
 > - “What can I do with aweskill?”
 
 If the user is speaking Chinese, use this version instead:
 
-> aweskill 已安装。请重启当前 agent，以激活 aweskill 和 aweskill-doctor 这两个 skills。重启后，你可以继续问我，例如：
+> aweskill 已安装。请调用 skills（输入 `/` 或 `$`，取决于你的 agent），看看列表中是否出现了 `aweskill`。如果出现了，说明已就绪可以直接使用。如果没有，请重启 agent 后再试。然后你可以继续问我，例如：
 >
 > - “帮我找一个好用的 Python 数据分析 skill，并安装到 aweskill。”
 > - “我能用 aweskill 做什么？”

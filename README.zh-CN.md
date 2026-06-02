@@ -83,7 +83,7 @@
 读取 https://github.com/Webioinfo01/aweskill/blob/main/README.ai.md 并按照说明为当前 agent 安装 aweskill。
 ```
 
-agent 会自动完成 CLI 安装、store 初始化和内置 skills 投影。重启 agent 后即可通过自然语言使用 aweskill。
+agent 会自动完成 CLI 安装、store 初始化和内置 skills 投影。调用 skills（Claude Code 输入 `/`，Codex 输入 `$`）检查新 skills 是否出现——如果出现了，即可直接通过自然语言使用 aweskill；如果没有，请先重启 agent。
 
 ### 从 npm 安装（推荐）
 

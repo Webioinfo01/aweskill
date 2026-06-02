@@ -30,7 +30,7 @@ If `aweskill` is not installed or the store is not initialized, run the full boo
 3. Confirm the store location: `aweskill store where --verbose`
 4. Project built-in skills to the current agent: `aweskill agent add skill aweskill,aweskill-doctor --global --agent <current-agent-id>`
 5. Verify: `aweskill agent list --global --agent <current-agent-id>` — both skills should show as `linked`
-6. Tell the user to restart the agent so the new skills become available.
+6. Tell the user to invoke skills (`/` or `$`, depending on the agent) and check if the new skills appear. If they do, the skills are ready to use. If not, ask the user to restart the agent.
 
 If `aweskill` is already installed but the store is not initialized, start from step 2.
 If the store is initialized but skills are not projected, start from step 4.

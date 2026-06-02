@@ -85,7 +85,7 @@ If you are working inside Codex, Claude Code, Cursor, Gemini CLI, or another cod
 Read https://github.com/Webioinfo01/aweskill/blob/main/README.ai.md and follow it to install aweskill for this agent.
 ```
 
-The agent will install the CLI, initialize the store, and project the built-in skills. After restarting the agent, it can use aweskill directly from natural-language requests.
+The agent will install the CLI, initialize the store, and project the built-in skills. Invoke skills (`/` in Claude Code, `$` in Codex) to check if the new skills appear — if they do, you can start using aweskill from natural-language requests right away; if not, restart the agent first.
 
 <details>
 <summary>Example agent-assisted install screenshot</summary>
