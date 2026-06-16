@@ -44,6 +44,7 @@ export function getAweskillPaths(homeDir: string): AweskillPaths {
     dedupBackupDir: path.join(rootDir, "backup", "dedup"),
     fixSkillsBackupDir: path.join(rootDir, "backup", "fix_skills"),
     bundlesDir: path.join(rootDir, "bundles"),
+    updateCheckFile: path.join(rootDir, "update-check.json"),
   };
 }
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import * as p from "@clack/prompts";
+
 import { createProgram } from "./cli/commands.js";
 import { formatCliErrorMessage } from "./cli/errors.js";
 import {
@@ -10,6 +12,7 @@ import {
   shouldDeferToCommandParsing,
 } from "./cli/helpers.js";
 import { isDirectCliEntry } from "./lib/runtime.js";
+import { maybeCheckForUpdate } from "./lib/update-check.js";
 
 export { createProgram } from "./cli/commands.js";
 
@@ -23,7 +26,14 @@ export async function main(argv = process.argv) {
     if (!shouldDeferToCommandParsing(commandArgs)) {
       await assertStoreInitialized(context.homeDir, commandArgs);
     }
+    const updateReminderPromise = maybeCheckForUpdate(context.homeDir, commandArgs).catch(
+      () => null,
+    );
     await program.parseAsync(normalizedArgv);
+    const reminder = await updateReminderPromise;
+    if (reminder) {
+      p.log.warn(reminder);
+    }
   } catch (error) {
     const code = typeof error === "object" && error !== null && "code" in error ? error.code : undefined;
     if (code === "commander.version" || code === "commander.helpDisplayed") {

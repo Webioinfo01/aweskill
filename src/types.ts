@@ -16,6 +16,7 @@ export interface AweskillPaths {
   dedupBackupDir: string;
   fixSkillsBackupDir: string;
   bundlesDir: string;
+  updateCheckFile: string;
 }
 
 export interface AgentDefinition {
