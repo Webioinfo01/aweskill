@@ -1,5 +1,19 @@
 # change log
 
+## v0.3.7
+
+`v0.3.7` adds a post-command update reminder and cleans up the README install section. Since `v0.3.6`, the CLI now checks npm for a newer version once every 24 hours and shows a non-blocking reminder after the command finishes. The "pin a specific release" section has been removed from both READMEs to avoid users installing stale versions.
+
+### Update reminder
+
+After any regular command, `aweskill` checks whether a newer version is available on npm (at most once every 24 hours). If an update exists, a warning line is printed after the command output. The check runs in parallel with the command so it does not add latency. Set `AWESKILL_NO_UPDATE_CHECK=1` to disable.
+
+### Highlights
+
+- Add post-command update-available reminder with 24h throttle
+- Remove pinned version install section from README and README.zh-CN
+- Update version badge to 0.3.7
+
 ## v0.3.6
 
 `v0.3.6` is a docs and polish release. Since `v0.3.5`, the README has been refreshed with a "Powered by aweskill" section, badge graphics, and org links. A minor test cleanup removes trailing blank lines. No functional changes to the CLI.
