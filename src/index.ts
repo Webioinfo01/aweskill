@@ -26,9 +26,7 @@ export async function main(argv = process.argv) {
     if (!shouldDeferToCommandParsing(commandArgs)) {
       await assertStoreInitialized(context.homeDir, commandArgs);
     }
-    const updateReminderPromise = maybeCheckForUpdate(context.homeDir, commandArgs).catch(
-      () => null,
-    );
+    const updateReminderPromise = maybeCheckForUpdate(context.homeDir, commandArgs).catch(() => null);
     await program.parseAsync(normalizedArgv);
     const reminder = await updateReminderPromise;
     if (reminder) {

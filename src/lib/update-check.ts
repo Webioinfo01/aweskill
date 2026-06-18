@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { getAweskillPaths } from "./path.js";
@@ -42,16 +42,13 @@ async function loadCache(filePath: string): Promise<UpdateCache | null> {
 async function saveCache(filePath: string, data: UpdateCache): Promise<void> {
   try {
     await mkdir(path.dirname(filePath), { recursive: true });
-    await writeFile(filePath, JSON.stringify(data, null, 2) + "\n");
+    await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`);
   } catch {
     // ignore write failures
   }
 }
 
-export async function maybeCheckForUpdate(
-  homeDir: string,
-  args: string[],
-): Promise<string | null> {
+export async function maybeCheckForUpdate(homeDir: string, args: string[]): Promise<string | null> {
   if (process.env.AWESKILL_NO_UPDATE_CHECK === "1") {
     return null;
   }
@@ -84,9 +81,7 @@ export async function maybeCheckForUpdate(
     return null;
   }
 
-  const lastRemindedMs = cache?.lastReminded
-    ? new Date(cache.lastReminded).getTime()
-    : 0;
+  const lastRemindedMs = cache?.lastReminded ? new Date(cache.lastReminded).getTime() : 0;
   if (now - lastRemindedMs < REMIND_INTERVAL_MS) {
     return null;
   }
