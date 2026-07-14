@@ -67,6 +67,12 @@ There is no separate global activation registry. The projected filesystem state 
 
 `aweskill` treats projected filesystem state as the truth. This avoids a second layer of activation metadata drifting out of sync with what users can see on disk.
 
+### Symlink Target Style
+
+On Unix-like systems the projection symlink target is **relative** by default (for example `../../../../.aweskill/skills/<name>`). A relative target only resolves at the directory depth it was created for, so a projection that is committed to git and later checked out at a different depth — most commonly a nested git worktree — will dangle.
+
+Set `AWESKILL_ABSOLUTE_SYMLINKS=1` to make `agent add` write an **absolute** target (the fully resolved `~/.aweskill/skills/<name>`) instead. Absolute targets resolve at any depth, so the same committed projection works in the main checkout and in nested worktrees. The default stays relative; this is an explicit opt-in. Because target resolution is depth-independent, `aweskill` still lists and removes absolute targets as managed projections.
+
 ### Bundles Are Expansion Sets
 
 `agent add bundle <name>` expands the bundle into skill names and projects those skills. There is no separate long-lived bundle activation object after projection.

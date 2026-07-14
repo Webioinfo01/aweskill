@@ -1,4 +1,4 @@
-import { lstat, mkdir, readFile, writeFile } from "node:fs/promises";
+import { lstat, mkdir, readFile, readlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -10,7 +10,9 @@ import {
   inspectProjectionTarget,
   listManagedSkillNames,
   removeManagedProjection,
+  resolveDirectoryLinkTarget,
   setDirectoryLinkCreatorForTesting,
+  shouldUseAbsoluteLinkTarget,
 } from "../src/lib/symlink.js";
 import { createTempWorkspace, writeSkill } from "./helpers.js";
 
@@ -110,5 +112,45 @@ describe("symlink helpers", () => {
 
     const managed = await listManagedSkillNames(targetDir, centralSkillsDir);
     expect(managed.has("prefix-trap")).toBe(false);
+  });
+
+  it("resolves a relative link target by default and an absolute one when opted in", () => {
+    const sourcePath = path.join(path.sep, "central", "skills", "link-me");
+    const targetPath = path.join(path.sep, "repo", "agent", "skills", "link-me");
+
+    expect(resolveDirectoryLinkTarget(sourcePath, targetPath, false)).toBe(
+      path.relative(path.dirname(targetPath), sourcePath),
+    );
+    expect(resolveDirectoryLinkTarget(sourcePath, targetPath, true)).toBe(path.resolve(sourcePath));
+  });
+
+  it("reads the absolute-symlink opt-in from the environment", () => {
+    expect(shouldUseAbsoluteLinkTarget({})).toBe(false);
+    expect(shouldUseAbsoluteLinkTarget({ AWESKILL_ABSOLUTE_SYMLINKS: "0" })).toBe(false);
+    expect(shouldUseAbsoluteLinkTarget({ AWESKILL_ABSOLUTE_SYMLINKS: "1" })).toBe(true);
+  });
+
+  it("writes an absolute on-disk target when AWESKILL_ABSOLUTE_SYMLINKS=1", async () => {
+    const workspace = await createTempWorkspace();
+    const sourcePath = getSkillPath(workspace.homeDir, "abs-link");
+    const targetDir = path.join(workspace.rootDir, "agent", "skills");
+    const targetPath = path.join(targetDir, "abs-link");
+
+    await writeSkill(sourcePath, "Abs Link");
+    await mkdir(targetDir, { recursive: true });
+
+    const previous = process.env.AWESKILL_ABSOLUTE_SYMLINKS;
+    process.env.AWESKILL_ABSOLUTE_SYMLINKS = "1";
+    try {
+      await expect(createSkillSymlink(sourcePath, targetPath)).resolves.toEqual({ status: "created", mode: "symlink" });
+    } finally {
+      if (previous === undefined) {
+        delete process.env.AWESKILL_ABSOLUTE_SYMLINKS;
+      } else {
+        process.env.AWESKILL_ABSOLUTE_SYMLINKS = previous;
+      }
+    }
+
+    expect(await readlink(targetPath)).toBe(path.resolve(sourcePath));
   });
 });
