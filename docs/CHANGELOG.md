@@ -1,5 +1,19 @@
 # change log
 
+## v0.3.8
+
+`v0.3.8` fixes dangling projection symlinks inside nested git worktrees and adds an opt-in for depth-independent targets. Since `v0.3.7`, a projection committed to git and checked out at a different directory depth — most commonly a nested git worktree — no longer breaks when absolute targets are enabled.
+
+### Absolute projection symlinks
+
+`aweskill` writes **relative** symlink targets by default, which only resolve at the depth they were created for. A projection committed to git and checked out into a deeper worktree would dangle. You can now opt in to **absolute** targets that resolve at any depth, either per command with `aweskill agent add … --absolute`, or globally with `AWESKILL_ABSOLUTE_SYMLINKS=1` (the flag overrides the env var). The default stays relative; absolute targets hard-code this machine's `~/.aweskill` path, so use them only when the same checkout is reused at varying depths on one machine.
+
+### Highlights
+
+- Add opt-in absolute projection symlink targets for nested git worktrees (closes #12)
+- Add `aweskill agent add --absolute` flag; keep `AWESKILL_ABSOLUTE_SYMLINKS=1` as the global default
+- Document the relative-vs-absolute portability tradeoff in README, README.zh-CN, and DESIGN
+
 ## v0.3.7
 
 `v0.3.7` adds a post-command update reminder and cleans up the README install section. Since `v0.3.6`, the CLI now checks npm for a newer version once every 24 hours and shows a non-blocking reminder after the command finishes. The "pin a specific release" section has been removed from both READMEs to avoid users installing stale versions.
