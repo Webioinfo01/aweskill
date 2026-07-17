@@ -158,7 +158,7 @@ npm install -g ./aweskill-<version>.tgz
 
 ### 投影的 skill 在 git worktree 里能正常用吗？
 
-默认情况下 `aweskill` 写的是**相对** symlink，它只能在创建时所处的目录深度上解析。如果你把投影的 skill 提交进 git，再 checkout 到嵌套更深的 git worktree 里，相对目标就可能悬空（dangling）。在执行 `agent add` 前设置 `AWESKILL_ABSOLUTE_SYMLINKS=1`，即可写入**绝对** symlink 目标，它在任意深度都能解析，因此同一份提交进 git 的投影在主 checkout 和嵌套 worktree 里都能生效。
+默认情况下 `aweskill` 写的是**相对** symlink，它只能在创建时所处的目录深度上解析。如果你把投影的 skill 提交进 git，再 checkout 到嵌套更深的 git worktree 里，相对目标就可能悬空（dangling）。执行 `aweskill agent add … --absolute`（或设置 `AWESKILL_ABSOLUTE_SYMLINKS=1` 让它成为默认），即可写入**绝对** symlink 目标，它在任意深度都能解析，因此同一份提交进 git 的投影在主 checkout 和嵌套 worktree 里都能生效。注意代价：绝对目标会写死当前机器的 `~/.aweskill` 路径，因此在 home 目录不同的另一台机器或 CI 上会悬空——只在同一台机器上、同一份 checkout 被复用到不同深度（如嵌套 git worktree）时才用它。
 
 ### aweskill 支持 Cursor 和 Gemini CLI 吗？
 

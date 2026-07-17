@@ -153,4 +153,31 @@ describe("symlink helpers", () => {
 
     expect(await readlink(targetPath)).toBe(path.resolve(sourcePath));
   });
+
+  it("writes an absolute on-disk target when the absolute option is set, regardless of env", async () => {
+    const workspace = await createTempWorkspace();
+    const sourcePath = getSkillPath(workspace.homeDir, "abs-opt");
+    const targetDir = path.join(workspace.rootDir, "agent", "skills");
+    const targetPath = path.join(targetDir, "abs-opt");
+
+    await writeSkill(sourcePath, "Abs Opt");
+    await mkdir(targetDir, { recursive: true });
+
+    const previous = process.env.AWESKILL_ABSOLUTE_SYMLINKS;
+    delete process.env.AWESKILL_ABSOLUTE_SYMLINKS;
+    try {
+      await expect(createSkillSymlink(sourcePath, targetPath, { absolute: true })).resolves.toEqual({
+        status: "created",
+        mode: "symlink",
+      });
+    } finally {
+      if (previous === undefined) {
+        delete process.env.AWESKILL_ABSOLUTE_SYMLINKS;
+      } else {
+        process.env.AWESKILL_ABSOLUTE_SYMLINKS = previous;
+      }
+    }
+
+    expect(await readlink(targetPath)).toBe(path.resolve(sourcePath));
+  });
 });

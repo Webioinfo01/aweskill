@@ -64,6 +64,7 @@ export async function runEnable(
     agents: string[];
     projectDir?: string;
     force?: boolean;
+    absolute?: boolean;
   },
 ) {
   const projectDir = options.scope === "project" ? getProjectDir(context, options.projectDir) : undefined;
@@ -127,7 +128,10 @@ export async function runEnable(
       const targetPath = path.join(skillsDir, skillName);
       const result =
         mode === "symlink"
-          ? await createSkillSymlink(sourcePath, targetPath, { allowReplaceExisting: options.force })
+          ? await createSkillSymlink(sourcePath, targetPath, {
+              allowReplaceExisting: options.force,
+              absolute: options.absolute,
+            })
           : await createSkillCopy(sourcePath, targetPath, { allowReplaceExisting: options.force });
       if (result.status === "created") {
         created.push(`${agentId}:${skillName}`);

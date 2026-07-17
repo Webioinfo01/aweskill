@@ -266,6 +266,10 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
       collectAgents,
     )
     .option("--force", "replace existing duplicate, foreign, or unmanaged targets in agent directories", false)
+    .option(
+      "--absolute",
+      "write absolute symlink targets that resolve at any depth (for projections committed to git and checked out in nested worktrees); overrides AWESKILL_ABSOLUTE_SYMLINKS",
+    )
     .action(async (type, targetNames, options) => {
       const isProject = options.project !== undefined;
       const scope: Scope = isProject ? "project" : "global";
@@ -278,6 +282,7 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
           agents: options.agent ?? [],
           projectDir,
           force: options.force,
+          absolute: options.absolute,
         }),
       );
     });

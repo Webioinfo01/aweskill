@@ -169,7 +169,7 @@ Yes. `aweskill` keeps one central copy of a skill and projects it into each agen
 
 ### Do projected skills work inside git worktrees?
 
-By default `aweskill` writes **relative** symlinks, which resolve only at the depth they were created for. If you commit projected skills into git and check them out into a nested git worktree, the relative target can dangle. Set `AWESKILL_ABSOLUTE_SYMLINKS=1` before `agent add` to write **absolute** symlink targets that resolve at any depth, so the same committed projection works in the main checkout and in nested worktrees.
+By default `aweskill` writes **relative** symlinks, which resolve only at the depth they were created for. If you commit projected skills into git and check them out into a nested git worktree, the relative target can dangle. Run `aweskill agent add … --absolute` (or set `AWESKILL_ABSOLUTE_SYMLINKS=1` to make it the default) to write **absolute** symlink targets that resolve at any depth, so the same committed projection works in the main checkout and in nested worktrees. Note the tradeoff: an absolute target hard-codes this machine's `~/.aweskill` path, so it will dangle on another machine or in CI where the home directory differs — use it only when the same checkout is reused at varying depths on one machine.
 
 ### Does aweskill support Cursor and Gemini CLI?
 

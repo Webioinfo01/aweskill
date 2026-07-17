@@ -23,7 +23,7 @@ export interface ProjectionResult {
   mode: "symlink" | "copy";
 }
 
-type DirectoryLinkCreator = (sourcePath: string, targetPath: string) => Promise<void>;
+type DirectoryLinkCreator = (sourcePath: string, targetPath: string, useAbsolute?: boolean) => Promise<void>;
 
 async function tryLstat(targetPath: string) {
   try {
@@ -66,8 +66,16 @@ export function resolveDirectoryLinkTarget(
   return path.relative(path.dirname(targetPath), sourcePath) || ".";
 }
 
-async function defaultDirectoryLinkCreator(sourcePath: string, targetPath: string): Promise<void> {
-  await symlink(resolveDirectoryLinkTarget(sourcePath, targetPath), targetPath, getDirectoryLinkTypeForPlatform());
+async function defaultDirectoryLinkCreator(
+  sourcePath: string,
+  targetPath: string,
+  useAbsolute = shouldUseAbsoluteLinkTarget(),
+): Promise<void> {
+  await symlink(
+    resolveDirectoryLinkTarget(sourcePath, targetPath, useAbsolute),
+    targetPath,
+    getDirectoryLinkTypeForPlatform(),
+  );
 }
 
 let directoryLinkCreator: DirectoryLinkCreator = defaultDirectoryLinkCreator;
@@ -159,7 +167,7 @@ export async function assertProjectionTargetSafe(
 export async function createSkillSymlink(
   sourcePath: string,
   targetPath: string,
-  options: { allowReplaceExisting?: boolean } = {},
+  options: { allowReplaceExisting?: boolean; absolute?: boolean } = {},
 ): Promise<ProjectionResult> {
   await mkdir(path.dirname(targetPath), { recursive: true });
   const existing = await tryLstat(targetPath);
@@ -186,7 +194,7 @@ export async function createSkillSymlink(
   }
 
   try {
-    await directoryLinkCreator(sourcePath, targetPath);
+    await directoryLinkCreator(sourcePath, targetPath, options.absolute);
     return { status: "created", mode: "symlink" };
   } catch (error) {
     if (!shouldFallbackToCopy(error)) {

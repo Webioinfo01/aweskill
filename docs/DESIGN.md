@@ -71,7 +71,9 @@ There is no separate global activation registry. The projected filesystem state 
 
 On Unix-like systems the projection symlink target is **relative** by default (for example `../../../../.aweskill/skills/<name>`). A relative target only resolves at the directory depth it was created for, so a projection that is committed to git and later checked out at a different depth — most commonly a nested git worktree — will dangle.
 
-Set `AWESKILL_ABSOLUTE_SYMLINKS=1` to make `agent add` write an **absolute** target (the fully resolved `~/.aweskill/skills/<name>`) instead. Absolute targets resolve at any depth, so the same committed projection works in the main checkout and in nested worktrees. The default stays relative; this is an explicit opt-in. Because target resolution is depth-independent, `aweskill` still lists and removes absolute targets as managed projections.
+Opt in to an **absolute** target (the fully resolved `~/.aweskill/skills/<name>`) either per command with `aweskill agent add … --absolute`, or globally by setting `AWESKILL_ABSOLUTE_SYMLINKS=1` (the `--absolute` flag overrides the env var). Absolute targets resolve at any depth, so the same committed projection works in the main checkout and in nested worktrees. The default stays relative; this is an explicit opt-in. Because target resolution is depth-independent, `aweskill` still lists and removes absolute targets as managed projections.
+
+The tradeoff is portability: an absolute target hard-codes the current machine's `~/.aweskill` path, so a projection committed with `--absolute` will dangle on another machine (or in CI) where the home directory differs. Relative remains the right default for projections shared across machines; reach for absolute only when the same checkout is reused at varying depths on one machine, as with nested git worktrees.
 
 ### Bundles Are Expansion Sets
 
