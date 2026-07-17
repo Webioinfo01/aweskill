@@ -151,7 +151,8 @@ describe("symlink helpers", () => {
       }
     }
 
-    expect(await readlink(targetPath)).toBe(path.resolve(sourcePath));
+    // Windows readlink appends a trailing separator for directory symlinks; normalize both sides.
+    expect(path.resolve(await readlink(targetPath))).toBe(path.resolve(sourcePath));
   });
 
   it("writes an absolute on-disk target when the absolute option is set, regardless of env", async () => {
@@ -178,6 +179,7 @@ describe("symlink helpers", () => {
       }
     }
 
-    expect(await readlink(targetPath)).toBe(path.resolve(sourcePath));
+    // Windows readlink appends a trailing separator for directory symlinks; normalize both sides.
+    expect(path.resolve(await readlink(targetPath))).toBe(path.resolve(sourcePath));
   });
 });
