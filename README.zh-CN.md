@@ -156,6 +156,10 @@ npm install -g ./aweskill-<version>.tgz
 
 可以。`aweskill` 会维护一份中央 skill 副本，再把它投影到每个 agent 需要的 skill 目录。
 
+### 投影的 skill 在 git worktree 里能正常用吗？
+
+默认情况下 `aweskill` 写的是**相对** symlink，它只能在创建时所处的目录深度上解析。如果你把投影的 skill 提交进 git，再 checkout 到嵌套更深的 git worktree 里，相对目标就可能悬空（dangling）。在执行 `agent add` 前设置 `AWESKILL_ABSOLUTE_SYMLINKS=1`，即可写入**绝对** symlink 目标，它在任意深度都能解析，因此同一份提交进 git 的投影在主 checkout 和嵌套 worktree 里都能生效。
+
 ### aweskill 支持 Cursor 和 Gemini CLI 吗？
 
 支持。`aweskill` 支持 Cursor、Gemini CLI 以及许多其他 AI agents 的 skill 投影。

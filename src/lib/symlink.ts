@@ -47,9 +47,27 @@ export function getDirectoryLinkTypeForPlatform(platform = process.platform): "d
   return platform === "win32" ? "junction" : "dir";
 }
 
+export function shouldUseAbsoluteLinkTarget(env = process.env): boolean {
+  return env.AWESKILL_ABSOLUTE_SYMLINKS === "1";
+}
+
+// Relative targets keep projections portable, but they only resolve at the depth they were
+// created for: once committed to git and checked out into a differently-nested worktree, the
+// same relative target dangles. An absolute target resolves at any depth. Opt in with
+// AWESKILL_ABSOLUTE_SYMLINKS=1; the default stays relative.
+export function resolveDirectoryLinkTarget(
+  sourcePath: string,
+  targetPath: string,
+  useAbsolute = shouldUseAbsoluteLinkTarget(),
+): string {
+  if (useAbsolute) {
+    return path.resolve(sourcePath);
+  }
+  return path.relative(path.dirname(targetPath), sourcePath) || ".";
+}
+
 async function defaultDirectoryLinkCreator(sourcePath: string, targetPath: string): Promise<void> {
-  const linkTarget = path.relative(path.dirname(targetPath), sourcePath) || ".";
-  await symlink(linkTarget, targetPath, getDirectoryLinkTypeForPlatform());
+  await symlink(resolveDirectoryLinkTarget(sourcePath, targetPath), targetPath, getDirectoryLinkTypeForPlatform());
 }
 
 let directoryLinkCreator: DirectoryLinkCreator = defaultDirectoryLinkCreator;

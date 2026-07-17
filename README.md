@@ -167,6 +167,10 @@ npm install -g ./aweskill-<version>.tgz
 
 Yes. `aweskill` keeps one central copy of a skill and projects it into each agent's expected skill directory.
 
+### Do projected skills work inside git worktrees?
+
+By default `aweskill` writes **relative** symlinks, which resolve only at the depth they were created for. If you commit projected skills into git and check them out into a nested git worktree, the relative target can dangle. Set `AWESKILL_ABSOLUTE_SYMLINKS=1` before `agent add` to write **absolute** symlink targets that resolve at any depth, so the same committed projection works in the main checkout and in nested worktrees.
+
 ### Does aweskill support Cursor and Gemini CLI?
 
 Yes. `aweskill` supports skill projection for Cursor, Gemini CLI, and many other AI agents.
