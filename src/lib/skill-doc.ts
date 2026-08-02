@@ -6,18 +6,21 @@ export interface ParsedSkillDoc {
 }
 
 export function parseSkillDoc(content: string): ParsedSkillDoc {
-  if (!content.startsWith("---\n")) {
-    return { frontmatter: {}, body: content };
+  // Normalize CRLF (Windows) to LF so frontmatter delimiters match regardless of the
+  // line endings the SKILL.md was saved with. No-op on LF-native platforms (macOS/Linux).
+  const normalized = content.replace(/\r\n/g, "\n");
+  if (!normalized.startsWith("---\n")) {
+    return { frontmatter: {}, body: normalized };
   }
 
-  const endIndex = content.indexOf("\n---", 4);
+  const endIndex = normalized.indexOf("\n---", 4);
   if (endIndex === -1) {
-    return { frontmatter: {}, body: content };
+    return { frontmatter: {}, body: normalized };
   }
 
-  const frontmatterText = content.slice(4, endIndex);
-  const bodyStart = content.indexOf("\n", endIndex + 4);
-  const body = bodyStart === -1 ? "" : content.slice(bodyStart + 1);
+  const frontmatterText = normalized.slice(4, endIndex);
+  const bodyStart = normalized.indexOf("\n", endIndex + 4);
+  const body = bodyStart === -1 ? "" : normalized.slice(bodyStart + 1);
   let parsed: unknown;
   try {
     parsed = parse(frontmatterText);
