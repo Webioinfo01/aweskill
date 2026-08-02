@@ -2,7 +2,11 @@ import { execFile } from "node:child_process";
 
 function runCommand(command: string, args: string[], cwd?: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    execFile(command, args, { timeout: 120_000, cwd }, (error, stdout, stderr) => {
+    // npm ships as npm.cmd on Windows. Node 20+ (CVE-2024-27980) refuses to
+    // spawn .cmd/.bat shims without a shell, so the whole self-update flow
+    // fails on Windows unless we route through one. git is a real .exe and is
+    // unaffected; routing it through cmd.exe as well is harmless.
+    execFile(command, args, { timeout: 120_000, cwd, shell: process.platform === "win32" }, (error, stdout, stderr) => {
       if (error) {
         reject(new Error(stderr || error.message));
         return;

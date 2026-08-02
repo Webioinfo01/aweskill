@@ -1,7 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { getArchiveExtractArgs } from "../src/commands/download.js";
 import {
   classifyDownloadConflict,
   DuplicateSkillNameError,
@@ -15,6 +16,16 @@ import {
 import { computeDirectoryHash } from "../src/lib/hash.js";
 import { getSkillPath } from "../src/lib/skills.js";
 import { createTempWorkspace, writeSkill } from "./helpers.js";
+
+const originalPlatform = process.platform;
+
+function setPlatform(platform: string): void {
+  Object.defineProperty(process, "platform", { value: platform, configurable: true });
+}
+
+afterEach(() => {
+  setPlatform(originalPlatform);
+});
 
 describe("download helpers", () => {
   it("discovers skill directories and reports their relative subpaths", async () => {
@@ -183,5 +194,31 @@ describe("download helpers", () => {
     expect(() => throwDownloadConflict("caveman", "different-source")).toThrow(
       "Name conflict for caveman: another skill with this name is installed from a different source. Use --override to replace it, or --as <name> to install under a new name.",
     );
+  });
+});
+
+describe("archive extraction command selection", () => {
+  it("uses bsdtar on Windows because unzip is not available", () => {
+    setPlatform("win32");
+    expect(getArchiveExtractArgs("/tmp/skill.zip", "/tmp/out")).toEqual({
+      command: "tar",
+      args: ["-xf", "/tmp/skill.zip", "-C", "/tmp/out"],
+    });
+  });
+
+  it("uses unzip on macOS", () => {
+    setPlatform("darwin");
+    expect(getArchiveExtractArgs("/tmp/skill.zip", "/tmp/out")).toEqual({
+      command: "unzip",
+      args: ["-q", "/tmp/skill.zip", "-d", "/tmp/out"],
+    });
+  });
+
+  it("uses unzip on Linux", () => {
+    setPlatform("linux");
+    expect(getArchiveExtractArgs("/tmp/skill.zip", "/tmp/out")).toEqual({
+      command: "unzip",
+      args: ["-q", "/tmp/skill.zip", "-d", "/tmp/out"],
+    });
   });
 });

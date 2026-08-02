@@ -26,6 +26,20 @@ import type { RuntimeContext } from "../types.js";
 const execFileAsync = promisify(execFile);
 const SCISKILL_API_BASE = process.env.SCISKILL_API_URL || "https://sciskillhub.org";
 
+/**
+ * Pick the archive extractor for the current platform.
+ *
+ * `unzip` is absent on a default Windows install. Windows 10+ ships bsdtar as
+ * `tar.exe`, which reads .zip natively, so use it there. macOS and Linux keep
+ * `unzip` (Linux GNU tar cannot read .zip).
+ */
+export function getArchiveExtractArgs(archivePath: string, extractRoot: string): { command: string; args: string[] } {
+  if (process.platform === "win32") {
+    return { command: "tar", args: ["-xf", archivePath, "-C", extractRoot] };
+  }
+  return { command: "unzip", args: ["-q", archivePath, "-d", extractRoot] };
+}
+
 export interface DownloadOptions {
   list?: boolean;
   skill?: string[];
@@ -81,7 +95,8 @@ export async function resolveSourceRoot(
       await writeFile(archivePath, archive);
       await mkdir(extractRoot, { recursive: true });
       try {
-        await execFileAsync("unzip", ["-q", archivePath, "-d", extractRoot]);
+        const extractor = getArchiveExtractArgs(archivePath, extractRoot);
+        await execFileAsync(extractor.command, extractor.args);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(`archive extraction failed: ${message}`);
