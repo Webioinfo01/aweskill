@@ -115,11 +115,11 @@ Escalate to `$aweskill` — this is a Self-Update issue, not a doctor issue. The
 
 - `aweskill store list --verbose` — central store contents
 - `aweskill bundle list --verbose` — bundle overview
-- `aweskill agent list [--scope] [--agent] --verbose` — projection state
+- `aweskill agent list [--global|--project [dir]] [--agent] --verbose` — projection state
 - `aweskill doctor clean --verbose` — suspicious store entries (`--skills-only` / `--bundles-only` to narrow scope)
 - `aweskill doctor dedup` — duplicate families
 - `aweskill doctor fix-skills --include-info --verbose` — frontmatter issues (`--skill <name>` to limit scope)
-- `aweskill doctor sync [--scope] [--agent] --verbose` — sync dry-run
+- `aweskill doctor sync [--global|--project [dir]] [--agent] --verbose` — sync dry-run
 
 ### Mutation Commands (require --apply)
 

@@ -80,7 +80,6 @@ aweskill update --check
 
 # Refresh tracked skills
 aweskill update [skill...]
-aweskill update --dry-run                  # show actions without modifying
 aweskill update --source <source>          # only update skills from a source
 aweskill update --override                 # discard local changes and overwrite
 ```
@@ -106,7 +105,7 @@ aweskill store show <skill>
 # Scan agent skill directories (dry-run: only discover)
 aweskill store scan
 aweskill store scan --verbose                  # show skill names and paths
-aweskill store scan --scope project            # scan project scope only
+aweskill store scan --project                  # scan project scope only
 aweskill store scan --agent claude             # scan specific agent only
 
 # Scan and import discovered skills
@@ -198,6 +197,8 @@ aweskill agent remove skill <name> --global --agent <id> --force  # also remove 
 # Recover one agent root into copied directories
 aweskill agent recover --global --agent <id>
 ```
+
+> **Windows note:** projections are normally symlinks (macOS/Linux) or junctions (Windows). When a junction cannot be created, aweskill silently falls back to a managed **copy** — a snapshot of the central store. In copy mode, `aweskill store update <skill>` does **not** auto-propagate into agent directories; re-project with `aweskill agent add skill <name> --global --agent <id> --force` if an updated skill is not reflected.
 
 For scope-sensitive or multi-agent projection:
 
