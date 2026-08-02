@@ -3,6 +3,7 @@
   <h1>aweskill：面向 AI Agents 的 Skill 包管理器 <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge.svg" alt="aweskill"></a></h1>
   <p><strong>以 CLI 为核心的 Skill 包管理器，AI agent 也能自己调用和维护。</strong></p>
   <p>在 Codex、Claude Code、Cursor、Gemini CLI、Qwen Code、Windsurf 等工具之间安装、更新、打包并投影 skills。</p>
+  <p><strong>一套 CLI，在 Ubuntu、macOS 和 Windows 上命令完全一致。</strong></p>
   <p>
     <a href="./README.md">English</a> ·
     <strong>简体中文</strong> ·
@@ -19,7 +20,7 @@
     <img src="https://img.shields.io/badge/status-beta-c96a3d?style=flat-square" alt="Status">
     <img src="https://img.shields.io/badge/agents-47_supported-0ea5a4?style=flat-square" alt="Supported agents">
     <img src="https://img.shields.io/badge/projection-symlink-1f2328?style=flat-square" alt="Projection mode">
-    <img src="https://img.shields.io/badge/OS-windows%20%26%20macOS-0078D4?style=flat-square" alt="Windows and macOS">
+    <img src="https://img.shields.io/badge/platform-ubuntu%20%7C%20macOS%20%7C%20windows-334155?style=flat-square" alt="Platform">
     <img src="https://img.shields.io/npm/dt/aweskill?style=flat-square" alt="npm downloads">
     <img src="https://img.shields.io/github/stars/Webioinfo01/aweskill?style=flat-square" alt="GitHub stars">
     <img src="https://img.shields.io/badge/platform-local%20CLI-334155?style=flat-square" alt="Local CLI">
@@ -319,25 +320,6 @@ aweskill agent add bundle frontend --global --agent claude-code
 # 查看当前投影状态
 aweskill agent list
 ```
-
-## Windows
-
-`aweskill` 现在已经支持 Windows 原生使用。
-
-- 需要 Node.js 20 及以上
-- 推荐使用 PowerShell 执行命令
-- 在 Windows 上，agent 投影会优先使用目录 junction；如果系统不允许创建链接，会回退到受管 copy
-- `store backup` 和 `store restore` 不再依赖系统自带 `tar`
-
-示例：
-
-```powershell
-aweskill store init
-aweskill store scan
-aweskill agent add bundle frontend --global --agent codex
-```
-
-如果你在 Windows 上遇到路径、权限或投影问题，建议带上 shell、Node 版本和目标 agent 信息来提 issue。
 
 ## 核心模型
 
