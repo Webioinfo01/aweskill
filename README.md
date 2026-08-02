@@ -3,6 +3,7 @@
   <h1>aweskill: Skill Package Manager for AI Agents <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge.svg" alt="aweskill"></a></h1>
   <p><strong>A CLI-first skill package manager that AI agents can operate themselves.</strong></p>
   <p>Install, update, bundle, and project skills across Codex, Claude Code, Cursor, Gemini CLI, Qwen Code, Windsurf, and more.</p>
+  <p><strong>One CLI, identical commands on Ubuntu, macOS, and Windows.</strong></p>
   <p>
     <strong>English</strong> ·
     <a href="./README.zh-CN.md">简体中文</a> ·
@@ -19,7 +20,7 @@
     <img src="https://img.shields.io/badge/status-beta-c96a3d?style=flat-square" alt="Status">
     <img src="https://img.shields.io/badge/agents-47_supported-0ea5a4?style=flat-square" alt="Supported agents">
     <img src="https://img.shields.io/badge/projection-symlink-1f2328?style=flat-square" alt="Projection mode">
-		<img src="https://img.shields.io/badge/OS-windows%20%26%20macOS-0078D4?style=flat-square" alt="Windows and macOS">
+		<img src="https://img.shields.io/badge/platform-ubuntu%20%7C%20macOS%20%7C%20windows-334155?style=flat-square" alt="Platform">
     <img src="https://img.shields.io/npm/dt/aweskill?style=flat-square" alt="npm downloads">
     <img src="https://img.shields.io/github/stars/Webioinfo01/aweskill?style=flat-square" alt="GitHub stars">
     <img src="https://img.shields.io/badge/platform-local%20CLI-334155?style=flat-square" alt="Local CLI">
@@ -330,25 +331,6 @@ aweskill agent add bundle frontend --global --agent claude-code
 # Inspect current projected skills
 aweskill agent list
 ```
-
-## Windows
-
-`aweskill` now supports Windows as a native platform.
-
-- Requires Node.js 20 or later
-- PowerShell is recommended for the examples below
-- On Windows, agent projections prefer directory junctions and fall back to managed copies when links are unavailable
-- `store backup` and `store restore` no longer require a system `tar` binary
-
-Example:
-
-```powershell
-aweskill store init
-aweskill store scan
-aweskill agent add bundle frontend --global --agent codex
-```
-
-If you run into Windows-specific path or projection issues, please open an issue with your shell, Node version, and target agent.
 
 ## Core Model
 
