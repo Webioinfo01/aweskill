@@ -1,5 +1,37 @@
 # change log
 
+## v0.4.0
+
+`v0.4.0` improves Windows support across npm spawning, archive extraction, and path handling. Windows users can now run `aweskill agent add` end-to-end without Unix-specific assumptions.
+
+### Windows npm spawn
+
+Agent installs that depend on npm now spawn npm in a shell on Windows, so `npx` and npm-installed CLIs resolve correctly through PATHEXT. The prior implementation called npm directly, which failed when the agent binary was a `.cmd` wrapper.
+
+### Sciskill archive extraction on Windows
+
+Sciskill archives are now extracted with cross-platform archive handling, fixing extraction failures on Windows where `tar` flags and path separators differ from Unix.
+
+### CRLF frontmatter parsing
+
+Skill-doc frontmatter is now normalized before parsing, so skills installed from Windows-checkout repos with CRLF line endings no longer produce blank frontmatter fields.
+
+### Path normalization in tests
+
+Symlink and readlink assertions now normalize trailing separators, preventing spurious test failures on Windows where `fs.realpath` and `readlink` return paths with a trailing backslash.
+
+### Cross-platform documentation
+
+Both READMEs now state cross-platform support inline rather than in a dedicated Windows chapter. The zh-CN README has been synced to match the English wording.
+
+### Highlights
+
+- Spawn npm in a shell on Windows so `.cmd` agent wrappers resolve
+- Cross-platform sciskill archive extraction
+- Normalize CRLF frontmatter before skill-doc parsing
+- Normalize readlink trailing separators in symlink tests
+- State cross-platform support inline in both READMEs
+
 ## v0.3.8
 
 `v0.3.8` fixes dangling projection symlinks inside nested git worktrees and adds an opt-in for depth-independent targets. Since `v0.3.7`, a projection committed to git and checked out at a different directory depth — most commonly a nested git worktree — no longer breaks when absolute targets are enabled.
