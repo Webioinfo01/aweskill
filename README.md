@@ -46,6 +46,7 @@ Instead of copying the same `SKILL.md` folders into every tool by hand, `aweskil
 
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI-agent-operable scientific literature discovery and curation. Search, annotate, filter, and report on academic papers.
 - **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Session bookmark manager for Claude Code and Codex. Bookmark, categorize, and restore sessions with aweswitch profiles.
+- **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Agent profile switcher for Claude Code, Codex, and OpenCode. Launch isolated sessions with different API endpoints, tokens, and models.
 
 ### Project Collections
 
