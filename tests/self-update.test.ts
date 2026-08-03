@@ -54,7 +54,7 @@ describe("self-update", () => {
 
     it("installs update after confirmation", async () => {
       const { context } = createRuntime("/tmp/home", "/tmp/cwd");
-      vi.mocked(selfUpdateModule.getNpmLatestVersion).mockResolvedValue("0.4.0");
+      vi.mocked(selfUpdateModule.getNpmLatestVersion).mockResolvedValue("0.5.0");
       vi.mocked(clackPrompts.confirm).mockResolvedValue(true as never);
       vi.mocked(selfUpdateModule.npmInstallGlobal).mockResolvedValue("");
 
@@ -65,7 +65,7 @@ describe("self-update", () => {
 
     it("cancels update when user declines", async () => {
       const { context, lines } = createRuntime("/tmp/home", "/tmp/cwd");
-      vi.mocked(selfUpdateModule.getNpmLatestVersion).mockResolvedValue("0.4.0");
+      vi.mocked(selfUpdateModule.getNpmLatestVersion).mockResolvedValue("0.5.0");
       vi.mocked(clackPrompts.confirm).mockResolvedValue(false as never);
 
       await runSelfUpdate(context, {});
