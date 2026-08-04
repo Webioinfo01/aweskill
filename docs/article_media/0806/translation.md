@@ -88,6 +88,7 @@ Read https://github.com/Webioinfo01/aweskill/blob/main/README.ai.md and follow i
 
 - [aweskill：让AI Agents 自己搞定skills 管理](https://mp.weixin.qq.com/s/wNMMwTHIGXFw8FIjcyVAKA)
 - [aweskill: 让 AI Agent 学会自己管理 skills](https://mp.weixin.qq.com/s/Fb0Q7nKEJtORSTz7Ukv_EA)
+- [aweskill更新：自动更新让使用更贴心](https://mp.weixin.qq.com/s/WSQVZ7nMRUlhVRsYqnrEEQ)
 
 
 
