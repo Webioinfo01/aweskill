@@ -8,41 +8,19 @@ I am on Windows. I open a fresh `cmd.exe` and type `aweskill find review`. The t
 
 When I came back, the install worked, the update worked, the `SKILL.md` showed its name and description, and the agent had a one-paragraph summary of what it changed. The `agent add` flow that worked on macOS for months now worked on Windows. Same command, same result, both shells.
 
-GitHub: [github.com/mugpeng/aweskill](https://github.com/mugpeng/aweskill)
+GitHub: [github.com/Webioinfo01/aweskill](https://github.com/Webioinfo01/aweskill)
 
-## The Three Bugs
+## Bugs Fixed
 
-Windows support had been "shipped" since v0.1.x. The Node.js code ran. The CLI worked. What did not work was the *parts that shell out to other tools*, and the parts that assume a Unix-y text encoding. The user hits those on the first run.
+v0.4.0 ships a focused set of Windows fixes — each one bites the user on the first run, and each one has a direct fix:
 
-**Bug 1: `npm` and `tar` were assumed.** `self-update` called `npm` directly, but on Windows `npm` is a `.cmd` shim, and modern Node refuses to spawn `.cmd` shims without a shell wrapper. So `aweskill self-update` failed with `spawn ENOENT` on a default Windows install. `git` (a real `.exe`) was fine. The sciskill archive download was worse: it called `unzip`, which is absent on Windows by default. The user saw two different errors depending on which command they ran first.
+**Bug 1: `npm` and `tar` were assumed.** `self-update` spawned `npm` directly, but on Windows `npm` is a `.cmd` shim and modern Node refuses to spawn `.cmd` shims without a shell wrapper; the sciskill archive download called `unzip`, which Windows does not ship. Fix: `self-update` now goes through the shell on Windows (real `.exe`s like `git` are unaffected), and the archive download picks the extractor per platform — `tar -xf` on Windows 10+ (built in), `unzip` on macOS/Linux, where the system `tar` cannot read `.zip`.
 
-**Bug 2: `SKILL.md` frontmatter disappeared.** The skill-doc parser expected Unix line endings. Files saved with CRLF — the Windows default in many editors — silently dropped all frontmatter. Name, description, the lot. `find --local` showed blank entries. `store show` showed nothing useful. The skill was *installed* but the tool could not read it. This one hit everyone who checked out a skill repo from Windows.
+**Bug 2: `SKILL.md` frontmatter disappeared.** The skill-doc parser expected Unix line endings, so CRLF files silently dropped all frontmatter — name and description were gone, and `find --local` showed blank entries. Fix: the parser now accepts CRLF; LF-native platforms see no change.
 
-**Bug 3: readlink had a trailing separator.** Less user-visible, but every Windows CI run flaked on a strict equality assertion, because Windows `readlink` appends a trailing backslash to directory symlink targets. The test was right; the platform was just different.
+**Bug 3: Windows CI flaked on a strict readlink assertion.** Windows `readlink` appends a trailing backslash to directory symlink targets. Fix: the test was normalized; the Windows CI matrix is green.
 
-v0.4.0 fixes all three, and treats Windows as a first-class platform in the docs.
-
-## What Changed
-
-### npm spawns through a shell on Windows
-
-`self-update` now goes through the shell on Windows so the `.cmd` shim resolves. `git` is unaffected (it is a real `.exe`). The same `aweskill self-update` that worked on macOS works on `cmd.exe` and PowerShell.
-
-### Sciskill archives use the right extractor per platform
-
-Downloads use `tar -xf` on Windows 10+ (built in) and `unzip` on macOS/Linux, where the system `tar` cannot read `.zip`. The user no longer needs to install anything.
-
-### CRLF frontmatter is normalized
-
-The skill-doc parser now accepts CRLF line endings. LF-native platforms (macOS/Linux) see no change. CRLF checkouts from Windows now work.
-
-### Tests stop flaking on Windows
-
-The symlink test was tightened so the Windows CI matrix stops flaking. `windows-latest` in CI is green.
-
-### The docs stop calling out Windows
-
-Both READMEs and the aweskill skill now state cross-platform support inline, with a `ubuntu | macOS | windows` badge and a one-line positioning statement. The dedicated Windows chapter is gone. The platform-specific detail that *does* exist — the junction fallback to managed copy in `agent add` — is now a single line under "Projection Work," because it is the only place the command behavior actually differs.
+The docs get a cleanup too: both READMEs and the aweskill skill drop the dedicated Windows chapter and state cross-platform support inline, with a `ubuntu | macOS | windows` badge. The one command-behavior difference that does remain — the junction fallback to managed copy in `agent add` — now lives as a single line under "Projection Work."
 
 ## A Day on Windows
 

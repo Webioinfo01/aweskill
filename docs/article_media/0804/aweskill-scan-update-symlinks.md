@@ -6,7 +6,7 @@ A few months ago, aweskill grew three things at once: a unified way to scan and 
 
 This article is about those three.
 
-GitHub: [github.com/mugpeng/aweskill](https://github.com/mugpeng/aweskill)
+GitHub: [github.com/Webioinfo01/aweskill](https://github.com/Webioinfo01/aweskill)
 
 ## The Imports Were Two Commands by Accident
 

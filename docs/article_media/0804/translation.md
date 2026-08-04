@@ -1,4 +1,4 @@
-# aweskill：一个工作流、一个提醒，以及更聪明的符号链接
+# aweskill更新：自动更新让使用更贴心
 
 ![aweskill](../../../logo/hero1.png)
 
@@ -6,7 +6,7 @@
 
 这篇文章就讲这三件事。
 
-GitHub: [github.com/mugpeng/aweskill](https://github.com/mugpeng/aweskill)
+GitHub: [github.com/Webioinfo01/aweskill](https://github.com/Webioinfo01/aweskill)
 
 ## 导入命令曾经不小心变成了两条
 
@@ -50,11 +50,7 @@ A new version of aweskill is available: 0.3.8 (you have 0.3.7). Run `aweskill se
 
 如果没有限流，每条命令都会去打 registry，每一次按键都会触发一次提醒——这恰恰是 v0.3.7 想避开的那种烦人的手机系统体验。这种检查本身也是用户会想关掉的东西，所以对应的环境变量是 `AWESKILL_NO_UPDATE_CHECK=1`。
 
-### 固定版本那一节没了
 
-过去两份 README 都推荐安装某个具体版本：`npm install -g aweskill@0.3.5`。出发点是：全新安装应该落在一个已知的东西上。但 2026 年的实际情况是，npm 默认装的就是最新版，而那条固定版本的推荐等于在教人故意去装一个*过时的*版本。v0.3.7 把这条推荐删了。装最新的就好。等有了更新的版本，让提醒来告诉你。
-
-这种决定在 changelog 里看起来很小，在用户体验里却很大。默认安装现在就是正确的安装。用户再也不用记着去"解除固定"什么。
 
 ## 在 worktree 里活下来的符号链接
 
@@ -123,6 +119,7 @@ aweskill agent add skill pr-review --global --agent codex --absolute
 
 ## Aweskill 系列文章
 
+- [aweskill：让AI Agents 自己搞定skills 管理](https://mp.weixin.qq.com/s/wNMMwTHIGXFw8FIjcyVAKA)
 - [aweskill: 让 AI Agent 学会自己管理 skills](https://mp.weixin.qq.com/s/Fb0Q7nKEJtORSTz7Ukv_EA)
 
 
