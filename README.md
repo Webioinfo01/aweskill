@@ -11,6 +11,9 @@
     <a href="https://we.webioinfo.top/">Webioinfo</a>
   </p>
   <p>
+    <a href="https://ko-fi.com/mugpeng"><img src="https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee-FF5E5B?style=flat-square&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
+  </p>
+  <p>
     <a href="https://github.com/Webioinfo01/aweskill/releases"><img src="https://img.shields.io/badge/version-0.4.0-7C3AED?style=flat-square" alt="Version"></a>
     <a href="https://github.com/Webioinfo01/aweskill"><img src="https://img.shields.io/badge/node-%E2%89%A520-0EA5E9?style=flat-square" alt="Node"></a>
     <a href="https://github.com/Webioinfo01/aweskill/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-22C55E?style=flat-square" alt="License"></a>
@@ -675,6 +678,20 @@ Works with 47 agents including:
 - [SkillClaw](https://github.com/AMAP-ML/SkillClaw): an agentic skill evolution system that captures real sessions through a local proxy, syncs skills through local or object storage, and can evolve shared skill libraries with an optional server.
 - [SkillNexus](https://github.com/skyseraph/SkillNexus): a full-lifecycle AI skill studio for generating, testing, evaluating, evolving, and ranking skills.
 - [Vibe-Skills](https://github.com/foryourhealth111-pixel/Vibe-Skills): an all-in-one AI skills package and harness that orchestrates expert Skills, verification, and persistent context for general-purpose agents.
+
+## Support
+
+If aweskill saves you time, consider supporting it:
+
+- ⭐ Star the repo — it helps others find it.
+- ☕ [Ko-fi](https://ko-fi.com/mugpeng) — buy me a coffee.
+- 💬 WeChat — scan the QR code below.
+
+<p align="center">
+  <img src="assets/images/wechat-pay.jpg" alt="WeChat Pay" width="240">
+</p>
+
+> aweskill is free and open source. Sponsors keep it maintained — thank you.
 
 ## Development
 

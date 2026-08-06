@@ -11,6 +11,9 @@
     <a href="https://we.webioinfo.top/">Webioinfo</a>
   </p>
   <p>
+    <a href="https://ko-fi.com/mugpeng"><img src="https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee-FF5E5B?style=flat-square&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
+  </p>
+  <p>
     <a href="https://github.com/Webioinfo01/aweskill/releases"><img src="https://img.shields.io/badge/version-0.4.0-7C3AED?style=flat-square" alt="Version"></a>
     <a href="https://github.com/Webioinfo01/aweskill"><img src="https://img.shields.io/badge/node-%E2%89%A520-0EA5E9?style=flat-square" alt="Node"></a>
     <a href="https://github.com/Webioinfo01/aweskill/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-22C55E?style=flat-square" alt="License"></a>
@@ -663,6 +666,20 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 | `zencoder` | `~/.zencoder/skills/` | `<project>/.zencoder/skills/` |
 
 </details>
+
+## 赞助与支持
+
+如果 aweskill 帮到了你，欢迎支持一下：
+
+- ⭐ 给项目点个 Star — 让更多人看到它。
+- ☕ [Ko-fi](https://ko-fi.com/mugpeng) — 请我喝杯咖啡。
+- 💬 微信 — 扫描下方收款码。
+
+<p align="center">
+  <img src="assets/images/wechat-pay.jpg" alt="微信收款码" width="240">
+</p>
+
+> aweskill 是免费开源的，你的支持让它持续维护下去 — 谢谢。
 
 ## 开发
 
