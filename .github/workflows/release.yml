@@ -1,6 +1,7 @@
 # A tag push (v*) releases: verify → publish to npm → GitHub Release.
 # The npm publish runs BEFORE the GitHub Release, so a failed publish
-# never leaves a release without a package. Requires the NPM_TOKEN secret.
+# never leaves a release without a package.
+# npm auth uses Trusted Publishing (OIDC) — no NPM_TOKEN secret.
 name: Release
 
 on:
@@ -10,7 +11,7 @@ on:
 
 permissions:
   contents: write
-  id-token: write  # npm provenance (OIDC)
+  id-token: write  # npm Trusted Publishing + provenance
 
 jobs:
   release:
@@ -20,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
 
       - run: npm ci
@@ -49,8 +50,6 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
