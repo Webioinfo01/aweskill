@@ -57,11 +57,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mugpeng/aweskill.git"
+    "url": "git+https://github.com/Webioinfo01/aweskill.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/mugpeng/aweskill/issues"
+    "url": "https://github.com/Webioinfo01/aweskill/issues"
   },
-  "homepage": "https://github.com/mugpeng/aweskill#readme"
+  "homepage": "https://github.com/Webioinfo01/aweskill#readme"
 }
