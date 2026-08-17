@@ -1,5 +1,29 @@
 # change log
 
+## v0.4.1
+
+`v0.4.1` is a maintenance release. Since `v0.4.0`, the release workflow is hardened with npm provenance, a fail-fast version check, and publish-before-release ordering, while both READMEs gained a Support section with Ko-fi and WeChat Pay sponsorship options and new article media were added under `docs/article_media/`.
+
+### Hardened release workflow
+
+The tag-triggered release workflow now verifies the tag against `package.json` before spending time on build and test, publishes to npm with provenance attestation, and creates the GitHub Release only after a successful publish — a failed publish never leaves a release without a package.
+
+### Support section and FUNDING
+
+A Ko-fi badge and a "Support the project" section (Ko-fi + WeChat Pay) were added to both READMEs, backed by `.github/FUNDING.yml` and a WeChat Pay QR image under `assets/images/`.
+
+### Article media
+
+Added release articles and translations under `docs/article_media/`: the 0804 scan-update-symlinks article and translation, the 0806 "use-aweskill-wear-the-badge" article and translation, and the 0808 Windows announcement translation. `aweswitch` was added to the "Powered by aweskill" section.
+
+### Highlights
+
+- Fail-fast tag/version verification in the release workflow
+- npm publish with provenance attestation; publish runs before GitHub Release creation
+- Add Ko-fi badge, Support section (Ko-fi + WeChat Pay), and `.github/FUNDING.yml`
+- Add 0804/0806/0808 article media and translations
+- Add aweswitch to the "Powered by aweskill" section
+
 ## v0.4.0
 
 `v0.4.0` improves Windows support across npm spawning, archive extraction, and path handling. Windows users can now run `aweskill agent add` end-to-end without Unix-specific assumptions.
