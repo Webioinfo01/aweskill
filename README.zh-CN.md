@@ -45,6 +45,7 @@
 
 ### AI 工具
 
+- **[awerouter](https://github.com/mugpeng/awerouter)** — 智能 LLM 路由器：基于结构化信号，把 agent 请求路由到 flash（便宜）或 pro（强）供应商。
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展。搜索、标注、筛选和报告学术论文。
 - **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Claude Code 和 Codex 的会话书签管理器。收藏、分类、恢复会话，支持 aweswitch 配置。
 
