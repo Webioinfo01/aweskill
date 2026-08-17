@@ -1,3 +1,6 @@
+# A tag push (v*) releases: verify → publish to npm → GitHub Release.
+# The npm publish runs BEFORE the GitHub Release, so a failed publish
+# never leaves a release without a package. Requires the NPM_TOKEN secret.
 name: Release
 
 on:
@@ -7,14 +10,13 @@ on:
 
 permissions:
   contents: write
+  id-token: write  # npm provenance (OIDC)
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -22,6 +24,17 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - run: npm ci
+
+      # Fail fast on a tag/version mismatch before spending time on build+test.
+      - name: Verify tag matches package.json version
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$PKG" != "$TAG" ]; then
+            echo "tag v$TAG does not match package.json version $PKG" >&2
+            exit 1
+          fi
+
       - run: npm run build
       - run: npm test
 
@@ -30,16 +43,17 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           sed -n "/^## v${VERSION}/,/^## v/{/^## v${VERSION}/d;/^## v/d;p;}" docs/CHANGELOG.md > release_notes.md
           if [ ! -s release_notes.md ]; then
-            echo "No changelog entry found for v${VERSION}" > release_notes.md
+            echo "no '## v${VERSION}' section found in docs/CHANGELOG.md" >&2
+            exit 1
           fi
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           body_path: release_notes.md
           generate_release_notes: false
-
-      - name: Publish to npm
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
