@@ -2,7 +2,7 @@
 
 ![aweskill](../../../logo/hero1.png)
 
-终于我aweskill 也是用上windows 了。为什么要用也，当然是我的好兄弟aweswitch 比我抢先了一步：
+终于我aweskill 也是用上windows 了。为什么要用也，当然是我的好兄弟aweswitch 比我抢先了一步：[aweswitch更新：谁说windows不能有同样丝滑体验](https://mp.weixin.qq.com/s/6PipJIV7aw95cUOtyg5Vmw)
 
 我坐在一台 Windows 机器前。新开一个 `cmd.exe`，敲下 `aweskill find review`。工具跑起来了。挑了个技能，运行 `aweskill install owner/repo`，然后……`spawn ENOENT`。agent 的 npm 垫片起不来。我试了 `aweskill self-update`，看着它又以同样的方式崩掉。我打开刚装好的那个 agent 的 `SKILL.md`，名字和描述都是空的——frontmatter 没了。我合上笔记本，去倒了杯咖啡，跟 agent 说：
 
@@ -109,10 +109,21 @@ aweskill self-update
 
 
 
+## Aweskill 系列文章
+
+- [aweskill：让AI Agents 自己搞定skills 管理](https://mp.weixin.qq.com/s/wNMMwTHIGXFw8FIjcyVAKA)
+- [aweskill: 让 AI Agent 学会自己管理 skills](https://mp.weixin.qq.com/s/Fb0Q7nKEJtORSTz7Ukv_EA)
+- [aweskill更新：自动更新让使用更贴心](https://mp.weixin.qq.com/s/WSQVZ7nMRUlhVRsYqnrEEQ)
+- [用起 aweskill，戴上 badge](https://mp.weixin.qq.com/s/8MVlDPtpfdHvZunkAXyfAg)
+
+
+
 ## 更多来自 Webioinfo 的项目
 
 aweskill 是 [Webioinfo](https://www.webioinfo.top/) 生态的一部分：
 
-- **[aweswitch](https://github.com/mugpeng/aweswitch)** — Agent 配置切换器（Claude、Codex、OpenCode）；现已跨平台
-- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — 带配置感知恢复的 AI 编码会话管理器
-- **[awescholar](https://github.com/Webioinfo01/awescholar)** — 自动化的学术文献发现工具
+- **[aweskill](https://aweskill.webioinfo.top/)** ——面向 47+ 种 AI 编程智能体的 CLI 优先技能包管理器
+- **[aweswitch](https://github.com/Webioinfo01/aweswitch)** ——Claude Code、Codex、OpenCode 的智能体档案切换器；启动的会话直接指向 awerouter 守护进程
+- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** ——支持档案感知恢复的 AI 编程会话管理器
+- **[awescholar](https://github.com/Webioinfo01/awescholar)** — 自动化科学文献发现
+- **[awerouter](https://github.com/mugpeng/awerouter)** — 智能 LLM 路由器：基于请求的结构化信号，在 Flash（低成本）与 Pro（高能力）模型提供商之间自动分流，为 Agent 兼顾成本、速度与推理质量。
