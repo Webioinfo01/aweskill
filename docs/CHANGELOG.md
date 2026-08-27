@@ -1,5 +1,28 @@
 # change log
 
+## v0.4.2
+
+`v0.4.2` adds Codex shared-root awareness and config-based skill toggling. `aweskill` now recognizes that Codex reads skills from both `~/.codex/skills` and the shared `~/.agents/skills` (plus repo-level `.agents/skills`), and it can hide a skill from Codex without removing projections or affecting other agents by writing a `[[skills.config]]` toggle into `~/.codex/config.toml`.
+
+### Codex skill toggle
+
+New `agent disable skill` and `agent enable skill` commands manage per-skill `enabled = false` entries under `[[skills.config]]` in the Codex user config. Codex only reads skill toggles from the user config layer, so these commands always operate at user scope; project-layer toggles are ignored by Codex.
+
+`agent list --agent codex` now reports shared `.agents/skills` entries in a read-only `shared` section, annotating duplicates and entries hidden by config toggles. `agent add` and `agent remove` continue to touch only `~/.codex/skills`, and they print a note when a skill also exists in a shared root. `doctor sync --apply` never mutates shared entries.
+
+### Documentation
+
+- Added `awerouter` to the "Powered by aweskill" section in both READMEs.
+- Updated `docs/article_media/0808/translation.md`.
+
+### Highlights
+
+- Add `agent disable skill` and `agent enable skill` for Codex `[[skills.config]]` toggles
+- `agent list --agent codex` shows shared `.agents/skills` entries with duplicate/hidden annotations
+- `doctor sync --apply` skips shared entries; add/remove warn when a skill also lives in a shared root
+- Add `awerouter` to the "Powered by aweskill" section
+- Update 0808 translation article
+
 ## v0.4.1
 
 `v0.4.1` is a maintenance release. Since `v0.4.0`, the release workflow is hardened with npm provenance, a fail-fast version check, and publish-before-release ordering, while both READMEs gained a Support section with Ko-fi and WeChat Pay sponsorship options and new article media were added under `docs/article_media/`.
