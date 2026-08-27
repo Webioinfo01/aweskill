@@ -161,7 +161,7 @@ export async function runEnable(
         if (await pathExists(path.join(sharedDir, skillName))) {
           context.write(
             `Note: ${skillName} is also present in shared ${sharedDir}, so ${agentId} will see it twice. ` +
-              `Remove one copy (e.g. "aweskill agent remove skill ${skillName} --agent <shared-dir-owner>") to avoid duplicates.`,
+              `Run "aweskill agent disable skill ${skillName} --agent ${agentId}" to hide the duplicate from ${agentId} without removing the shared copy.`,
           );
         }
       }

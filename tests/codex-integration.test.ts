@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createProgram, main } from "../src/index.js";
 import { getSkillToggleConfigPath, resolveAgentSharedSkillsDirs, resolveAgentSkillsDir } from "../src/lib/agents.js";
+import { pathExists } from "../src/lib/fs.js";
 import { getSkillPath } from "../src/lib/skills.js";
 import { createTempWorkspace, writeSkill } from "./helpers.js";
 
@@ -206,5 +207,59 @@ describe("codex shared-root and toggle integration", () => {
     const finalContent = await readFile(path.join(codexDir, "config.toml"), "utf8");
     expect(finalContent.startsWith(original)).toBe(true);
     expect(finalContent).not.toContain("# aweskill");
+  });
+
+  it("agent list at project scope reports the project shared .agents/skills", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: (message) => lines.push(`ERR:${message}`),
+    });
+
+    await program.parseAsync(["node", "aweskill", "store", "init"], { from: "node" });
+    await writeSkill(getSkillPath(workspace.homeDir, "rtk"));
+
+    const shared = path.join(workspace.projectDir, ".agents", "skills");
+    await mkdir(path.join(workspace.projectDir, ".codex"), { recursive: true });
+    await mkdir(shared, { recursive: true });
+    await symlink(getSkillPath(workspace.homeDir, "rtk"), path.join(shared, "rtk"));
+
+    await program.parseAsync(["node", "aweskill", "agent", "list", "--project", "--agent", "codex"], {
+      from: "node",
+    });
+
+    const output = lines.join("\n");
+    expect(output).toContain("project skills for codex");
+    expect(output).toContain("also visible to codex via shared .agents/skills (read-only)");
+    expect(output).toContain("rtk");
+  });
+
+  it("agent list --apply never mutates shared .agents/skills entries", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: (message) => lines.push(`ERR:${message}`),
+    });
+
+    await program.parseAsync(["node", "aweskill", "store", "init"], { from: "node" });
+    await writeSkill(getSkillPath(workspace.homeDir, "rtk"));
+
+    const shared = path.join(workspace.homeDir, ".agents", "skills");
+    await mkdir(path.join(workspace.homeDir, ".codex"), { recursive: true });
+    await mkdir(shared, { recursive: true });
+    const sharedLink = path.join(shared, "rtk");
+    await symlink(getSkillPath(workspace.homeDir, "rtk"), sharedLink);
+
+    await program.parseAsync(["node", "aweskill", "doctor", "sync", "--apply", "--agent", "codex"], {
+      from: "node",
+    });
+
+    expect(await pathExists(sharedLink)).toBe(true);
   });
 });

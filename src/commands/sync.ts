@@ -12,7 +12,7 @@ import {
 import { pathExists } from "../lib/fs.js";
 import { getAweskillPaths } from "../lib/path.js";
 import { resolveCanonicalSkillName } from "../lib/rmdup.js";
-import { isSkillDisabled } from "../lib/skill-toggles.js";
+import { listSkillToggles } from "../lib/skill-toggles.js";
 import { getSkillPath, listSkillEntriesInDirectory, listSkills } from "../lib/skills.js";
 import {
   createSkillSymlink,
@@ -55,6 +55,15 @@ async function collectSharedEntries(options: {
     return [];
   }
   const toggleConfig = getSkillToggleConfigPath(options.agentId, options.homeDir);
+  const disabledNames = toggleConfig ? new Set<string>() : null;
+  if (toggleConfig) {
+    const toggles = await listSkillToggles(toggleConfig);
+    for (const [name, entry] of toggles) {
+      if (entry.enabled === false) {
+        disabledNames!.add(name);
+      }
+    }
+  }
   const entries: SyncEntry[] = [];
   for (const sharedDir of sharedDirs) {
     if (!(await pathExists(sharedDir))) {
@@ -66,7 +75,7 @@ async function collectSharedEntries(options: {
       if (options.managedNames.has(skill.name)) {
         notes.push("duplicate: also projected in agent root");
       }
-      if (toggleConfig && (await isSkillDisabled(toggleConfig, skill.name))) {
+      if (disabledNames?.has(skill.name)) {
         notes.push("hidden by config toggle");
       }
       entries.push({

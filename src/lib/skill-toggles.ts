@@ -111,7 +111,7 @@ function ensureTrailingNewline(content: string): string {
 }
 
 function formatManagedBlock(skillName: string, enabled: boolean): string {
-  return [`[[skills.config]] ${MANAGED_MARKER}`, `name = "${skillName}"`, `enabled = ${enabled}`, ""].join("\n");
+  return [`[[skills.config]] ${MANAGED_MARKER}`, `name = "${skillName}"`, `enabled = ${enabled}`].join("\n");
 }
 
 async function readConfigLines(configPath: string): Promise<string[] | null> {
@@ -179,7 +179,8 @@ export async function setSkillEnabled(
     return "updated";
   }
 
-  const content = ensureTrailingNewline(lines.join("\n")) + formatManagedBlock(skillName, enabled);
+  const content =
+    (lines.length === 0 ? "" : ensureTrailingNewline(lines.join("\n"))) + formatManagedBlock(skillName, enabled) + "\n";
   await mkdir(path.dirname(configPath), { recursive: true });
   await writeFile(configPath, content, "utf8");
   return enabled ? "enabled" : "disabled";

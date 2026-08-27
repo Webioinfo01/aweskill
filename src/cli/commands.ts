@@ -322,11 +322,10 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
   agent
     .command("disable")
     .description(
-      "Hide a skill from an agent via its config toggle (e.g. Codex [[skills.config]]); projections and other agents are untouched",
+      "Hide a skill from an agent via its config toggle (e.g. Codex [[skills.config]]); projections and other agents are untouched. Always operates at user scope because Codex only reads skill toggles from the user config layer.",
     )
     .argument("<type>", "skill (bundles are not supported)")
     .argument("<name...>", "skill name(s), space-separated or comma-separated")
-    .option("--global", "toggles live in the agent user config (Codex ignores project-layer toggles)", true)
     .option(
       "--agent <agent>",
       "repeat or use comma list; defaults to all detected; only agents with config toggle support are affected",
@@ -346,7 +345,6 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
     .description('Remove a config toggle previously written by "aweskill agent disable"')
     .argument("<type>", "skill (bundles are not supported)")
     .argument("<name...>", "skill name(s), space-separated or comma-separated")
-    .option("--global", "toggles live in the agent user config (Codex ignores project-layer toggles)", true)
     .option(
       "--agent <agent>",
       "repeat or use comma list; defaults to all detected; only agents with config toggle support are affected",
