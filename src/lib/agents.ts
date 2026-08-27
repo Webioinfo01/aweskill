@@ -12,6 +12,8 @@ function defineAgent(
     rootDir: (homeDir: string) => string;
     globalSkillsDir?: (homeDir: string) => string;
     projectSkillsDir?: (projectDir: string) => string;
+    sharedSkillsDirs?: (scope: Scope, baseDir: string) => string[];
+    skillToggleConfigPath?: (homeDir: string) => string;
   },
 ): AgentDefinition {
   return {
@@ -23,6 +25,8 @@ function defineAgent(
     rootDir: options.rootDir,
     globalSkillsDir: options.globalSkillsDir,
     projectSkillsDir: options.projectSkillsDir,
+    sharedSkillsDirs: options.sharedSkillsDirs,
+    skillToggleConfigPath: options.skillToggleConfigPath,
   };
 }
 
@@ -81,6 +85,14 @@ const AGENTS = {
     rootDir: (homeDir) => path.join(homeDir, ".codex"),
     globalSkillsDir: (homeDir) => path.join(homeDir, ".codex", "skills"),
     projectSkillsDir: (projectDir) => path.join(projectDir, ".codex", "skills"),
+    sharedSkillsDirs: (_scope, baseDir) => {
+      // Codex discovers user skills from ~/.agents/skills and repo skills from
+      // .agents/skills directories between cwd and the repo root. For global
+      // scope baseDir is homeDir, for project scope it is the project dir, and
+      // .agents/skills under that base is the shared root aweskill checks.
+      return [path.join(baseDir, ".agents", "skills")];
+    },
+    skillToggleConfigPath: (homeDir) => path.join(homeDir, ".codex", "config.toml"),
   }),
   copilot: defineAgent("copilot", "GitHub Copilot", {
     rootDir: (homeDir) => path.join(homeDir, ".copilot"),
@@ -301,6 +313,18 @@ export function resolveAgentSkillsDir(agentId: AgentId, scope: Scope, baseDir: s
     throw new Error(`Agent ${agentId} does not support ${scope} scope.`);
   }
   return resolver(baseDir);
+}
+
+/** Additional skill directories the agent reads besides its own skills directory. */
+export function resolveAgentSharedSkillsDirs(agentId: AgentId, scope: Scope, baseDir: string): string[] {
+  const resolver = getAgentDefinition(agentId).sharedSkillsDirs;
+  return resolver ? resolver(scope, baseDir) : [];
+}
+
+/** Config file backing `agent disable/enable skill`, or undefined when unsupported. */
+export function getSkillToggleConfigPath(agentId: AgentId, homeDir: string): string | undefined {
+  const resolver = getAgentDefinition(agentId).skillToggleConfigPath;
+  return resolver ? resolver(homeDir) : undefined;
 }
 
 export function getProjectionMode(agentId: AgentId): ProjectionMode {

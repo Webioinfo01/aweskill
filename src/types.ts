@@ -28,6 +28,19 @@ export interface AgentDefinition {
   rootDir: (homeDir: string) => string;
   globalSkillsDir?: (homeDir: string) => string;
   projectSkillsDir?: (projectDir: string) => string;
+  /**
+   * Extra skill directories the agent also reads in addition to its own
+   * skills directory (e.g. Codex reads ~/.agents/skills at user scope and
+   * .agents/skills at repo scope). Projections there are owned by another
+   * agent, so aweskill only reads them for visibility checks.
+   */
+  sharedSkillsDirs?: (scope: Scope, baseDir: string) => string[];
+  /**
+   * Config file whose [[skills.config]] entries can hide a skill from the
+   * agent by name, regardless of which root it was discovered in. Undefined
+   * when the agent has no config-based skill toggle.
+   */
+  skillToggleConfigPath?: (homeDir: string) => string;
 }
 
 export interface RuntimeContext {

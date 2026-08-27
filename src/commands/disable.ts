@@ -1,7 +1,13 @@
 import path from "node:path";
 import type { AgentId } from "../lib/agents.js";
-import { resolveAgentSkillsDir, resolveAgentsForMutation } from "../lib/agents.js";
+import {
+  getSkillToggleConfigPath,
+  resolveAgentSharedSkillsDirs,
+  resolveAgentSkillsDir,
+  resolveAgentsForMutation,
+} from "../lib/agents.js";
 import { listBundles } from "../lib/bundles.js";
+import { pathExists } from "../lib/fs.js";
 import { getAweskillPaths, normalizeNameList, sanitizeName, uniqueSorted } from "../lib/path.js";
 import { skillExists } from "../lib/skills.js";
 import { inspectProjectionTarget, listManagedSkillNames, removeProjectionTarget } from "../lib/symlink.js";
@@ -241,6 +247,23 @@ export async function runDisable(
         ? 'Run "aweskill bundle list" to see available bundles.'
         : 'Run "aweskill store list" to see available skills.';
     context.write(`Missing ${noun}: ${targets.missingTargetNames.join(", ")}. ${hint}`);
+  }
+
+  for (const agentId of agents) {
+    const sharedDirs = resolveAgentSharedSkillsDirs(agentId, options.scope, baseDir);
+    if (sharedDirs.length === 0 || !getSkillToggleConfigPath(agentId, context.homeDir)) {
+      continue;
+    }
+    for (const skillName of skillNames) {
+      for (const sharedDir of sharedDirs) {
+        if (await pathExists(path.join(sharedDir, skillName))) {
+          context.write(
+            `Note: ${skillName} is still visible to ${agentId} via shared ${sharedDir}. ` +
+              `Run "aweskill agent disable skill ${skillName} --agent ${agentId}" to hide it without removing the shared copy.`,
+          );
+        }
+      }
+    }
   }
   return { agents, skillNames, removed, missingTargetNames: targets.missingTargetNames };
 }

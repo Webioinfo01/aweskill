@@ -26,6 +26,7 @@ import { runRmdup } from "../commands/rmdup.js";
 import { runScan } from "../commands/scan.js";
 import { runSelfUpdate } from "../commands/self-update.js";
 import { runShow } from "../commands/show.js";
+import { runSkillDisable, runSkillEnable } from "../commands/skill-toggle.js";
 import { runSync } from "../commands/sync.js";
 import { runUpdate } from "../commands/update.js";
 import { runStoreWhere } from "../commands/where.js";
@@ -315,6 +316,48 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
           agents: options.agent ?? [],
           projectDir,
           force: options.force,
+        }),
+      );
+    });
+  agent
+    .command("disable")
+    .description(
+      "Hide a skill from an agent via its config toggle (e.g. Codex [[skills.config]]); projections and other agents are untouched",
+    )
+    .argument("<type>", "skill (bundles are not supported)")
+    .argument("<name...>", "skill name(s), space-separated or comma-separated")
+    .option("--global", "toggles live in the agent user config (Codex ignores project-layer toggles)", true)
+    .option(
+      "--agent <agent>",
+      "repeat or use comma list; defaults to all detected; only agents with config toggle support are affected",
+      collectAgents,
+    )
+    .action(async (type, targetNames, options) => {
+      await runFramedCommand(" aweskill agent disable ", async () =>
+        runSkillDisable(context, {
+          type,
+          name: targetNames,
+          agents: options.agent ?? [],
+        }),
+      );
+    });
+  agent
+    .command("enable")
+    .description('Remove a config toggle previously written by "aweskill agent disable"')
+    .argument("<type>", "skill (bundles are not supported)")
+    .argument("<name...>", "skill name(s), space-separated or comma-separated")
+    .option("--global", "toggles live in the agent user config (Codex ignores project-layer toggles)", true)
+    .option(
+      "--agent <agent>",
+      "repeat or use comma list; defaults to all detected; only agents with config toggle support are affected",
+      collectAgents,
+    )
+    .action(async (type, targetNames, options) => {
+      await runFramedCommand(" aweskill agent enable ", async () =>
+        runSkillEnable(context, {
+          type,
+          name: targetNames,
+          agents: options.agent ?? [],
         }),
       );
     });

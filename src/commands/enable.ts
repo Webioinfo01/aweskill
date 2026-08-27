@@ -1,7 +1,13 @@
 import path from "node:path";
 
-import { getProjectionMode, resolveAgentSkillsDir, resolveAgentsForMutation } from "../lib/agents.js";
+import {
+  getProjectionMode,
+  resolveAgentSharedSkillsDirs,
+  resolveAgentSkillsDir,
+  resolveAgentsForMutation,
+} from "../lib/agents.js";
 import { listBundles, readBundle } from "../lib/bundles.js";
+import { pathExists } from "../lib/fs.js";
 import { getAweskillPaths, normalizeNameList, uniqueSorted } from "../lib/path.js";
 import { getSkillPath, listSkills, skillExists } from "../lib/skills.js";
 import { createSkillCopy, createSkillSymlink, inspectProjectionTarget } from "../lib/symlink.js";
@@ -144,5 +150,22 @@ export async function runEnable(
   context.write(
     `Enabled ${options.type} ${targetLabel} for ${agents.join(", ")} in ${scopeLabel}${created.length > 0 ? ` (${created.length} created)` : ""}`,
   );
+
+  for (const agentId of agents) {
+    const sharedDirs = resolveAgentSharedSkillsDirs(agentId, options.scope, baseDir);
+    if (sharedDirs.length === 0) {
+      continue;
+    }
+    for (const skillName of skillNames) {
+      for (const sharedDir of sharedDirs) {
+        if (await pathExists(path.join(sharedDir, skillName))) {
+          context.write(
+            `Note: ${skillName} is also present in shared ${sharedDir}, so ${agentId} will see it twice. ` +
+              `Remove one copy (e.g. "aweskill agent remove skill ${skillName} --agent <shared-dir-owner>") to avoid duplicates.`,
+          );
+        }
+      }
+    }
+  }
   return { agents, skillNames, created };
 }

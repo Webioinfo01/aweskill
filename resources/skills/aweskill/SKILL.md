@@ -194,9 +194,17 @@ aweskill agent add skill <name> --global --agent <id> --force  # replace duplica
 aweskill agent remove skill <name> --global --agent <id>
 aweskill agent remove skill <name> --global --agent <id> --force  # also remove duplicates/foreign targets
 
+# Temporarily hide a skill from one agent (config toggle; projections kept)
+aweskill agent disable skill <name> --agent <id>
+
+# Restore a hidden skill (removes the config toggle)
+aweskill agent enable skill <name> --agent <id>
+
 # Recover one agent root into copied directories
 aweskill agent recover --global --agent <id>
 ```
+
+> **Codex shared roots:** Codex reads skills from its own `~/.codex/skills` AND the shared `~/.agents/skills` (plus repo-level `.agents/skills`). `agent list --agent codex` shows the shared entries in a read-only `shared` section with duplicate and hidden annotations. `agent add`/`remove` only touch `~/.codex/skills`; when a skill also lives in a shared root, aweskill prints a note. To truly hide a skill from Codex without touching other agents, use `agent disable skill` (writes `[[skills.config]]` into `~/.codex/config.toml`); Codex ignores project-layer toggles, so `disable`/`enable` operate at user scope only.
 
 > **Windows note:** projections are normally symlinks (macOS/Linux) or junctions (Windows). When a junction cannot be created, aweskill silently falls back to a managed **copy** — a snapshot of the central store. In copy mode, `aweskill store update <skill>` does **not** auto-propagate into agent directories; re-project with `aweskill agent add skill <name> --global --agent <id> --force` if an updated skill is not reflected.
 
