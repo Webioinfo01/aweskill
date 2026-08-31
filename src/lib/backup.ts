@@ -4,6 +4,7 @@ import path from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
 
 import { pathExists } from "./fs.js";
+import { SKILL_CONTENT_EXCLUDED_DIRS } from "./hash.js";
 import { scanStoreHygiene } from "./hygiene.js";
 import { getAweskillPaths } from "./path.js";
 
@@ -65,14 +66,16 @@ function splitTarName(name: string): { name: string; prefix: string } {
     return { name, prefix: "" };
   }
 
-  const parts = name.split("/");
-  while (parts.length > 1) {
-    const candidatePrefix = parts.slice(0, -1).join("/");
-    const candidateName = parts[parts.length - 1] ?? "";
-    if (Buffer.byteLength(candidateName, "utf8") <= 100 && Buffer.byteLength(candidatePrefix, "utf8") <= 155) {
-      return { name: candidateName, prefix: candidatePrefix };
+  // ustar can only represent a path as prefix (<=155) + "/" + name (<=100) covering
+  // the whole path. There is exactly one candidate split (before the last component);
+  // if it does not fit, fail loudly instead of silently dropping leading components.
+  const separatorIndex = name.lastIndexOf("/");
+  if (separatorIndex !== -1) {
+    const prefix = name.slice(0, separatorIndex);
+    const leaf = name.slice(separatorIndex + 1);
+    if (Buffer.byteLength(leaf, "utf8") <= 100 && Buffer.byteLength(prefix, "utf8") <= 155) {
+      return { name: leaf, prefix };
     }
-    parts.shift();
   }
 
   throw new Error(`Path is too long for tar header: ${name}`);
@@ -194,6 +197,9 @@ async function collectTarEntries(rootDir: string, relativeDir: string): Promise<
     const absolutePath = path.join(absoluteDir, entry.name);
     const archivePath = normalizeTarPath(path.join(relativeDir, entry.name));
     if (entry.isDirectory()) {
+      if (SKILL_CONTENT_EXCLUDED_DIRS.has(entry.name)) {
+        continue;
+      }
       entries.push(...(await collectTarEntries(rootDir, path.join(relativeDir, entry.name))));
       continue;
     }

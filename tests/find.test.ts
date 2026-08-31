@@ -167,6 +167,19 @@ describe("find command", () => {
     expect(lines).toEqual([]);
   });
 
+  it("rejects sciskill-only filters when used with the local provider", async () => {
+    const workspace = await createTempWorkspace();
+    const { context, lines } = createRuntime(workspace.homeDir, workspace.projectDir);
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(runFind(context, "protein", { provider: "local", stage: "Study Design" })).rejects.toThrow(
+      "--domain and --stage are only supported with the sciskill provider.",
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(lines).toEqual([]);
+  });
+
   it("rejects an invalid sciskill domain before making network requests", async () => {
     const workspace = await createTempWorkspace();
     const { context } = createRuntime(workspace.homeDir, workspace.projectDir);

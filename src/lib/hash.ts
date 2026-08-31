@@ -2,6 +2,10 @@ import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
+// Directories excluded from a skill's "content": both the content hash and the
+// backup archive must ignore the same set or they disagree about what a skill is.
+export const SKILL_CONTENT_EXCLUDED_DIRS = new Set([".git", "node_modules"]);
+
 async function collectFiles(
   baseDir: string,
   currentDir: string,
@@ -10,7 +14,7 @@ async function collectFiles(
   const entries = await readdir(currentDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (entry.name === ".git" || entry.name === "node_modules") {
+    if (SKILL_CONTENT_EXCLUDED_DIRS.has(entry.name)) {
       continue;
     }
 

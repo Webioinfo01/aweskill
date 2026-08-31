@@ -103,3 +103,27 @@ describe("skill-toggles", () => {
     expect(toggles.get("managed-one")?.managed).toBe(true);
   });
 });
+
+describe("skill-toggles block boundaries", () => {
+  it("does not cut a block short at a multi-line array value", async () => {
+    const workspace = await createTempWorkspace();
+    const file = await configPath(workspace);
+    await mkdir(path.dirname(file), { recursive: true });
+    await writeFile(
+      file,
+      [
+        "[[skills.config]] # aweskill",
+        'name = "array-owner"',
+        "enabled = false",
+        "tags = [",
+        '  "a", "b"',
+        "]",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+
+    const toggles = await listSkillToggles(file);
+    expect(toggles.get("array-owner")?.enabled).toBe(false);
+  });
+});

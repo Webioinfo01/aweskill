@@ -72,7 +72,7 @@ Meaning:
 Fix:
 
 ```bash
-aweskill store import --scan --global --agent codex
+aweskill store scan --import --global --agent codex
 ```
 
 ## malformed `SKILL.md` frontmatter

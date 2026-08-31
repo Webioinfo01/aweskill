@@ -1,4 +1,4 @@
-import { rm } from "node:fs/promises";
+import { readlink, rm } from "node:fs/promises";
 import path from "node:path";
 import type { AgentId } from "../lib/agents.js";
 import {
@@ -10,7 +10,7 @@ import {
   resolveAgentsForListingOrSync,
 } from "../lib/agents.js";
 import { pathExists } from "../lib/fs.js";
-import { getAweskillPaths } from "../lib/path.js";
+import { getAweskillPaths, isPathSafe } from "../lib/path.js";
 import { resolveCanonicalSkillName } from "../lib/rmdup.js";
 import { listSkillToggles } from "../lib/skill-toggles.js";
 import { getSkillPath, listSkillEntriesInDirectory, listSkills } from "../lib/skills.js";
@@ -36,6 +36,16 @@ interface SyncEntry {
 
 function getProjectDir(context: RuntimeContext, explicitProjectDir?: string): string {
   return explicitProjectDir ?? context.cwd;
+}
+
+/** True when a (possibly broken) symlink points inside the central skills directory. */
+async function isStorePointingSymlink(targetPath: string, centralSkillsDir: string): Promise<boolean> {
+  try {
+    const resolved = path.resolve(path.dirname(targetPath), await readlink(targetPath));
+    return isPathSafe(centralSkillsDir, resolved);
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -157,7 +167,14 @@ export async function runSync(
 
   if (agents.length === 0) {
     context.write(formatNoAgentsDetectedForScope(options.scope, projectDir));
-    return { relinked: [], repairedBroken: [], removedBroken: [], removedSuspicious: [], newEntries: [] };
+    return {
+      relinked: [],
+      repairedBroken: [],
+      removedBroken: [],
+      removedForeignBroken: [],
+      removedSuspicious: [],
+      newEntries: [],
+    };
   }
 
   const { skillsDir: centralSkillsDir } = getAweskillPaths(context.homeDir);
@@ -172,6 +189,7 @@ export async function runSync(
   const relinked: string[] = [];
   const repairedBroken: string[] = [];
   const removedBroken: string[] = [];
+  const removedForeignBroken: string[] = [];
   const removedSuspicious: string[] = [];
   const newEntries: string[] = [];
   let suspiciousCount = 0;
@@ -186,7 +204,13 @@ export async function runSync(
 
     for (const skillName of Array.from(brokenSymlinks).sort((left, right) => left.localeCompare(right))) {
       const targetPath = path.join(skillsDir, skillName);
-      entries.push({ name: skillName, path: targetPath, category: "broken" });
+      const isManaged = await isStorePointingSymlink(targetPath, centralSkillsDir);
+      entries.push({
+        name: skillName,
+        path: targetPath,
+        category: "broken",
+        note: isManaged ? undefined : "foreign broken symlink",
+      });
       repairableCount += 1;
 
       if (!options.apply) {
@@ -204,7 +228,7 @@ export async function runSync(
 
       const wasRemoved = await removeManagedProjection(targetPath);
       if (wasRemoved) {
-        removedBroken.push(`${agentId}:${skillName}`);
+        (isManaged ? removedBroken : removedForeignBroken).push(`${agentId}:${skillName}`);
       }
     }
 
@@ -313,6 +337,11 @@ export async function runSync(
   } else {
     lines.push(`Repaired ${repairedBroken.length} broken symlink projection${repairedBroken.length === 1 ? "" : "s"}.`);
     lines.push(`Removed ${removedBroken.length} broken projection${removedBroken.length === 1 ? "" : "s"}.`);
+    if (removedForeignBroken.length > 0) {
+      lines.push(
+        `Removed ${removedForeignBroken.length} foreign broken symlink${removedForeignBroken.length === 1 ? "" : "s"}.`,
+      );
+    }
     lines.push(
       `Relinked ${relinked.length} duplicate or matched agent skill entr${relinked.length === 1 ? "y" : "ies"}.`,
     );
@@ -333,5 +362,5 @@ export async function runSync(
   }
 
   context.write(lines.join("\n").trim());
-  return { relinked, repairedBroken, removedBroken, removedSuspicious, newEntries };
+  return { relinked, repairedBroken, removedBroken, removedForeignBroken, removedSuspicious, newEntries };
 }

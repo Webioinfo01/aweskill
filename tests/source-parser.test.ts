@@ -50,6 +50,22 @@ describe("download source parser", () => {
     });
   });
 
+  it("rejects sciskill-shaped download URLs on foreign hosts", () => {
+    // Downloads always resolve through the sciskill API base, so a foreign host
+    // in this URL shape is never actually used and must not be accepted.
+    expect(() => parseDownloadSource("https://example.com/api/v1/download/some-skill")).toThrow(
+      "Unsupported download source: https://example.com/api/v1/download/some-skill",
+    );
+  });
+
+  it("parses github.com URLs written without the https scheme", () => {
+    expect(parseDownloadSource("github.com/anthropics/skills")).toEqual({
+      type: "github",
+      source: "anthropics/skills",
+      sourceUrl: "https://github.com/anthropics/skills.git",
+    });
+  });
+
   it("rejects path traversal in GitHub subpaths", () => {
     expect(() => parseDownloadSource("owner/repo/../secret")).toThrow("Unsafe subpath");
   });

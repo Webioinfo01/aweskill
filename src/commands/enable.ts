@@ -85,6 +85,7 @@ export async function runEnable(
   const { skillsDir: centralSkillsDir } = getAweskillPaths(context.homeDir);
 
   // Preflight: check all targets are safe before touching any
+  const alreadyProjected: string[] = [];
   for (const agentId of agents) {
     const skillsDir = resolveAgentSkillsDir(agentId, options.scope, baseDir);
     for (const skillName of skillNames) {
@@ -95,10 +96,16 @@ export async function runEnable(
         continue;
       }
       if (status.kind === "managed_symlink" || status.kind === "managed_copy") {
-        if (status.matchesSource && !options.force) {
+        if (status.matchesSource) {
+          // Re-projecting the same source is an idempotent no-op, so repeated
+          // setup commands succeed instead of failing mid-workflow.
+          alreadyProjected.push(`${agentId}:${skillName}`);
+          continue;
+        }
+        if (!options.force) {
           throw new Error(
-            `Target path is already an aweskill-managed projection for ${skillName}: ${targetPath}. ` +
-              `Re-run with --force to recreate it.`,
+            `Target path is already an aweskill-managed projection pointing at a different source: ${targetPath}. ` +
+              `Re-run with --force to replace it.`,
           );
         }
         continue;
@@ -150,6 +157,9 @@ export async function runEnable(
   context.write(
     `Enabled ${options.type} ${targetLabel} for ${agents.join(", ")} in ${scopeLabel}${created.length > 0 ? ` (${created.length} created)` : ""}`,
   );
+  for (const entry of alreadyProjected) {
+    context.write(`Note: ${entry} is already projected; nothing to do (use --force to recreate).`);
+  }
 
   for (const agentId of agents) {
     const sharedDirs = resolveAgentSharedSkillsDirs(agentId, options.scope, baseDir);
@@ -167,5 +177,5 @@ export async function runEnable(
       }
     }
   }
-  return { agents, skillNames, created };
+  return { agents, skillNames, created, alreadyProjected };
 }

@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -33,7 +33,7 @@ describe("skill lock", () => {
     expect(lock.skills.alpha?.installedAt).toBe(lock.skills.alpha?.updatedAt);
   });
 
-  it("warns when the lock file has an unsupported shape", async () => {
+  it("warns when the lock file has an unsupported shape and preserves the corrupt file", async () => {
     const workspace = await createTempWorkspace();
     const lockPath = getSkillLockPath(workspace.homeDir);
     await mkdir(path.dirname(lockPath), { recursive: true });
@@ -43,6 +43,12 @@ describe("skill lock", () => {
     const lock = await readSkillLock(workspace.homeDir);
 
     expect(lock).toEqual({ version: 1, skills: {} });
-    expect(error).toHaveBeenCalledWith(`Warning: corrupt ${lockPath}, starting with empty lock`);
+    const preserved = (await readdir(path.dirname(lockPath))).find((name) =>
+      name.startsWith("skills-lock.json.corrupt-"),
+    );
+    expect(preserved).toBeDefined();
+    expect(error).toHaveBeenCalledWith(
+      expect.stringContaining(`Warning: corrupt ${lockPath}, starting with an empty lock (previous file kept at`),
+    );
   });
 });

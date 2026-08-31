@@ -1,23 +1,35 @@
 import { execFile } from "node:child_process";
 
-function runCommand(command: string, args: string[], cwd?: string): Promise<string> {
+import { getGitHubToken } from "./github-tree.js";
+
+function runCommand(
+  command: string,
+  args: string[],
+  cwd?: string,
+  options: { timeoutMs?: number } = {},
+): Promise<string> {
   return new Promise((resolve, reject) => {
     // npm ships as npm.cmd on Windows. Node 20+ (CVE-2024-27980) refuses to
     // spawn .cmd/.bat shims without a shell, so the whole self-update flow
     // fails on Windows unless we route through one. git is a real .exe and is
     // unaffected; routing it through cmd.exe as well is harmless.
-    execFile(command, args, { timeout: 120_000, cwd, shell: process.platform === "win32" }, (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(stderr || error.message));
-        return;
-      }
-      resolve(stdout.trim());
-    });
+    execFile(
+      command,
+      args,
+      { timeout: options.timeoutMs ?? 120_000, cwd, shell: process.platform === "win32" },
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error(stderr || error.message));
+          return;
+        }
+        resolve(stdout.trim());
+      },
+    );
   });
 }
 
-export async function getNpmLatestVersion(): Promise<string> {
-  const output = await runCommand("npm", ["view", "aweskill", "version"]);
+export async function getNpmLatestVersion(options: { timeoutMs?: number } = {}): Promise<string> {
+  const output = await runCommand("npm", ["view", "aweskill", "version"], undefined, { timeoutMs: options.timeoutMs });
   return output;
 }
 
@@ -29,8 +41,13 @@ export interface GitHubDevCommit {
 }
 
 export async function getGitHubDevCommit(): Promise<GitHubDevCommit> {
+  const token = getGitHubToken();
   const response = await fetch("https://api.github.com/repos/mugpeng/aweskill/commits?sha=dev&per_page=1", {
-    headers: { Accept: "application/vnd.github+json" },
+    headers: {
+      Accept: "application/vnd.github+json",
+      "User-Agent": "aweskill",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
 
   if (!response.ok) {

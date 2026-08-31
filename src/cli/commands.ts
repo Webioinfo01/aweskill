@@ -48,9 +48,20 @@ function addFindCommand(parent: Command, context: RuntimeContext, title: string)
     .description("Search skills across configured providers")
     .option("-p, --provider <provider>", "limit search to one provider (skills-sh, sciskill, or local)")
     .option("--local", "search the local central store only", false)
-    .option("-l, --limit <number>", "limit the number of results", (value) => Number.parseInt(value, 10), 10)
-    .option("--domain <domain>", 'sciskill domain filter, e.g. "Life Sciences", "Chemistry", "Engineering"')
-    .option("--stage <stage>", 'sciskill stage filter, e.g. "Study Design", "Data Analysis", "Writing"')
+    .option(
+      "-l, --limit <number>",
+      "limit the number of results per provider (default 10)",
+      (value) => Number.parseInt(value, 10),
+      10,
+    )
+    .option(
+      "--domain <domain>",
+      'sciskill domain filter, e.g. "Life Sciences", "Chemical Sciences", "Physical Sciences"',
+    )
+    .option(
+      "--stage <stage>",
+      'sciskill stage filter, e.g. "Study Design", "Data Processing", "Writing and Publication"',
+    )
     .action(async (query, options) => {
       const provider = (options.local ? "local" : options.provider) as "skills-sh" | "sciskill" | "local" | undefined;
       if (provider && provider !== "skills-sh" && provider !== "sciskill" && provider !== "local") {

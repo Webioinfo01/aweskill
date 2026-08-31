@@ -10,9 +10,9 @@ import {
   DuplicateSkillNameError,
   discoverDownloadableSkills,
   discoverDownloadableSkillsByName,
+  formatDownloadConflict,
   formatDownloadConflictLines,
   formatDuplicateSkillNameConflict,
-  throwDownloadConflict,
 } from "../lib/download.js";
 import { pathExists } from "../lib/fs.js";
 import { fetchGitHubRepoTree, type GitHubRepoTree, getGitHubTreeShaForSubpath } from "../lib/github-tree.js";
@@ -258,7 +258,9 @@ export async function runDownload(context: RuntimeContext, input: string, option
         continue;
       }
       if (conflict.reason !== "none" && !options.override) {
-        throwDownloadConflict(targetName, conflict.reason);
+        const installedSoFar =
+          downloaded.length > 0 ? ` Installed before this conflict: ${downloaded.join(", ")}.` : "";
+        throw new Error(`${formatDownloadConflict(targetName, conflict.reason)}${installedSoFar}`);
       }
 
       await importPath({

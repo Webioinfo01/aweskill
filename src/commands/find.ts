@@ -74,7 +74,7 @@ function formatAllowedValues(values: readonly string[]): string {
 }
 
 function validateFindOptions(options: FindOptions): void {
-  if (options.provider === "skills-sh" && (options.domain || options.stage)) {
+  if (options.provider && options.provider !== "sciskill" && (options.domain || options.stage)) {
     throw new Error("--domain and --stage are only supported with the sciskill provider.");
   }
 

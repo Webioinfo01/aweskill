@@ -7,6 +7,9 @@ import { AWESKILL_VERSION } from "./version.js";
 
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const REMIND_INTERVAL_MS = 24 * 60 * 60 * 1000;
+// The reminder is printed after the command finishes, so a slow npm registry must
+// not hold the process hostage; cap the check well below runCommand's 120s default.
+const UPDATE_CHECK_TIMEOUT_MS = 8_000;
 
 interface UpdateCache {
   lastChecked: string;
@@ -66,7 +69,7 @@ export async function maybeCheckForUpdate(homeDir: string, args: string[]): Prom
     latestVersion = cache.latestVersion;
   } else {
     try {
-      latestVersion = await getNpmLatestVersion();
+      latestVersion = await getNpmLatestVersion({ timeoutMs: UPDATE_CHECK_TIMEOUT_MS });
       await saveCache(updateCheckFile, {
         lastChecked: new Date().toISOString(),
         latestVersion,

@@ -2527,6 +2527,24 @@ describe("commands", () => {
     expect(lines.join("\n")).toContain("Removed remove-tracked");
   });
 
+  it("store remove rejects unknown skills instead of reporting success", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+
+    await program.parseAsync(["node", "aweskill", "store", "init"], { from: "node" });
+    await expect(
+      program.parseAsync(["node", "aweskill", "store", "remove", "never-installed"], {
+        from: "node",
+      }),
+    ).rejects.toThrow('Unknown skill: never-installed. Run "aweskill store list" to see available skills.');
+  });
+
   it("scan --import reports broken symlink sources and finishes with a missing count", async () => {
     const workspace = await createTempWorkspace();
     const lines: string[] = [];
@@ -3631,12 +3649,13 @@ describe("commands", () => {
     );
   });
 
-  it("agent add reports an existing aweskill-managed projection instead of silently skipping it", async () => {
+  it("agent add is idempotent when the same-source projection already exists", async () => {
     const workspace = await createTempWorkspace();
+    const lines: string[] = [];
     const program = createProgram({
       cwd: workspace.projectDir,
       homeDir: workspace.homeDir,
-      write: () => undefined,
+      write: (message) => lines.push(message),
       error: () => undefined,
     });
 
@@ -3648,13 +3667,16 @@ describe("commands", () => {
     );
 
     const targetPath = path.join(resolveAgentSkillsDir("codex", "global", workspace.homeDir), "duplicate-managed");
-    await expect(
-      program.parseAsync(
-        ["node", "aweskill", "agent", "add", "skill", "duplicate-managed", "--global", "--agent", "codex"],
-        { from: "node" },
-      ),
-    ).rejects.toThrow(
-      `Target path is already an aweskill-managed projection for duplicate-managed: ${targetPath}. Re-run with --force to recreate it.`,
+    await program.parseAsync(
+      ["node", "aweskill", "agent", "add", "skill", "duplicate-managed", "--global", "--agent", "codex"],
+      { from: "node" },
+    );
+
+    expect(lines.join("\n")).toContain(
+      `Note: codex:duplicate-managed is already projected; nothing to do (use --force to recreate).`,
+    );
+    expect(path.resolve(path.dirname(targetPath), await readlink(targetPath))).toBe(
+      getSkillPath(workspace.homeDir, "duplicate-managed"),
     );
   });
 
@@ -3788,7 +3810,7 @@ describe("commands", () => {
         { from: "node" },
       ),
     ).rejects.toThrow(
-      `Target path already exists as a directory: ${targetPath}. Re-run with --force to remove it. If this is a valid local skill, run "aweskill store import --scan" first to add it to the aweskill store.`,
+      `Target path already exists as a directory: ${targetPath}. Re-run with --force to remove it. If this is a valid local skill, run "aweskill store scan --import" first to add it to the aweskill store.`,
     );
 
     await program.parseAsync(
@@ -3821,7 +3843,7 @@ describe("commands", () => {
         { from: "node" },
       ),
     ).rejects.toThrow(
-      `Target path is a symlink that is not managed by aweskill: ${targetPath}. Re-run with --force to remove it. If this is a valid local skill, run "aweskill store import --scan" first to add it to the aweskill store.`,
+      `Target path is a symlink that is not managed by aweskill: ${targetPath}. Re-run with --force to remove it. If this is a valid local skill, run "aweskill store scan --import" first to add it to the aweskill store.`,
     );
 
     await program.parseAsync(
@@ -4211,7 +4233,8 @@ describe("commands", () => {
     await program.parseAsync(["node", "aweskill", "doctor", "sync", "--global", "--agent", "codex", "--apply"], {
       from: "node",
     });
-    expect(lines.join("\n")).toContain("Removed 1 broken projection.");
+    expect(lines.join("\n")).toContain("Removed 1 foreign broken symlink.");
+    expect(lines.join("\n")).not.toContain("Removed 1 broken projection.");
     await expect(access(targetPath)).rejects.toThrow();
   });
 

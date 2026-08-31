@@ -30,7 +30,9 @@ export async function listBundles(homeDir: string): Promise<BundleDefinition[]> 
 }
 
 export async function listBundlesInDirectory(bundlesDir: string): Promise<BundleDefinition[]> {
-  await mkdir(bundlesDir, { recursive: true });
+  if (!(await pathExists(bundlesDir))) {
+    return [];
+  }
   const entries = await readdir(bundlesDir, { withFileTypes: true });
 
   const bundles = await Promise.all(
@@ -61,6 +63,9 @@ async function resolveBundleFilePath(bundlesDir: string, bundleName: string): Pr
   }
 
   const sanitized = sanitizeName(bundleName);
+  if (!(await pathExists(bundlesDir))) {
+    return bundleFilePathInDirectory(bundlesDir, bundleName);
+  }
   const entries = await readdir(bundlesDir, { withFileTypes: true });
   const match = entries.find(
     (entry) =>

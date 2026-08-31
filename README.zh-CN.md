@@ -47,11 +47,15 @@
 
 - **[awerouter](https://github.com/mugpeng/awerouter)** — 智能 LLM 路由器：基于结构化信号，把 agent 请求路由到 flash（便宜）或 pro（强）供应商。
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展。搜索、标注、筛选和报告学术论文。
+- **[aweshare](https://github.com/wehuman01/aweshare)** — local-first 的 AI 能力中继：通过自建 Hub 共享本地 Ollama/vLLM、国产厂商 coding plan 或已授权的 OpenAI/Anthropic 帐号订阅，消费者用标准 SDK 调用，实现 token 的共享经济。
 - **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Claude Code 和 Codex 的会话书签管理器。收藏、分类、恢复会话，支持 aweswitch 配置。
+- **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Claude Code、Codex、OpenCode 的 agent 配置切换器。用不同 API endpoint、token 和模型启动隔离会话。
+- **[awewarm](https://github.com/wehuman01/awewarm)** — 订阅窗口保温器：让 AI 编程套餐的用量窗口持续保持开启，本地部署和多租户 awewarm-hub 服务器都支持。
 
 ### 项目收集
 
 - **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — AI 在生物学、生物信息学和生物医学研究中应用的精选综述。由 awescholar 驱动。
+- **[Awesome AI Virtual Tumor](https://github.com/Webioinfo01/Awesome-AI-Virtual-Tumor)** — 面向虚拟肿瘤建模与仿真的前沿 AI 系统精选合集：静态模型、动态模型、agent、基准与综述。
 
 ### 为你的项目添加 aweskill badge
 
@@ -685,6 +689,26 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 ## 开发
 
 环境搭建、测试、代码风格请参考 [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)。设计原则和命令语义请参考 [docs/DESIGN.md](docs/DESIGN.md)。
+
+## Awesome 软件生态
+
+aweskill 是一个不断壮大的 "awesome" 工具家族中的技能管理器 — 每个项目都坚持 CLI 优先、local-first、可被 AI agent 直接操作。
+
+### AI 工具
+
+- **[aweskill](https://aweskill.webioinfo.top/)** — CLI 优先的技能包管理器，支持 47+ AI 编程 agent。
+- **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Claude Code、Codex、OpenCode 的 agent 配置切换器。
+- **[awerouter](https://github.com/mugpeng/awerouter)** — 智能路由器，用结构信号把请求分给 Flash 或 Pro 模型，减少不必要的模型开销。
+- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — 收藏、分类、恢复 AI 编程会话，还能搭配 aweswitch 实现保存配置，一键启动。
+- **[aweshare](https://github.com/wehuman01/aweshare)** — 通过自建 Hub 共享本地 Ollama/vLLM，或国产厂商 coding plan，或已授权的 OpenAI/Anthropic 帐号订阅，实现 token 的共享经济。
+- **[awewarm](https://github.com/wehuman01/awewarm)** — 订阅窗口保持器，让 AI 编程套餐的窗口持续激活，无论是本地设置，还是通过远程连接的服务器。
+- **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展，搜索、标注、筛选和报告学术论文。
+- **[awedot](https://awedot.wehuman.top/)** — 悬浮球驻留屏幕边缘，实时追踪当前 AI 会话；一键收藏、随时恢复，并可搭配 aweswitch 固定 agent 配置（比如用 GLM 模型启动）。
+
+### Project Collections
+
+- **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — AI 在生物学、生物信息学和生物医学研究中应用的精选综述。由 awescholar 驱动。
+- **[Awesome AI Virtual Tumor](https://github.com/Webioinfo01/Awesome-AI-Virtual-Tumor)** — 面向虚拟肿瘤建模与仿真的前沿 AI 系统精选合集：静态模型、动态模型、agent、基准与综述。
 
 ## 许可证
 

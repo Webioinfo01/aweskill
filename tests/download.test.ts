@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
-import { getArchiveExtractArgs } from "../src/commands/download.js";
+import { getArchiveExtractArgs, runDownload } from "../src/commands/download.js";
 import {
   classifyDownloadConflict,
   DuplicateSkillNameError,
@@ -15,7 +15,7 @@ import {
 } from "../src/lib/download.js";
 import { computeDirectoryHash } from "../src/lib/hash.js";
 import { getSkillPath } from "../src/lib/skills.js";
-import { createTempWorkspace, writeSkill } from "./helpers.js";
+import { createRuntime, createTempWorkspace, writeSkill } from "./helpers.js";
 
 const originalPlatform = process.platform;
 
@@ -220,5 +220,24 @@ describe("archive extraction command selection", () => {
       command: "unzip",
       args: ["-q", "/tmp/skill.zip", "-d", "/tmp/out"],
     });
+  });
+});
+
+describe("runDownload conflict reporting", () => {
+  it("reports which skills were already installed when a later skill conflicts", async () => {
+    const workspace = await createTempWorkspace();
+    const { context } = createRuntime(workspace.homeDir, workspace.projectDir);
+    const sourceDir = path.join(workspace.projectDir, "multi-source");
+    await writeSkill(path.join(sourceDir, "aaa-first"), "First Skill");
+    await writeSkill(path.join(sourceDir, "zzz-second"), "Second Skill");
+    // A same-name, different-content, unmanaged skill blocks the second install.
+    await writeSkill(getSkillPath(workspace.homeDir, "zzz-second"), "Conflicting Local Copy");
+
+    await expect(runDownload(context, sourceDir, { all: true })).rejects.toThrow(
+      "Unmanaged conflict for zzz-second: a skill with this name exists but has no source record. " +
+        "Use --override to replace it, or --as <name> to install under a new name. " +
+        "Installed before this conflict: aaa-first.",
+    );
+    expect(getSkillPath(workspace.homeDir, "aaa-first")).toBeDefined();
   });
 });

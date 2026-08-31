@@ -47,14 +47,35 @@ export function parseDownloadSource(input: string, cwd = process.cwd()): Downloa
     };
   }
 
-  const sciskillUrl = input.match(/^https:\/\/[^/]+\/api(?:\/v1)?\/download\/(.+)$/);
+  const sciskillUrl = input.match(/^https:\/\/([^/]+)\/api(?:\/v1)?\/download\/(.+)$/);
   if (sciskillUrl) {
-    const skillId = decodeURIComponent(sciskillUrl[1]!.replace(/\/+$/, ""));
+    const allowedHosts = new Set(["sciskillhub.org"]);
+    const envBase = process.env.SCISKILL_API_URL;
+    if (envBase) {
+      try {
+        allowedHosts.add(new URL(envBase).host);
+      } catch {
+        // Ignore malformed env overrides; downloads fall back to the default base.
+      }
+    }
+    if (!allowedHosts.has(sciskillUrl[1]!)) {
+      // Downloads always resolve through the sciskill API base, so accepting a
+      // foreign host here would silently download from a different server than
+      // the URL the user typed. Reject instead.
+      throw new Error(`Unsupported download source: ${input}`);
+    }
+    const skillId = decodeURIComponent(sciskillUrl[2]!.replace(/\/+$/, ""));
     return {
       type: "sciskill",
       source: `sciskill:${skillId}`,
       sourceUrl: input.replace(/\/+$/, ""),
     };
+  }
+
+  // "github.com/..." without a scheme would otherwise be parsed as the
+  // shorthand owner "github.com", producing a clone of a nonexistent repo.
+  if (input.toLowerCase().startsWith("github.com/")) {
+    return parseDownloadSource(`https://${input}`, cwd);
   }
 
   const githubTreeWithPath = input.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/tree\/([^/]+)\/(.+)$/);

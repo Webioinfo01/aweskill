@@ -48,7 +48,11 @@ export async function readSkillLock(homeDir: string): Promise<SkillLockFile> {
     }
     return parsed;
   } catch {
-    console.error(`Warning: corrupt ${lockPath}, starting with empty lock`);
+    // Keep the corrupt file aside: returning an empty lock here means the next
+    // write would silently discard every recorded source otherwise.
+    const preservedPath = `${lockPath}.corrupt-${Date.now()}`;
+    await rename(lockPath, preservedPath).catch(() => undefined);
+    console.error(`Warning: corrupt ${lockPath}, starting with an empty lock (previous file kept at ${preservedPath})`);
     return emptyLock();
   }
 }

@@ -1,8 +1,9 @@
-import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { parse } from "yaml";
 
+import { pathExists } from "./fs.js";
 import { getAweskillPaths } from "./path.js";
 import { listSkills } from "./skills.js";
 
@@ -485,12 +486,31 @@ export async function applySkillDocFixes(
       continue;
     }
     if (options.backup) {
-      const backupPath = path.join(backupDir, result.relativePath);
+      // A rerun must not fail halfway because an earlier run already backed the
+      // same file up; suffix instead so the original backup is never overwritten.
+      const backupPath = await nextAvailableBackupPath(path.join(backupDir, result.relativePath));
       await mkdir(path.dirname(backupPath), { recursive: true });
-      await cp(result.skillFile, backupPath, { force: false });
+      await cp(result.skillFile, backupPath);
     }
     await writeFile(result.skillFile, result.nextContent, "utf8");
   }
+}
+
+async function nextAvailableBackupPath(backupPath: string): Promise<string> {
+  if (!(await pathExists(backupPath))) {
+    return backupPath;
+  }
+
+  const entries = new Set(await readdir(path.dirname(backupPath)).catch(() => []));
+  const base = path.basename(backupPath);
+  const extension = base.endsWith(".md") ? ".md" : "";
+  const stem = extension ? base.slice(0, -extension.length) : base;
+
+  let index = 1;
+  while (entries.has(`${stem}-${index}${extension}`)) {
+    index += 1;
+  }
+  return path.join(path.dirname(backupPath), `${stem}-${index}${extension}`);
 }
 
 export function formatSkillDocFixReport(

@@ -50,4 +50,40 @@ describe("backup helpers", () => {
       readFile(path.join(extracted.extractedSkillsDir, "legacy-skill", "SKILL.md"), "utf8"),
     ).resolves.toContain("Legacy Skill");
   });
+
+  it("excludes .git and node_modules from backup archives, matching the content hash", async () => {
+    const workspace = await createTempWorkspace();
+    const { skillsDir } = getAweskillPaths(workspace.homeDir);
+    const skillDir = path.join(skillsDir, "vendored-skill");
+
+    await mkdir(path.join(skillDir, "node_modules", "dep"), { recursive: true });
+    await mkdir(path.join(skillDir, ".git", "objects"), { recursive: true });
+    await writeFile(path.join(skillDir, "SKILL.md"), "# Vendored Skill\n", "utf8");
+    await writeFile(path.join(skillDir, "node_modules", "dep", "index.js"), "module.exports = 1;\n", "utf8");
+    await writeFile(path.join(skillDir, ".git", "HEAD"), "ref: refs/heads/main\n", "utf8");
+
+    const archivePath = await createSkillsBackupArchive(workspace.homeDir);
+    const extracted = await extractSkillsArchive(archivePath);
+
+    await expect(
+      readFile(path.join(extracted.extractedSkillsDir, "vendored-skill", "SKILL.md"), "utf8"),
+    ).resolves.toContain("Vendored Skill");
+    await expect(access(path.join(extracted.extractedSkillsDir, "vendored-skill", "node_modules"))).rejects.toThrow();
+    await expect(access(path.join(extracted.extractedSkillsDir, "vendored-skill", ".git"))).rejects.toThrow();
+  });
+
+  it("fails loudly when a path cannot be represented in a ustar header", async () => {
+    const workspace = await createTempWorkspace();
+    const { skillsDir } = getAweskillPaths(workspace.homeDir);
+    // "skills/" + 100 chars + "/" + 50 chars + "/file.md" fits neither as a
+    // 100-byte name nor as a 155-byte prefix plus a 100-byte leaf name after the
+    // first split, so the archive must refuse instead of dropping path parts.
+    const deepDir = path.join(skillsDir, "long-skill", "a".repeat(100), "b".repeat(50));
+
+    await mkdir(deepDir, { recursive: true });
+    await writeFile(path.join(skillsDir, "long-skill", "SKILL.md"), "# Long Skill\n", "utf8");
+    await writeFile(path.join(deepDir, "file.md"), "deep\n", "utf8");
+
+    await expect(createSkillsBackupArchive(workspace.homeDir)).rejects.toThrow("Path is too long for tar header");
+  });
 });

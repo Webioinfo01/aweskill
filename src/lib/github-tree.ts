@@ -12,7 +12,7 @@ export interface GitHubRepoTree {
 
 const GITHUB_TREE_TIMEOUT_MS = 10_000;
 
-function getGitHubToken(): string | undefined {
+export function getGitHubToken(): string | undefined {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined;
 }
 

@@ -202,14 +202,14 @@ export async function runDisable(
         throw new Error(
           `Target path is a symlink that is not managed by aweskill: ${targetPath}. ` +
             `Re-run with --force to remove it. ` +
-            `If this is a valid local skill, run "aweskill store import --scan" first to add it to the aweskill store.`,
+            `If this is a valid local skill, run "aweskill store scan --import" first to add it to the aweskill store.`,
         );
       }
       if (status.kind === "directory" && !options.force) {
         throw new Error(
           `Target path already exists as a directory: ${targetPath}. ` +
             `Re-run with --force to remove it. ` +
-            `If this is a valid local skill, run "aweskill store import --scan" first to add it to the aweskill store.`,
+            `If this is a valid local skill, run "aweskill store scan --import" first to add it to the aweskill store.`,
         );
       }
       if (status.kind === "file" && !options.force) {

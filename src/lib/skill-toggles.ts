@@ -19,7 +19,11 @@ import path from "node:path";
 
 const MANAGED_MARKER = "# aweskill";
 const TABLE_HEADER = /^\s*\[\[skills\.config\]\]/;
-const ANY_HEADER = /^\s*\[/;
+// A real table header line is only the bracketed key path (`[section]`,
+// `[[array.of.tables]]`) plus an optional trailing comment. Matching more loosely
+// (any line starting with `[`) would cut a block short at the first line of a
+// multi-line TOML array value such as `list = [` followed by `  ["a",`.
+const ANY_HEADER = /^\s*\[+[\w.-]+\]+\s*(?:#.*)?$/;
 
 export interface SkillToggleEntry {
   name?: string;
