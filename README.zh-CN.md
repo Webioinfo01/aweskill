@@ -43,7 +43,7 @@
 
 ## aweskill 驱动的项目
 
-### AI 工具
+### CLI 工具
 
 - **[awerouter](https://github.com/mugpeng/awerouter)** — 智能 LLM 路由器：基于结构化信号，把 agent 请求路由到 flash（便宜）或 pro（强）供应商。
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展。搜索、标注、筛选和报告学术论文。
@@ -692,9 +692,9 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 
 ## Awesome 软件生态
 
-aweskill 是一个不断壮大的 "awesome" 工具家族中的技能管理器 — 每个项目都坚持 CLI 优先、local-first、可被 AI agent 直接操作。
+aweskill 是一个不断壮大的 "awesome" 工具家族中的技能管理器 — 围绕 AI 编程 agent 打造，local-first、可被 agent 直接操作。
 
-### AI 工具
+### CLI 工具
 
 - **[aweskill](https://aweskill.webioinfo.top/)** — CLI 优先的技能包管理器，支持 47+ AI 编程 agent。
 - **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Claude Code、Codex、OpenCode 的 agent 配置切换器。
@@ -703,6 +703,9 @@ aweskill 是一个不断壮大的 "awesome" 工具家族中的技能管理器 �
 - **[aweshare](https://github.com/wehuman01/aweshare)** — 通过自建 Hub 共享本地 Ollama/vLLM，或国产厂商 coding plan，或已授权的 OpenAI/Anthropic 帐号订阅，实现 token 的共享经济。
 - **[awewarm](https://github.com/wehuman01/awewarm)** — 订阅窗口保持器，让 AI 编程套餐的窗口持续激活，无论是本地设置，还是通过远程连接的服务器。
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展，搜索、标注、筛选和报告学术论文。
+
+### 桌面应用
+
 - **[awedot](https://awedot.wehuman.top/)** — 悬浮球驻留屏幕边缘，实时追踪当前 AI 会话；一键收藏、随时恢复，并可搭配 aweswitch 固定 agent 配置（比如用 GLM 模型启动）。
 
 ### Project Collections
