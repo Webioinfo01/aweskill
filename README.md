@@ -332,6 +332,9 @@ aweskill store scan
 # Scan and import discovered agent skills into the central store
 aweskill store scan --import
 
+# Create a new skill scaffold in the central store
+aweskill store create my-skill --description "Use when ..."
+
 # Create a bundle
 aweskill bundle create frontend
 aweskill bundle add frontend my-skill
@@ -426,6 +429,35 @@ aweskill store update --check
 # Refresh one tracked skill from its recorded source
 aweskill store update lifesciences-proteomics
 ```
+
+### Create a new skill
+
+Making a skill follows the same lifecycle as installing one: scaffold into the central store, iterate, validate, project, and publish when it is good enough.
+
+```bash
+# Check whether a similar skill already exists before writing a new one
+aweskill find review
+aweskill find review --local
+
+# Scaffold a new skill with valid SKILL.md frontmatter and references/
+aweskill store create paper-review --description "Use when reviewing academic papers, checking citations, or summarizing manuscripts. 中文触发词：论文评审、审稿、文献总结。"
+
+# Draft the skill: edit the generated SKILL.md body at
+# ~/.aweskill/skills/paper-review/SKILL.md and add on-demand docs under references/
+
+# Validate the frontmatter (dry-run by default)
+aweskill doctor fix-skills --skill paper-review
+
+# Project and iterate; projections are symlinks, so edits go live instantly
+aweskill agent add skill paper-review --global --agent codex
+```
+
+A few notes:
+
+- With the built-in `aweskill-creator` skill projected, you can just ask your agent to "make me a skill for X" — it interviews you, checks for existing skills, scaffolds, drafts, tests with realistic prompts, validates, and projects
+- For a repo-specific skill shared through git, scaffold into the repo instead and bring it into the store later: `aweskill store create my-skill --dir <repo>/.agents/skills`, then `aweskill store install <path>` on each machine
+- To publish, copy the finished skill directory into its own git repo; others install it with `aweskill install owner/repo`
+- Created skills are not source-tracked (like `scan --import`), so `store update` never overwrites your edits
 
 ### Build reusable bundles
 

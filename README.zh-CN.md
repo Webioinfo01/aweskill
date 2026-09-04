@@ -321,6 +321,9 @@ aweskill store scan
 # 把扫描到的 agent skill 导入中央仓库
 aweskill store scan --import
 
+# 在中央仓库新建一个 skill 脚手架
+aweskill store create my-skill --description "Use when ..."
+
 # 创建 bundle
 aweskill bundle create frontend
 aweskill bundle add frontend my-skill
@@ -415,6 +418,35 @@ aweskill store update --check
 # 按已记录来源刷新一个已追踪 skill
 aweskill store update lifesciences-proteomics
 ```
+
+### 制作一个新 skill
+
+制作 skill 和安装 skill 走的是同一套生命周期：脚手架进中央仓库、迭代、校验、投影，满意后再发布。
+
+```bash
+# 写新 skill 之前，先查一下是否已有类似 skill
+aweskill find review
+aweskill find review --local
+
+# 新建一个带合法 SKILL.md frontmatter 和 references/ 的 skill 脚手架
+aweskill store create paper-review --description "Use when reviewing academic papers, checking citations, or summarizing manuscripts. 中文触发词：论文评审、审稿、文献总结。"
+
+# 起草内容：编辑生成的 SKILL.md 正文（位于
+# ~/.aweskill/skills/paper-review/SKILL.md），按需在 references/ 下加文档
+
+# 校验 frontmatter（默认 dry-run，不会改文件）
+aweskill doctor fix-skills --skill paper-review
+
+# 投影并迭代；投影是 symlink，中央仓库里的修改即时生效
+aweskill agent add skill paper-review --global --agent codex
+```
+
+几点说明：
+
+- 投影好内置 `aweskill-creator` skill 后，直接对 agent 说"帮我做一个 xx skill"即可——它会访谈你、查重、脚手架、起草、用真实 prompt 测试、校验并投影
+- 仓库专用、要随 git 共享的 skill，用 `aweskill store create my-skill --dir <repo>/.agents/skills` 直接建在仓库里，之后各机器用 `aweskill store install <path>` 收进中央仓库
+- 要发布时，把成品目录拷进独立 git 仓库，别人就能用 `aweskill install owner/repo` 安装
+- 创建的 skill 不做来源追踪（同 `scan --import`），`store update` 永远不会覆盖你的修改
 
 ### 构建可复用 bundle
 

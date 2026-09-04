@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aweskill Creator"
+  short_description: "Author skills with the aweskill lifecycle: scaffold, draft, test, validate, project."
+  default_prompt: "Use $aweskill-creator to create or improve a skill."
