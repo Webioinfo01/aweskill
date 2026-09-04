@@ -11,6 +11,7 @@ import {
   runBundleTemplateShow,
 } from "../commands/bundle.js";
 import { runClean } from "../commands/clean.js";
+import { runCreate } from "../commands/create.js";
 import { runDisable } from "../commands/disable.js";
 import { runDownload } from "../commands/download.js";
 import { runEnable } from "../commands/enable.js";
@@ -401,6 +402,20 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
     .option("--verbose", "show scanned skill details instead of per-agent totals", false)
     .action(async (options) => {
       await runFramedCommand(" aweskill store init ", async () => runInit(context, options));
+    });
+  store
+    .command("create")
+    .argument("<name>")
+    .description("Create a new skill scaffold in the central store or under --dir")
+    .option("--description <description>", "skill description; the primary trigger signal in SKILL.md frontmatter")
+    .option("--dir <dir>", "create the scaffold under this directory instead of the central store")
+    .action(async (name, options) => {
+      await runFramedCommand(" aweskill store create ", async () =>
+        runCreate(context, name, {
+          description: options.description,
+          dir: options.dir,
+        }),
+      );
     });
   store
     .command("list")

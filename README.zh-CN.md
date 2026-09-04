@@ -151,7 +151,7 @@ npm install -g ./aweskill-<version>.tgz
 - **面向真实本地混乱状态的 doctor 工作流**：处理 broken projections、重复条目、可疑文件、frontmatter 异常，以及 agent 目录和中央仓库之间的漂移
 - **bundle 组织方式**：按项目、团队、工作流或 agent 组织可复用 skill 集合
 - **托管启用/停用模型**：通过按需投影实现插拔，而不是手动把目录复制到每个工具里
-- **提供可被 agent 调用的管理与修复 skills**：让 AI agent 能根据自然语言请求运行 `aweskill` 和 `aweskill-doctor` 工作流
+- **提供可被 agent 调用的管理、修复与创作 skills**：让 AI agent 能根据自然语言请求运行 `aweskill`、`aweskill-doctor` 和 `aweskill-creator` 工作流
 - **本地维护与恢复能力**：备份、恢复、查重、清理、同步修复都在同一个本地 CLI 流程里完成
 
 <details>
@@ -179,7 +179,7 @@ npm install -g ./aweskill-<version>.tgz
 
 ### AI agent 能直接调用 aweskill 吗？
 
-可以。`aweskill` 内置了 `aweskill` 和 `aweskill-doctor` 管理 skills；安装或投影这些 skills 后，AI agent 可以根据自然语言请求，通过运行 aweskill 命令来搜索、安装、更新、打包、修复、去重、清理、同步或投影 skills。
+可以。`aweskill` 内置了 `aweskill`、`aweskill-doctor` 和 `aweskill-creator` 管理 skills；安装或投影这些 skills 后，AI agent 可以根据自然语言请求，通过运行 aweskill 命令来搜索、安装、更新、打包、修复、去重、清理、同步、投影或制作 skills。
 
 ### 当本地 skill 状态变乱时，aweskill 的差异点是什么？
 
@@ -226,7 +226,7 @@ npm install -g ./aweskill-<version>.tgz
 | 按记录来源追踪更新 | ✗ | ✗ | ✓ | ✓ | ✗ | 记录 source 元数据，再用 `aweskill update` 刷新，同时保护中央仓库里的本地修改 |
 | 多 agent 按需插拔投影 | ✗ | ✓ | ✓ | ✓ | ✓ | 通过 `symlink`、junction 或受管 `copy`，把中央仓库里的 skills 投影到各 agent 目录 |
 | bundle / manifest / collection 分组 | ✗ | ✗ | ✓ | ✗ | ✓ | 用 bundle 按项目、团队、工作流或 agent 组织可复用 skill 集合 |
-| 可被 agent 直接调用的管理 skills | ✗ | ✗ | ✗ | ✗ | ✗ | 内置 `aweskill` 和 `aweskill-doctor` skills，让 AI agents 可根据自然语言请求运行 aweskill 工作流 |
+| 可被 agent 直接调用的管理 skills | ✗ | ✗ | ✗ | ✗ | ✗ | 内置 `aweskill`、`aweskill-doctor` 和 `aweskill-creator` skills，让 AI agents 可根据自然语言请求运行 aweskill 工作流 |
 | 本地维护与恢复能力 | ✗ | ✗ | ✗ | ✗ | ✗ | CLI 内置 backup、restore、dedup、clean、sync、fix-skills 和 recover 工作流 |
 
 这里的 `sciskill` 指的是 `sciskillhub` 下的公开 registry 元数据仓库，不是本地 skill 管理 CLI。
@@ -237,11 +237,12 @@ npm install -g ./aweskill-<version>.tgz
 
 `aweskill` 最适合的用法，是先让你的编码 agent 能直接操作它。
 
-建议先把内置的 `aweskill` 和 `aweskill-doctor` skills 投影给当前 agent：
+建议先把内置的 `aweskill`、`aweskill-doctor` 和 `aweskill-creator` skills 投影给当前 agent：
 
 - `aweskill` 负责日常操作，例如 `find`、`install`、`update`、`bundle` 和 `agent add`
 - `aweskill-doctor` 负责修复优先的工作流，例如 `doctor sync`、`doctor clean`、`doctor dedup`、`doctor fix-skills` 和 `agent recover`
-- 如果不先投影这两个 skill，agent 当然也能直接跑 shell 命令，但它不会自带这些面向 aweskill 的操作指引，也就不容易稳定地从自然语言请求进入合适的工作流
+- `aweskill-creator` 负责创作工作流：用 `store create` 新建 skill 脚手架、起草内容、测试、校验并投影
+- 如果不先投影这些 skill，agent 当然也能直接跑 shell 命令，但它不会自带这些面向 aweskill 的操作指引，也就不容易稳定地从自然语言请求进入合适的工作流
 
 ## 快速开始
 
@@ -265,7 +266,7 @@ aweskill store where --verbose
 aweskill agent supported
 
 # 把内置管理 skills 投影给当前 agent
-aweskill agent add skill aweskill,aweskill-doctor --global --agent codex
+aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent codex
 
 # 确认当前投影状态
 aweskill agent list --global --agent codex
@@ -275,12 +276,14 @@ aweskill agent list --global --agent codex
 
 ### 3. 开始用自然语言驱动 aweskill
 
-投影好 `aweskill` 和 `aweskill-doctor` 之后，你就可以直接对编码 agent 说：
+投影好 `aweskill`、`aweskill-doctor` 和 `aweskill-creator` 之后，你就可以直接对编码 agent 说：
 
 ```text
 帮我找一个适合 Python 数据分析的 skill，并安装到 aweskill central store。
 
 把 frontend bundle 投影到 Codex 和 Cursor。
+
+帮我做一个论文评审的 skill：搭好脚手架、写好触发描述，然后投影给 Codex。
 
 扫描我现有的 agent skill 目录，把未托管的 skills 导入 aweskill。
 
@@ -501,6 +504,7 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 | --- | --- |
 | `aweskill self-update [--dev] [--check]` | 更新 aweskill CLI 本身；默认从 npm 更新，`--dev` 从 GitHub dev 分支构建，`--check` 仅显示版本不更新 |
 | `aweskill store init [--scan] [--verbose]` | 初始化 `~/.aweskill` 布局 |
+| `aweskill store create <name> [--description <description>] [--dir <dir>]` | 新建一个 skill 脚手架，带合法的 `SKILL.md` frontmatter 和 `references/`，默认创建到中央仓库，也可用 `--dir` 指定目录做仓库内创作 |
 | `aweskill store where [--verbose]` | 显示 `~/.aweskill` 位置，并汇总核心 store 目录 |
 | `aweskill store backup [archive] [--skills-only]` | 归档中央仓库；默认同时包含 skills 和 bundles |
 | `aweskill store restore <archive> [--override] [--skills-only]` | 从备份归档或已解包目录恢复 |
@@ -561,14 +565,16 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 
 ## 内置 Skill
 
-`aweskill` 内置了两个 meta-skill，用来教 AI agent 直接运行 aweskill 命令。
+`aweskill` 内置了三个 meta-skill，用来教 AI agent 直接运行 aweskill 命令。
 
 - `aweskill`：常规管理，覆盖 `find`、`install`、`update`、中央仓库流程、bundle 和 agent 投影
 - `aweskill-doctor`：异常诊断和修复，覆盖 broken projections、重复 skills、suspicious entries 和 sync cleanup
+- `aweskill-creator`：创作工作流，覆盖用 `store create` 新建脚手架、起草、测试、校验和投影
 
 ```bash
 aweskill store install resources/skills/aweskill
 aweskill store install resources/skills/aweskill-doctor
+aweskill store install resources/skills/aweskill-creator
 ```
 
 skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。

@@ -19,6 +19,7 @@ Match the user's intent to a task domain, then follow the workflow below.
 | "Give Codex skill X", "project a bundle to Cursor", "remove a projection" | Projection Work | `aweskill agent list --verbose` |
 | "Update a skill", "refresh skills", "更新技能" | Source Lifecycle | `aweskill update --check` |
 | "Update aweskill itself", "upgrade the CLI" | Self-Update | `aweskill self-update --check` |
+| "Make me a skill", "turn this workflow into a skill", "做一个技能" | Authoring | Hand off to `$aweskill-creator` |
 | "Something is broken", "skill not showing up", "duplicate skills" | Escalate | Hand off to `$aweskill-doctor` |
 
 ## First-Time Setup

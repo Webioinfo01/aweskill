@@ -1,5 +1,20 @@
 # change log
 
+## Unreleased
+
+`Unreleased` adds skill authoring support. Creating a skill now has the same first-class lifecycle as installing one: `store create` scaffolds a valid skill into the central store (or a repo directory with `--dir`), and a third built-in meta-skill, `aweskill-creator`, teaches agents the full authoring loop — capture intent, check for existing skills, scaffold, draft, test, validate, and project.
+
+### Skill authoring
+
+New `aweskill store create <name> [--description <description>] [--dir <dir>]` command scaffolds a skill directory with valid `SKILL.md` frontmatter and `references/`. Names are sanitized then validated as strict kebab-case (1-64 characters) and fail fast on conflicts; missing `--description` writes a TODO placeholder with a warning. Created skills are not source-tracked, matching `scan --import` semantics.
+
+### Highlights
+
+- Add `aweskill store create <name>` for skill scaffolding in the central store or under `--dir`
+- Add built-in `aweskill-creator` meta-skill; `store init` installs it and the `aweskill` bundle template includes it
+- Route authoring intents in the `aweskill` meta-skill to `$aweskill-creator`
+- Update both READMEs and README.ai.md to cover the third built-in skill
+
 ## v0.4.2
 
 `v0.4.2` adds Codex shared-root awareness and config-based skill toggling. `aweskill` now recognizes that Codex reads skills from both `~/.codex/skills` and the shared `~/.agents/skills` (plus repo-level `.agents/skills`), and it can hide a skill from Codex without removing projections or affecting other agents by writing a `[[skills.config]]` toggle into `~/.codex/config.toml`.

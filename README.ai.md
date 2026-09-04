@@ -8,7 +8,7 @@ After completing this protocol:
 
 1. `aweskill` CLI is installed globally via npm
 2. The aweskill central store is initialized at `~/.aweskill/skills/`
-3. The built-in skills `aweskill` and `aweskill-doctor` are projected into the current agent's skill directory
+3. The built-in skills `aweskill`, `aweskill-doctor`, and `aweskill-creator` are projected into the current agent's skill directory
 4. After the user verifies the new skills are available (invoke skills via `/` or `$` to check), it can use aweskill commands from natural-language requests
 
 ## Language Behavior
@@ -70,7 +70,7 @@ If you cannot determine your agent id from the output, ask the user.
 Replace `<agent-id>` with the id from step 4:
 
 ```bash
-aweskill agent add skill aweskill,aweskill-doctor --global --agent <agent-id>
+aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent <agent-id>
 ```
 
 ### 6. Verify
@@ -79,7 +79,7 @@ aweskill agent add skill aweskill,aweskill-doctor --global --agent <agent-id>
 aweskill agent list --global --agent <agent-id>
 ```
 
-Expected output should show `aweskill` and `aweskill-doctor` as `linked`.
+Expected output should show `aweskill`, `aweskill-doctor`, and `aweskill-creator` as `linked`.
 
 ### 7. Ask about existing skills migration
 
@@ -101,7 +101,7 @@ Skip this step if the user explicitly says they are starting fresh or declines.
 
 ### 8. Verify skills are available
 
-After projection (and optional migration), tell the user to invoke skills (`/` in Claude Code, `$` in Codex, or the equivalent in other agents) and check if the new skills (e.g. `aweskill`, `aweskill-doctor`) appear in the list. If they do, the skills are ready to use immediately. If not, the user should restart the agent.
+After projection (and optional migration), tell the user to invoke skills (`/` in Claude Code, `$` in Codex, or the equivalent in other agents) and check if the new skills (e.g. `aweskill`, `aweskill-doctor`, `aweskill-creator`) appear in the list. If they do, the skills are ready to use immediately. If not, the user should restart the agent.
 
 > aweskill is installed. Invoke skills (type `/` or `$` depending on your agent) and look for `aweskill` — if it appears, you're good to go. If not, restart the agent. Then you can ask me things like:
 >

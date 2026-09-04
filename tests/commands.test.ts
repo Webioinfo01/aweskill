@@ -229,6 +229,9 @@ describe("commands", () => {
     await expect(
       readFile(path.join(getSkillPath(workspace.homeDir, "aweskill-doctor"), "SKILL.md"), "utf8"),
     ).resolves.toContain("name: aweskill-doctor");
+    await expect(
+      readFile(path.join(getSkillPath(workspace.homeDir, "aweskill-creator"), "SKILL.md"), "utf8"),
+    ).resolves.toContain("name: aweskill-creator");
     const lock = await readSkillLock(workspace.homeDir);
     expect(lock.skills.aweskill).toMatchObject({
       source: "mugpeng/aweskill",
@@ -246,7 +249,15 @@ describe("commands", () => {
       subpath: "resources/skills/aweskill-doctor",
       computedHash: await computeDirectoryHash(getSkillPath(workspace.homeDir, "aweskill-doctor")),
     });
-    expect(lines.join("\n")).toContain("Installed built-in skills: aweskill, aweskill-doctor");
+    expect(lock.skills["aweskill-creator"]).toMatchObject({
+      source: "mugpeng/aweskill",
+      sourceType: "github",
+      sourceUrl: "https://github.com/mugpeng/aweskill.git",
+      ref: "main",
+      subpath: "resources/skills/aweskill-creator",
+      computedHash: await computeDirectoryHash(getSkillPath(workspace.homeDir, "aweskill-creator")),
+    });
+    expect(lines.join("\n")).toContain("Installed built-in skills: aweskill, aweskill-creator, aweskill-doctor");
 
     await writeFile(path.join(getSkillPath(workspace.homeDir, "aweskill"), "SKILL.md"), "# User Aweskill\n", "utf8");
     lines.length = 0;
@@ -256,7 +267,9 @@ describe("commands", () => {
     await expect(
       readFile(path.join(getSkillPath(workspace.homeDir, "aweskill"), "SKILL.md"), "utf8"),
     ).resolves.toContain("User Aweskill");
-    expect(lines.join("\n")).toContain("Built-in skills already installed: aweskill, aweskill-doctor");
+    expect(lines.join("\n")).toContain(
+      "Built-in skills already installed: aweskill, aweskill-creator, aweskill-doctor",
+    );
   });
 
   it("creates a timestamped backup archive under ~/.aweskill/backup", async () => {
@@ -321,7 +334,7 @@ describe("commands", () => {
 
     const output = lines.join("\n");
     expect(output).toContain(`aweskill store: ${path.join(workspace.homeDir, ".aweskill")}`);
-    expect(output).toContain(`  - skills: 4 entries -> ${path.join(workspace.homeDir, ".aweskill", "skills")}`);
+    expect(output).toContain(`  - skills: 5 entries -> ${path.join(workspace.homeDir, ".aweskill", "skills")}`);
     expect(output).toContain(`  - dup_skills: 0 entries -> ${path.join(workspace.homeDir, ".aweskill", "dup_skills")}`);
     expect(output).toContain(`  - backup: 2 entries -> ${path.join(workspace.homeDir, ".aweskill", "backup")}`);
     expect(output).toContain(`  - bundles: 1 entry -> ${path.join(workspace.homeDir, ".aweskill", "bundles")}`);
@@ -539,7 +552,9 @@ describe("commands", () => {
       readFile(path.join(workspace.homeDir, ".aweskill", "bundles", "research.yaml"), "utf8"),
     ).resolves.toContain("changed");
     expect(lines.join("\n")).toContain("Restored 0 skills and 0 bundles");
-    expect(lines.join("\n")).toContain("Skipped existing skills: aweskill, aweskill-doctor, restore-me");
+    expect(lines.join("\n")).toContain(
+      "Skipped existing skills: aweskill, aweskill-creator, aweskill-doctor, restore-me",
+    );
     expect(lines.join("\n")).toContain("Skipped existing bundles: research");
   });
 
@@ -574,7 +589,7 @@ describe("commands", () => {
 
     const updatedArchives = (await readdir(backupDir)).filter((entry) => entry.endsWith(".tar.gz"));
     expect(updatedArchives.length).toBeGreaterThanOrEqual(2);
-    expect(lines.join("\n")).toContain("Restored 3 skills");
+    expect(lines.join("\n")).toContain("Restored 4 skills");
     expect(lines.join("\n")).toContain("Backed up current skills and bundles to");
   });
 
@@ -607,7 +622,7 @@ describe("commands", () => {
     await expect(
       readFile(path.join(workspace.homeDir, ".aweskill", "bundles", "research.yaml"), "utf8"),
     ).resolves.toContain("restore-me");
-    expect(lines.join("\n")).toContain("Restored 3 skills and 1 bundles");
+    expect(lines.join("\n")).toContain("Restored 4 skills and 1 bundles");
     expect(lines.join("\n")).toContain("Backed up current skills and bundles to");
   });
 

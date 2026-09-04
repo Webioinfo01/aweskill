@@ -38,6 +38,7 @@ Current top-level convenience commands:
 Store-only commands stay under `store`, including:
 
 - `store init`
+- `store create`
 - `store where`
 - `store scan`
 - `store backup`
@@ -88,6 +89,15 @@ Mutating agent commands should default to the detected installed agent set for t
 `aweskill` removes only entries it can identify as its own managed projections. It does not blindly delete arbitrary directories in user-owned skill roots.
 
 ## Store and Import Semantics
+
+### Create Behavior
+
+- `store create <name>` scaffolds a new skill directory with valid `SKILL.md` frontmatter and an empty `references/`
+- names are sanitized like everywhere else, then validated as strict kebab-case (1-64 characters); invalid names fail fast
+- the command refuses to overwrite an existing skill and has no `--override`; editing an existing skill means editing it
+- `--description` fills the frontmatter trigger description; when omitted, a TODO placeholder is written and a warning is printed
+- by default the scaffold lands in the central store; `--dir <path>` scaffolds under a user-chosen directory for repo-based authoring, and the printed next steps point to `store install` instead of `doctor fix-skills`
+- created skills are not source-tracked, matching `scan --import` semantics; publishing is copying the directory into its own git repo others can `store install` from
 
 ### Import Behavior
 
@@ -188,10 +198,11 @@ This rule should stay consistent across `agent list`, `doctor sync`, and any fut
 
 ## Built-in Skills
 
-`aweskill` ships two meta-skills that teach AI agents how to operate the CLI:
+`aweskill` ships three meta-skills that teach AI agents how to operate the CLI:
 
 - `resources/skills/aweskill/` — core operations
 - `resources/skills/aweskill-doctor/` — diagnostics and repair
+- `resources/skills/aweskill-creator/` — skill authoring: capture intent, check for existing skills, scaffold with `store create`, draft, test, validate, and project
 
 Each skill follows this structure:
 

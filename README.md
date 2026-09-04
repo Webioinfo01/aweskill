@@ -162,7 +162,7 @@ npm install -g ./aweskill-<version>.tgz
 - **Doctor workflows for real local mess** such as broken projections, duplicate entries, suspicious files, malformed frontmatter, and drift between agent directories and the central store
 - **Bundle-based organization** for reusable skill sets by project, team, workflow, or agent
 - **Managed enable/disable model** with plug-and-play projection instead of manually copying folders into each tool
-- **Agent-callable management and repair skills** so AI agents can run both `aweskill` and `aweskill-doctor` workflows from natural-language requests
+- **Agent-callable management, repair, and authoring skills** so AI agents can run `aweskill`, `aweskill-doctor`, and `aweskill-creator` workflows from natural-language requests
 - **Backup, restore, deduplication, cleanup, sync repair, and recovery** in one local CLI workflow
 
 <details>
@@ -237,7 +237,7 @@ Use `scan --import` for initial setup — discover and import skills from existi
 | Tracked updates from recorded sources | ✗ | ✗ | ✓ | ✓ | ✗ | Records source metadata, then refreshes with `aweskill update` while protecting local central-store edits |
 | Plug-and-play multi-agent projection | ✗ | ✓ | ✓ | ✓ | ✓ | Projects selected skills from the central store into agent-specific directories using `symlink`, junction, or managed `copy` |
 | Bundle, manifest, or collection grouping | ✗ | ✗ | ✓ | ✗ | ✓ | Uses bundles to group reusable skills by project, team, workflow, or agent |
-| Agent-callable management skills | ✗ | ✗ | ✗ | ✗ | ✗ | Ships built-in `aweskill` and `aweskill-doctor` skills so AI agents can run aweskill workflows from natural-language requests |
+| Agent-callable management skills | ✗ | ✗ | ✗ | ✗ | ✗ | Ships built-in `aweskill`, `aweskill-doctor`, and `aweskill-creator` skills so AI agents can run aweskill workflows from natural-language requests |
 | Local maintenance and recovery | ✗ | ✗ | ✗ | ✗ | ✗ | Includes backup, restore, deduplication, clean, sync, fix-skills, and recover workflows in the CLI |
 
 `sciskill` here refers to the public registry-metadata repository under `sciskillhub`, not a local skill-manager CLI.
@@ -248,10 +248,11 @@ Use `aweskill` when your main problem is not just installing a skill once, but m
 
 `aweskill` works best when your coding agent can operate it directly.
 
-Project the built-in `aweskill` and `aweskill-doctor` skills into your agent first:
+Project the built-in `aweskill`, `aweskill-doctor`, and `aweskill-creator` skills into your agent first:
 
 - `aweskill` covers day-to-day operations such as `find`, `install`, `update`, `bundle`, and `agent add`
 - `aweskill-doctor` covers repair-first workflows such as `doctor sync`, `doctor clean`, `doctor dedup`, `doctor fix-skills`, and `agent recover`
+- `aweskill-creator` covers authoring workflows: scaffold a new skill with `store create`, draft it, test it, validate it, and project it
 - Without projecting them, an agent can still run shell commands, but it will not have the built-in skill guidance that makes aweskill workflows easier to discover and apply from natural-language requests
 
 ## Quick Start
@@ -276,7 +277,7 @@ aweskill store where --verbose
 aweskill agent supported
 
 # Project the built-in management skills into your current agent
-aweskill agent add skill aweskill,aweskill-doctor --global --agent codex
+aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent codex
 
 # Verify the current projected state
 aweskill agent list --global --agent codex
@@ -286,12 +287,14 @@ Replace `codex` with your agent id.
 
 ### 3. Use aweskill through natural language
 
-After projecting `aweskill` and `aweskill-doctor`, you can ask your coding agent to do things like:
+After projecting `aweskill`, `aweskill-doctor`, and `aweskill-creator`, you can ask your coding agent to do things like:
 
 ```text
 Find a Python data-science skill and install the best match into aweskill.
 
 Project my frontend bundle to Codex and Cursor.
+
+Make me a skill for reviewing papers, scaffold it, and project it to Codex.
 
 Scan my existing agent skill directories and import anything unmanaged into the aweskill store.
 
@@ -512,6 +515,7 @@ Top-level convenience commands are available for high-frequency search and track
 | --- | --- |
 | `aweskill self-update [--dev] [--check]` | Update the aweskill CLI itself; default updates from npm, `--dev` builds from GitHub dev branch, `--check` shows versions without updating |
 | `aweskill store init [--scan] [--verbose]` | Create the `~/.aweskill` layout |
+| `aweskill store create <name> [--description <description>] [--dir <dir>]` | Create a new skill scaffold with valid `SKILL.md` frontmatter and `references/` in the central store, or under `--dir` for repo-based authoring |
 | `aweskill store where [--verbose]` | Show the `~/.aweskill` location and summarize core store directories |
 | `aweskill store backup [archive] [--skills-only]` | Archive the central store; by default includes both skills and bundles |
 | `aweskill store restore <archive> [--override] [--skills-only]` | Restore from a backup archive or unpacked backup directory |
@@ -572,14 +576,16 @@ Top-level convenience commands are available for high-frequency search and track
 
 ## Built-in Skills
 
-`aweskill` ships two meta-skills that teach AI agents how to run aweskill commands directly.
+`aweskill` ships three meta-skills that teach AI agents how to run aweskill commands directly.
 
 - `aweskill`: routine management for `find`, `install`, `update`, central-store workflows, bundles, and agent projection
 - `aweskill-doctor`: diagnosis and repair for broken projections, duplicate skills, suspicious entries, and sync cleanup
+- `aweskill-creator`: authoring workflows for making new skills — `store create` scaffolding, drafting, testing, validating, and projecting
 
 ```bash
 aweskill store install resources/skills/aweskill
 aweskill store install resources/skills/aweskill-doctor
+aweskill store install resources/skills/aweskill-creator
 ```
 
 See [docs/DESIGN.md](docs/DESIGN.md) for skill directory structure and design principles.
