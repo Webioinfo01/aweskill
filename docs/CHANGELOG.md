@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.4.3 - 2026-09-04
+
 `Unreleased` adds skill authoring support. Creating a skill now has the same first-class lifecycle as installing one: `store create` scaffolds a valid skill into the central store (or a repo directory with `--dir`), and a third built-in meta-skill, `aweskill-creator`, teaches agents the full authoring loop — capture intent, check for existing skills, scaffold, draft, test, validate, and project.
 
 ### Skill authoring
