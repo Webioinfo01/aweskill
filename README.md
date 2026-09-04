@@ -43,29 +43,6 @@ Instead of copying the same `SKILL.md` folders into every tool by hand, `aweskil
 
 > **Website:** [aweskill.webioinfo.top](https://aweskill.webioinfo.top/) — project homepage with install guides and agent compatibility overview.
 
-## Add the aweskill badge to your project
-
-If your project uses aweskill and you'd like to show support, add one of these badges to your README:
-
-| Badge | Preview |
-|-------|---------|
-| `aweskill-badge.svg` | Used by aweskill itself |
-| `aweskill-badge2.svg` | For companion projects |
-
-Example using `aweskill-badge2.svg`:
-
-```html
-<a href="https://github.com/Webioinfo01/aweskill">
-  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
-</a>
-```
-
-Place it in your README title, e.g.:
-
-```markdown
-# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
-```
-
 ## Quick Start
 
 `aweskill` is designed for a simple loop: install the CLI once, equip your agent with the built-in management skills, then let the agent operate aweskill for day-to-day work.
@@ -501,6 +478,19 @@ Project the built-in `aweskill`, `aweskill-doctor`, and `aweskill-creator` skill
 - `aweskill-creator` covers authoring workflows: scaffold a new skill with `store create`, draft it, test it, validate it, and project it
 - Without projecting them, an agent can still run shell commands, but it will not have the built-in skill guidance that makes aweskill workflows easier to discover and apply from natural-language requests
 
+<details>
+<summary>Install the built-in skills into the central store</summary>
+
+```bash
+aweskill store install resources/skills/aweskill
+aweskill store install resources/skills/aweskill-doctor
+aweskill store install resources/skills/aweskill-creator
+```
+
+</details>
+
+See [docs/DESIGN.md](docs/DESIGN.md) for skill directory structure and design principles.
+
 ## Core Model
 
 `aweskill` keeps one central skill store in `~/.aweskill/skills/`, groups reusable skills through bundles, and projects selected skills into each agent's own skill directory. That projected filesystem state is the activation model.
@@ -572,11 +562,14 @@ Top-level convenience commands are available for high-frequency search and track
 
 </details>
 
+<details>
+<summary>find output and --domain / --stage filter details</summary>
+
 `aweskill find` prefers to print `source` values that `aweskill store install` can use directly. When a provider returns a discover-only source such as `smithery.ai`, the result still appears, but `aweskill` marks it as unsupported for direct install and tells you to visit the matching `skills.sh` page so you can inspect the upstream installation instructions there. Local search results do not print install commands; they print the skill path and an `aweskill store show <skill>` hint instead. When searching both remote providers at once, `--limit` applies per provider before merge and dedupe.
 
 `--domain` and `--stage` are sciskill-only filters. If you pass either flag with `--provider skills-sh`, `aweskill` now fails fast instead of ignoring the filter. When using `--domain` or `--stage` with sciskill, the value must exactly match the corresponding enum, including spaces and capitalization; invalid values also fail fast and print the allowed values.
 
-### `--domain` Values
+**`--domain` Values**
 
 | Value | Meaning |
 | --- | --- |
@@ -589,7 +582,7 @@ Top-level convenience commands are available for high-frequency search and track
 | `Medical and Health Sciences` | Medical and health sciences |
 | `Physical Sciences` | Physical sciences |
 
-### `--stage` Values
+**`--stage` Values**
 
 | Value | Meaning |
 | --- | --- |
@@ -601,21 +594,30 @@ Top-level convenience commands are available for high-frequency search and track
 | `Visualization and Presentation` | Visualization and presentation |
 | `Writing and Publication` | Writing and publication |
 
-## Built-in Skills
+</details>
 
-`aweskill` ships three meta-skills that teach AI agents how to run aweskill commands directly.
+## Add the aweskill badge to your project
 
-- `aweskill`: routine management for `find`, `install`, `update`, central-store workflows, bundles, and agent projection
-- `aweskill-doctor`: diagnosis and repair for broken projections, duplicate skills, suspicious entries, and sync cleanup
-- `aweskill-creator`: authoring workflows for making new skills — `store create` scaffolding, drafting, testing, validating, and projecting
+If your project uses aweskill and you'd like to show support, add one of these badges to your README:
 
-```bash
-aweskill store install resources/skills/aweskill
-aweskill store install resources/skills/aweskill-doctor
-aweskill store install resources/skills/aweskill-creator
+| Badge | Preview |
+|-------|---------|
+| `aweskill-badge.svg` | Used by aweskill itself |
+| `aweskill-badge2.svg` | For companion projects |
+
+Example using `aweskill-badge2.svg`:
+
+```html
+<a href="https://github.com/Webioinfo01/aweskill">
+  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
+</a>
 ```
 
-See [docs/DESIGN.md](docs/DESIGN.md) for skill directory structure and design principles.
+Place it in your README title, e.g.:
+
+```markdown
+# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
+```
 
 ## Contributing
 

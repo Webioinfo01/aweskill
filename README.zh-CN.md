@@ -41,29 +41,6 @@
 
 > **项目网站：**[aweskill.webioinfo.top](https://aweskill.webioinfo.top/) — 包含安装指南和 Agent 兼容性概览。
 
-## 为你的项目添加 aweskill badge
-
-如果你的项目使用了 aweskill 并且想要表示支持，可以在 README 中添加以下 badge：
-
-| Badge | 用途 |
-|-------|------|
-| `aweskill-badge.svg` | aweskill 自身使用 |
-| `aweskill-badge2.svg` | 供 companion 项目使用 |
-
-以 `aweskill-badge2.svg` 为例：
-
-```html
-<a href="https://github.com/Webioinfo01/aweskill">
-  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
-</a>
-```
-
-放在 README 标题中，例如：
-
-```markdown
-# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
-```
-
 ## 快速开始
 
 `aweskill` 的推荐路径很简单：CLI 只安装一次，先把内置管理 skills 装给 agent，之后就让 agent 用自然语言来日常操作 aweskill。
@@ -490,6 +467,19 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 - `aweskill-creator` 负责创作工作流：用 `store create` 新建 skill 脚手架、起草内容、测试、校验并投影
 - 如果不先投影这些 skill，agent 当然也能直接跑 shell 命令，但它不会自带这些面向 aweskill 的操作指引，也就不容易稳定地从自然语言请求进入合适的工作流
 
+<details>
+<summary>把内置 skills 安装进中央仓库</summary>
+
+```bash
+aweskill store install resources/skills/aweskill
+aweskill store install resources/skills/aweskill-doctor
+aweskill store install resources/skills/aweskill-creator
+```
+
+</details>
+
+skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
+
 ## 核心模型
 
 `aweskill` 会把 `~/.aweskill/skills/` 作为唯一技能中央仓库，用 bundle 组织可复用 skill 集合，再把选中的 skill 投影到各个 agent 的技能目录。投影后的文件系统状态本身就是启用状态。
@@ -561,11 +551,14 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 
 </details>
 
+<details>
+<summary>find 输出与 --domain / --stage 过滤细则</summary>
+
 `aweskill find` 会优先输出 `aweskill store install` 能直接使用的 `source`。如果 provider 返回的是 `smithery.ai` 这类仅供发现的 source，结果仍会显示，但 `aweskill` 会明确标注它不支持直接安装，并提示你去对应的 `skills.sh` 页面查看上游安装说明。本地搜索结果不会输出安装命令，而是输出 skill 路径和 `aweskill store show <skill>` 提示。默认同时搜索两个远程 provider 时，`--limit` 按 provider 分别生效，再做合并去重。
 
 `--domain` 和 `--stage` 只适用于 sciskill。若和 `--provider skills-sh` 一起传入，`aweskill` 现在会直接报错，而不是忽略过滤条件。对 sciskill 使用这两个参数时，传入值必须与对应枚举完全一致，包括空格和大小写；非法值也会直接报错，并列出允许值。
 
-### `--domain` 可用值
+**`--domain` 可用值**
 
 | 值 | 含义 |
 | --- | --- |
@@ -578,7 +571,7 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 | `Medical and Health Sciences` | 医学健康 |
 | `Physical Sciences` | 物理科学 |
 
-### `--stage` 可用值
+**`--stage` 可用值**
 
 | 值 | 含义 |
 | --- | --- |
@@ -590,21 +583,30 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 | `Visualization and Presentation` | 可视化展示 |
 | `Writing and Publication` | 写作发表 |
 
-## 内置 Skill
+</details>
 
-`aweskill` 内置了三个 meta-skill，用来教 AI agent 直接运行 aweskill 命令。
+## 为你的项目添加 aweskill badge
 
-- `aweskill`：常规管理，覆盖 `find`、`install`、`update`、中央仓库流程、bundle 和 agent 投影
-- `aweskill-doctor`：异常诊断和修复，覆盖 broken projections、重复 skills、suspicious entries 和 sync cleanup
-- `aweskill-creator`：创作工作流，覆盖用 `store create` 新建脚手架、起草、测试、校验和投影
+如果你的项目使用了 aweskill 并且想要表示支持，可以在 README 中添加以下 badge：
 
-```bash
-aweskill store install resources/skills/aweskill
-aweskill store install resources/skills/aweskill-doctor
-aweskill store install resources/skills/aweskill-creator
+| Badge | 用途 |
+|-------|------|
+| `aweskill-badge.svg` | aweskill 自身使用 |
+| `aweskill-badge2.svg` | 供 companion 项目使用 |
+
+以 `aweskill-badge2.svg` 为例：
+
+```html
+<a href="https://github.com/Webioinfo01/aweskill">
+  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
+</a>
 ```
 
-skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
+放在 README 标题中，例如：
+
+```markdown
+# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
+```
 
 ## 贡献
 

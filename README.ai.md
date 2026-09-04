@@ -22,8 +22,13 @@ After completing this protocol:
 
 - Node.js >= 20 (`node --version`)
 - npm available (`npm --version`)
+- Works on Ubuntu, macOS, and Windows. Projection writes symlinks on Ubuntu/macOS and junctions or managed copies on Windows automatically — no extra flags are needed.
 
 If Node.js is missing, tell the user to install it from https://nodejs.org/ before continuing.
+
+## Already Installed?
+
+If `aweskill --help` already works on this machine, do not reinstall. Run `aweskill store where --verbose` to confirm the store, then continue from step 4 to check or complete the projection.
 
 ## Steps
 
@@ -80,6 +85,8 @@ aweskill agent list --global --agent <agent-id>
 ```
 
 Expected output should show `aweskill`, `aweskill-doctor`, and `aweskill-creator` as `linked`.
+
+If any of the three skills is missing or not shown as `linked`, stop and report the actual output to the user. Do not retry with different agents or scopes.
 
 ### 7. Ask about existing skills migration
 
