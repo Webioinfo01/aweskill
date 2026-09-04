@@ -373,6 +373,29 @@ See [docs/fix-skills-categories.md](docs/fix-skills-categories.md) for full deta
 
 </details>
 
+## Add the aweskill badge to your project
+
+If your project uses aweskill and you'd like to show support, add one of these badges to your README:
+
+| Badge | Preview |
+|-------|---------|
+| `aweskill-badge.svg` | Used by aweskill itself |
+| `aweskill-badge2.svg` | For companion projects |
+
+Example using `aweskill-badge2.svg`:
+
+```html
+<a href="https://github.com/Webioinfo01/aweskill">
+  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
+</a>
+```
+
+Place it in your README title, e.g.:
+
+```markdown
+# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
+```
+
 ## FAQ
 
 ### Why aweskill, and who is it for?
@@ -595,29 +618,6 @@ Top-level convenience commands are available for high-frequency search and track
 | `Writing and Publication` | Writing and publication |
 
 </details>
-
-## Add the aweskill badge to your project
-
-If your project uses aweskill and you'd like to show support, add one of these badges to your README:
-
-| Badge | Preview |
-|-------|---------|
-| `aweskill-badge.svg` | Used by aweskill itself |
-| `aweskill-badge2.svg` | For companion projects |
-
-Example using `aweskill-badge2.svg`:
-
-```html
-<a href="https://github.com/Webioinfo01/aweskill">
-  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
-</a>
-```
-
-Place it in your README title, e.g.:
-
-```markdown
-# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
-```
 
 ## Contributing
 

@@ -362,6 +362,29 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 
 </details>
 
+## 为你的项目添加 aweskill badge
+
+如果你的项目使用了 aweskill 并且想要表示支持，可以在 README 中添加以下 badge：
+
+| Badge | 用途 |
+|-------|------|
+| `aweskill-badge.svg` | aweskill 自身使用 |
+| `aweskill-badge2.svg` | 供 companion 项目使用 |
+
+以 `aweskill-badge2.svg` 为例：
+
+```html
+<a href="https://github.com/Webioinfo01/aweskill">
+  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
+</a>
+```
+
+放在 README 标题中，例如：
+
+```markdown
+# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
+```
+
 ## FAQ
 
 ### 为什么用 aweskill，它适合谁？
@@ -584,29 +607,6 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 | `Writing and Publication` | 写作发表 |
 
 </details>
-
-## 为你的项目添加 aweskill badge
-
-如果你的项目使用了 aweskill 并且想要表示支持，可以在 README 中添加以下 badge：
-
-| Badge | 用途 |
-|-------|------|
-| `aweskill-badge.svg` | aweskill 自身使用 |
-| `aweskill-badge2.svg` | 供 companion 项目使用 |
-
-以 `aweskill-badge2.svg` 为例：
-
-```html
-<a href="https://github.com/Webioinfo01/aweskill">
-  <img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion">
-</a>
-```
-
-放在 README 标题中，例如：
-
-```markdown
-# My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
-```
 
 ## 贡献
 
