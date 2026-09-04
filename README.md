@@ -43,23 +43,7 @@ Instead of copying the same `SKILL.md` folders into every tool by hand, `aweskil
 
 > **Website:** [aweskill.webioinfo.top](https://aweskill.webioinfo.top/) — project homepage with install guides and agent compatibility overview.
 
-## Powered by aweskill
-
-### CLI Tools
-
-- **[awerouter](https://github.com/mugpeng/awerouter)** — Smart LLM router: routes agent requests to flash (cheap) or pro (strong) providers based on structural signals.
-- **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI-agent-operable scientific literature discovery and curation. Search, annotate, filter, and report on academic papers.
-- **[aweshare](https://github.com/wehuman01/aweshare)** — Local-first AI capability relay: share local Ollama/vLLM backends, domestic coding plans, or authorized OpenAI/Anthropic subscriptions through a self-hosted hub, consumed with standard SDKs — a sharing economy for tokens.
-- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Session bookmark manager for Claude Code and Codex. Bookmark, categorize, and restore sessions with aweswitch profiles.
-- **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Agent profile switcher for Claude Code, Codex, and OpenCode. Launch isolated sessions with different API endpoints, tokens, and models.
-- **[awewarm](https://github.com/wehuman01/awewarm)** — Subscription window warmer: keeps AI coding-plan usage windows open, both for local setups and via the multi-tenant awewarm-hub server.
-
-### Project Collections
-
-- **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — A curated survey of AI applications in biology, bioinformatics, and biomedical research. Powered by awescholar.
-- **[Awesome AI Virtual Tumor](https://github.com/Webioinfo01/Awesome-AI-Virtual-Tumor)** — A curated collection of state-of-the-art AI systems for virtual tumor modeling and simulation: static models, dynamic models, agents, benchmarks, and reviews.
-
-### Add the aweskill badge to your project
+## Add the aweskill badge to your project
 
 If your project uses aweskill and you'd like to show support, add one of these badges to your README:
 
@@ -82,19 +66,37 @@ Place it in your README title, e.g.:
 # My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
 ```
 
-## Install
+## Quick Start
 
-You can install `aweskill` yourself, or ask an AI coding agent to do it for you.
+`aweskill` is designed for a simple loop: install the CLI once, equip your agent with the built-in management skills, then let the agent operate aweskill for day-to-day work.
 
-### Ask an AI agent to install aweskill
+### 1. Install aweskill
 
-If you are working inside Codex, Claude Code, Cursor, Gemini CLI, or another coding agent, tell it:
+If you are working inside Codex, Claude Code, Cursor, or another coding agent, just hand the whole job to it — the agent installs the CLI, initializes the store, and projects the built-in skills. Invoke skills (`/` in Claude Code, `$` in Codex) afterwards to confirm the new skills appear; if not, restart the agent first.
+
+You can tell your agent:
 
 ```text
 Read https://github.com/Webioinfo01/aweskill/blob/main/README.ai.md and follow it to install aweskill for this agent.
 ```
 
-The agent will install the CLI, initialize the store, and project the built-in skills. Invoke skills (`/` in Claude Code, `$` in Codex) to check if the new skills appear — if they do, you can start using aweskill from natural-language requests right away; if not, restart the agent first.
+Working outside a coding agent and prefer to do it yourself? Install globally with npm (requires [Node.js](https://nodejs.org/) 20 or later), then initialize the central store — the commands are in the folded blocks below.
+
+Package page: [npmjs.com/package/aweskill](https://www.npmjs.com/package/aweskill)
+
+<details>
+<summary>Install and bootstrap CLI commands</summary>
+
+```bash
+# Install aweskill and initialize the central store
+npm install -g aweskill
+aweskill store init
+
+# Show where the aweskill store lives
+aweskill store where --verbose
+```
+
+</details>
 
 <details>
 <summary>Example agent-assisted install screenshot</summary>
@@ -105,50 +107,294 @@ _Example: a coding agent following `README.ai.md` to install aweskill, initializ
 
 </details>
 
-### Install from npm (recommended)
-
-Requires [Node.js](https://nodejs.org/) 20 or later.
-
-```bash
-npm install -g aweskill
-aweskill --help
-```
-
-Package page: [npmjs.com/package/aweskill](https://www.npmjs.com/package/aweskill)
-
-### Install from this repository
+<details>
+<summary>Other install methods: this repository, GitHub dev branch, local dev link, packed tarball</summary>
 
 ```bash
+# Install from this repository
 npm install
 npm run build
 npm install -g .
-```
 
-### Install dev version from GitHub
-
-To try the latest development features before they are released:
-
-```bash
+# Install the dev version from GitHub (dev branch contains in-progress changes and may be unstable)
 npm install -g Webioinfo01/aweskill#dev
-```
 
-The `dev` branch contains in-progress changes and may be unstable. Use the npm release for production.
-
-### Local development link
-
-```bash
+# Local development link
 npm install
 npm link
 aweskill --help
-```
 
-### Install from packed tarball
-
-```bash
+# Install from a packed tarball
 npm install
 npm pack
 npm install -g ./aweskill-<version>.tgz
 ```
+
+</details>
+
+### 2. Equip your agent
+
+If you just installed aweskill by hand, one step remains: project the three built-in management skills into your current agent — `aweskill` for day-to-day operations, `aweskill-doctor` for diagnosis and repair, and `aweskill-creator` for authoring (see [Built-In Agent Skills](#built-in-agent-skills) for what each covers). Agent-assisted installs complete this step automatically.
+
+You can tell your agent:
+
+```text
+List the supported agent ids, then project aweskill, aweskill-doctor, and aweskill-creator into codex's global skills directory.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# See supported agent ids
+aweskill agent supported
+
+# Project the built-in management skills into your current agent
+aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent codex
+
+# Verify the current projected state
+aweskill agent list --global --agent codex
+```
+
+</details>
+
+Replace `codex` with your agent id.
+
+### 3. Use aweskill through natural language
+
+From here on, day-to-day use needs no memorized commands: state the intent and the agent enters the matching aweskill workflow. The six common scenarios follow — each opens with the intent and the outcome in plain language; expand the folded block to run the CLI by hand or verify exactly what happens.
+
+#### Bring existing skills under management
+
+If you already have skills scattered across Claude Code, Codex, and other tools, aweskill can scan those directories and bring the unmanaged ones into the central store as the single source of truth going forward. Scanning only discovers and reports; importing happens after you confirm. On import, the original directory is replaced by a symlink into the central store by default (original files can be kept instead).
+
+You can tell your agent:
+
+```text
+Bring the skills already in my Claude Code directories into aweskill.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# Scan agent skill directories (dry-run: only discover)
+aweskill store scan
+
+# Scan and import all discovered skills
+aweskill store scan --import
+
+# Scan and import with detailed output
+aweskill store scan --import --verbose
+
+# Scan and import, overwriting existing skills
+aweskill store scan --import --override
+
+# Scan and import, keeping originals instead of replacing with symlinks
+aweskill store scan --import --keep-source
+
+# Scan specific agent only
+aweskill store scan --import --agent claude
+```
+
+</details>
+
+#### Find, install, and keep skills up to date
+
+When you need a new skill, have the agent search skills.sh and sciskillhub.org together, or only the local central store: remote results come with a source `aweskill store install` can use directly, and local results point at the skill path. Installs record their source, so one command later checks or refreshes updates while your local edits in the central store stay protected. Peek at a skill with `store show` before installing or updating.
+
+You can tell your agent:
+
+```text
+Find a proteomics skill and install it; then check whether my installed skills have source updates.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# Search both skills.sh and sciskillhub.org
+aweskill find protein
+
+# Search one provider only
+aweskill find protein --provider sciskill
+
+# Search the local central store and print matching skill paths
+aweskill find review --local
+
+# Inspect one local skill summary
+aweskill store show paper-review
+
+# Print the full markdown or just the path
+aweskill store show paper-review --raw
+aweskill store show paper-review --path
+
+# Install a skill from a GitHub-style source discovered via skills.sh
+aweskill store install owner/repo
+
+# Install a scientific skill from sciskillhub.org
+aweskill store install sciskill:open-source/research/lifesciences-proteomics
+
+# Check tracked installs for updates without changing files
+aweskill store update --check
+
+# Refresh one tracked skill from its recorded source
+aweskill store update lifesciences-proteomics
+```
+
+</details>
+
+#### Create a new skill
+
+Making a skill follows the same lifecycle as installing one: scaffold into the central store, iterate, validate, project, and publish when it is good enough.
+
+You can tell your agent:
+
+```text
+Make me a skill for reviewing papers: scaffold it, write the trigger description, and project it to Codex.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# Check whether a similar skill already exists before writing a new one
+aweskill find review
+aweskill find review --local
+
+# Scaffold a new skill with valid SKILL.md frontmatter and references/
+aweskill store create paper-review --description "Use when reviewing academic papers, checking citations, or summarizing manuscripts. 中文触发词：论文评审、审稿、文献总结。"
+
+# Draft the skill: edit the generated SKILL.md body at
+# ~/.aweskill/skills/paper-review/SKILL.md and add on-demand docs under references/
+
+# Validate the frontmatter (dry-run by default)
+aweskill doctor fix-skills --skill paper-review
+
+# Project and iterate; projections are symlinks, so edits go live instantly
+aweskill agent add skill paper-review --global --agent codex
+```
+
+</details>
+
+A few notes:
+
+- With the built-in `aweskill-creator` skill projected, you can just ask your agent to "make me a skill for X" — it interviews you, checks for existing skills, scaffolds, drafts, tests with realistic prompts, validates, and projects
+- For a repo-specific skill shared through git, scaffold into the repo instead and bring it into the store later: `aweskill store create my-skill --dir <repo>/.agents/skills`, then `aweskill store install <path>` on each machine
+- To publish, copy the finished skill directory into its own git repo; others install it with `aweskill install owner/repo`
+- Created skills are not source-tracked (like `scan --import`), so `store update` never overwrites your edits
+
+#### Group skills into reusable bundles
+
+When the same skills always travel together — a project's stack, a team's standard workflow — group them into a bundle and project or remove the whole set at once instead of naming skills one by one. Bundles live in `~/.aweskill/bundles/*.yaml` and can be shared through git.
+
+You can tell your agent:
+
+```text
+Create a backend bundle with api-design and db-schema in it.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# Create a reusable bundle
+aweskill bundle create backend
+
+# Add multiple skills into the bundle
+aweskill bundle add backend api-design,db-schema
+
+# Inspect what the bundle contains
+aweskill bundle show backend
+```
+
+</details>
+
+#### Project skills into agents
+
+A skill takes effect only once it is projected into the target agent's skill directory — the projected state is the activation state. Project a single skill, several skills, or a whole bundle, into one agent or every detected agent. Projections are symlinks by default, so edits in the central store go live instantly. Disable a projection with `agent remove`, and when you no longer want aweskill to manage things at all, `agent recover` turns the symlinks back into full directories.
+
+You can tell your agent:
+
+```text
+Project the backend bundle to Codex and Cursor.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# Project one skill into detected global agent directories
+aweskill agent add skill biopython
+
+# Project multiple skills into one specific global agent directory
+aweskill agent add skill biopython,scanpy --global --agent codex
+
+# Project a whole bundle into every detected global agent directory
+aweskill agent add bundle backend --global --agent all
+
+# Turn managed symlinks back into full directories
+aweskill agent recover --global --agent codex
+```
+
+</details>
+
+#### Inspect, repair, and back up
+
+Local state drifts over time: broken projections, duplicate entries, suspicious files, malformed frontmatter. The doctor commands handle these — they all default to dry run, only `--apply` makes real changes, and rewrites or moves can back up the originals first. The central store as a whole can be archived with `store backup` and restored with `store restore` at any time.
+
+You can tell your agent:
+
+```text
+Inspect my Codex skills for broken or duplicate projections, but do not modify anything yet.
+```
+
+<details>
+<summary>Equivalent CLI commands</summary>
+
+```bash
+# Inspect the central store layout and entry counts
+aweskill store where --verbose
+
+# Create a backup archive of the current store
+aweskill store backup
+
+# Restore a backup archive into the current store
+aweskill store restore ~/Downloads/aweskill-backup.tar.gz
+
+# Inspect agent entries and categories
+aweskill agent list
+
+# Remove suspicious entries from the central store
+aweskill doctor clean
+
+# Move duplicate central-store skills into dup_skills
+aweskill doctor dedup --apply
+
+# Back up duplicates before moving them into dup_skills
+aweskill doctor dedup --apply --backup
+
+# Back up malformed SKILL.md files before rewriting them
+aweskill doctor fix-skills --apply --backup
+
+# Inspect repair actions for one agent
+aweskill doctor sync --global --agent codex
+
+# Repair broken / duplicate / matched agent entries for one agent
+aweskill doctor sync --global --agent codex --apply
+
+# Remove suspicious agent entries only when explicitly requested
+aweskill doctor sync --global --agent codex --apply --remove-suspicious
+```
+
+`aweskill doctor fix-skills` reports two groups of categories:
+
+- Actionable fixes: `missing-closing-delimiter` adds the missing frontmatter closing fence, `invalid-yaml` rebuilds broken frontmatter from recoverable fields and body text, `added-frontmatter` inserts minimal frontmatter when the file starts with body content, `normalized-name` restores a usable canonical skill name, and `normalized-description` restores a usable description from the first body sentence.
+- Informational checks: `normalized-required-permissions` reports permissions that could be normalized into the canonical list form, `preserved-unknown-fields` reports frontmatter fields outside the built-in core set, and `removed-empty-fields` reports blank arrays, objects, or scalar values that could be dropped.
+
+See [docs/fix-skills-categories.md](docs/fix-skills-categories.md) for full details and before/after examples.
+
+</details>
 
 ## FAQ
 
@@ -255,97 +501,6 @@ Project the built-in `aweskill`, `aweskill-doctor`, and `aweskill-creator` skill
 - `aweskill-creator` covers authoring workflows: scaffold a new skill with `store create`, draft it, test it, validate it, and project it
 - Without projecting them, an agent can still run shell commands, but it will not have the built-in skill guidance that makes aweskill workflows easier to discover and apply from natural-language requests
 
-## Quick Start
-
-`aweskill` is designed for a simple loop: install the CLI once, equip your agent with the built-in management skills, then let the agent operate aweskill for day-to-day work.
-
-### 1. Bootstrap aweskill once
-
-```bash
-# Install aweskill and initialize the central store
-npm install -g aweskill
-aweskill store init
-
-# Show where the aweskill store lives
-aweskill store where --verbose
-```
-
-### 2. Equip your agent
-
-```bash
-# See supported agent ids
-aweskill agent supported
-
-# Project the built-in management skills into your current agent
-aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent codex
-
-# Verify the current projected state
-aweskill agent list --global --agent codex
-```
-
-Replace `codex` with your agent id.
-
-### 3. Use aweskill through natural language
-
-After projecting `aweskill`, `aweskill-doctor`, and `aweskill-creator`, you can ask your coding agent to do things like:
-
-```text
-Find a Python data-science skill and install the best match into aweskill.
-
-Project my frontend bundle to Codex and Cursor.
-
-Make me a skill for reviewing papers, scaffold it, and project it to Codex.
-
-Scan my existing agent skill directories and import anything unmanaged into the aweskill store.
-
-Check whether any installed skills have source updates.
-
-Inspect my Codex skills for broken or duplicate projections, but do not modify anything yet.
-
-Repair broken and duplicate Codex projections, and back up anything risky first.
-```
-
-### 4. Common manual CLI flows
-
-```bash
-# Find a skill across supported providers
-aweskill find protein
-
-# Search the local central store only
-aweskill find review --local
-
-# Install a discovered skill into the central store
-aweskill install sciskill:open-source/research/lifesciences-proteomics
-
-# Check tracked installs for source updates
-aweskill update --check
-
-# Update aweskill itself (npm stable)
-aweskill self-update
-
-# Update aweskill from GitHub dev branch
-aweskill self-update --dev
-
-# Scan existing agent skill directories
-aweskill store scan
-
-# Scan and import discovered agent skills into the central store
-aweskill store scan --import
-
-# Create a new skill scaffold in the central store
-aweskill store create my-skill --description "Use when ..."
-
-# Create a bundle
-aweskill bundle create frontend
-aweskill bundle add frontend my-skill
-
-# Enable the bundle for one agent
-aweskill agent add bundle frontend --global --agent claude-code
-
-# Inspect current projected skills
-aweskill agent list
-```
-
 ## Core Model
 
 `aweskill` keeps one central skill store in `~/.aweskill/skills/`, groups reusable skills through bundles, and projects selected skills into each agent's own skill directory. That projected filesystem state is the activation model.
@@ -373,166 +528,6 @@ Discovery and install sources:
 - The local central store is available as a `local` search provider and reads `~/.aweskill/skills/*/SKILL.md`
 - `aweskill find` searches `skills.sh` and `sciskill` by default, merges results by normalized name, and lets `--limit` apply per provider before merge and dedupe; use `--local` or `--provider local` to search only the local central store
 - `aweskill store install` currently accepts local paths, GitHub sources, and `sciskill:<skill-id>` identifiers
-
-## Common Workflows
-
-### Scan and import skills into the central store
-
-```bash
-# Scan agent skill directories (dry-run: only discover)
-aweskill store scan
-
-# Scan and import all discovered skills
-aweskill store scan --import
-
-# Scan and import with detailed output
-aweskill store scan --import --verbose
-
-# Scan and import, overwriting existing skills
-aweskill store scan --import --override
-
-# Scan and import, keeping originals instead of replacing with symlinks
-aweskill store scan --import --keep-source
-
-# Scan specific agent only
-aweskill store scan --import --agent claude
-```
-
-### Find, install, and update tracked skills
-
-```bash
-# Search both skills.sh and sciskillhub.org
-aweskill find protein
-
-# Search one provider only
-aweskill find protein --provider sciskill
-
-# Search the local central store and print matching skill paths
-aweskill find review --local
-
-# Inspect one local skill summary
-aweskill store show paper-review
-
-# Print the full markdown or just the path
-aweskill store show paper-review --raw
-aweskill store show paper-review --path
-
-# Install a skill from a GitHub-style source discovered via skills.sh
-aweskill store install owner/repo
-
-# Install a scientific skill from sciskillhub.org
-aweskill store install sciskill:open-source/research/lifesciences-proteomics
-
-# Check tracked installs for updates without changing files
-aweskill store update --check
-
-# Refresh one tracked skill from its recorded source
-aweskill store update lifesciences-proteomics
-```
-
-### Create a new skill
-
-Making a skill follows the same lifecycle as installing one: scaffold into the central store, iterate, validate, project, and publish when it is good enough.
-
-```bash
-# Check whether a similar skill already exists before writing a new one
-aweskill find review
-aweskill find review --local
-
-# Scaffold a new skill with valid SKILL.md frontmatter and references/
-aweskill store create paper-review --description "Use when reviewing academic papers, checking citations, or summarizing manuscripts. 中文触发词：论文评审、审稿、文献总结。"
-
-# Draft the skill: edit the generated SKILL.md body at
-# ~/.aweskill/skills/paper-review/SKILL.md and add on-demand docs under references/
-
-# Validate the frontmatter (dry-run by default)
-aweskill doctor fix-skills --skill paper-review
-
-# Project and iterate; projections are symlinks, so edits go live instantly
-aweskill agent add skill paper-review --global --agent codex
-```
-
-A few notes:
-
-- With the built-in `aweskill-creator` skill projected, you can just ask your agent to "make me a skill for X" — it interviews you, checks for existing skills, scaffolds, drafts, tests with realistic prompts, validates, and projects
-- For a repo-specific skill shared through git, scaffold into the repo instead and bring it into the store later: `aweskill store create my-skill --dir <repo>/.agents/skills`, then `aweskill store install <path>` on each machine
-- To publish, copy the finished skill directory into its own git repo; others install it with `aweskill install owner/repo`
-- Created skills are not source-tracked (like `scan --import`), so `store update` never overwrites your edits
-
-### Build reusable bundles
-
-```bash
-# Create a reusable bundle
-aweskill bundle create backend
-
-# Add multiple skills into the bundle
-aweskill bundle add backend api-design,db-schema
-
-# Inspect what the bundle contains
-aweskill bundle show backend
-```
-
-### Project skills into agents
-
-```bash
-# Project one skill into detected global agent directories
-aweskill agent add skill biopython
-
-# Project multiple skills into one specific global agent directory
-aweskill agent add skill biopython,scanpy --global --agent codex
-
-# Project a whole bundle into every detected global agent directory
-aweskill agent add bundle backend --global --agent all
-
-# Turn managed symlinks back into full directories
-aweskill agent recover --global --agent codex
-```
-
-### Keep the store clean
-
-```bash
-# Inspect the central store layout and entry counts
-aweskill store where --verbose
-
-# Create a backup archive of the current store
-aweskill store backup
-
-# Restore a backup archive into the current store
-aweskill store restore ~/Downloads/aweskill-backup.tar.gz
-
-# Inspect agent entries and categories
-aweskill agent list
-
-# Remove suspicious entries from the central store
-aweskill doctor clean
-
-# Move duplicate central-store skills into dup_skills
-aweskill doctor dedup --apply
-
-# Back up duplicates before moving them into dup_skills
-aweskill doctor dedup --apply --backup
-
-# Back up malformed SKILL.md files before rewriting them
-aweskill doctor fix-skills --apply --backup
-
-# Inspect repair actions for one agent
-aweskill doctor sync --global --agent codex
-
-# Repair broken / duplicate / matched agent entries for one agent
-aweskill doctor sync --global --agent codex --apply
-
-# Remove suspicious agent entries only when explicitly requested
-aweskill doctor sync --global --agent codex --apply --remove-suspicious
-```
-
-All `doctor` commands default to dry-run. Add `--apply` to make real changes.
-
-`aweskill doctor fix-skills` reports two groups of categories:
-
-- Actionable fixes: `missing-closing-delimiter` adds the missing frontmatter closing fence, `invalid-yaml` rebuilds broken frontmatter from recoverable fields and body text, `added-frontmatter` inserts minimal frontmatter when the file starts with body content, `normalized-name` restores a usable canonical skill name, and `normalized-description` restores a usable description from the first body sentence.
-- Informational checks: `normalized-required-permissions` reports permissions that could be normalized into the canonical list form, `preserved-unknown-fields` reports frontmatter fields outside the built-in core set, and `removed-empty-fields` reports blank arrays, objects, or scalar values that could be dropped.
-
-See [docs/fix-skills-categories.md](docs/fix-skills-categories.md) for full details and before/after examples.
 
 ## Command Surface
 

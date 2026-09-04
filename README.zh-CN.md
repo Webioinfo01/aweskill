@@ -41,23 +41,7 @@
 
 > **项目网站：**[aweskill.webioinfo.top](https://aweskill.webioinfo.top/) — 包含安装指南和 Agent 兼容性概览。
 
-## aweskill 驱动的项目
-
-### CLI 工具
-
-- **[awerouter](https://github.com/mugpeng/awerouter)** — 智能 LLM 路由器：基于结构化信号，把 agent 请求路由到 flash（便宜）或 pro（强）供应商。
-- **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展。搜索、标注、筛选和报告学术论文。
-- **[aweshare](https://github.com/wehuman01/aweshare)** — local-first 的 AI 能力中继：通过自建 Hub 共享本地 Ollama/vLLM、国产厂商 coding plan 或已授权的 OpenAI/Anthropic 帐号订阅，消费者用标准 SDK 调用，实现 token 的共享经济。
-- **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Claude Code 和 Codex 的会话书签管理器。收藏、分类、恢复会话，支持 aweswitch 配置。
-- **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Claude Code、Codex、OpenCode 的 agent 配置切换器。用不同 API endpoint、token 和模型启动隔离会话。
-- **[awewarm](https://github.com/wehuman01/awewarm)** — 订阅窗口保温器：让 AI 编程套餐的用量窗口持续保持开启，本地部署和多租户 awewarm-hub 服务器都支持。
-
-### 项目收集
-
-- **[Awesome AI Meets Biology](https://github.com/Webioinfo01/Awesome-AI-Meets-Biology)** — AI 在生物学、生物信息学和生物医学研究中应用的精选综述。由 awescholar 驱动。
-- **[Awesome AI Virtual Tumor](https://github.com/Webioinfo01/Awesome-AI-Virtual-Tumor)** — 面向虚拟肿瘤建模与仿真的前沿 AI 系统精选合集：静态模型、动态模型、agent、基准与综述。
-
-### 为你的项目添加 aweskill badge
+## 为你的项目添加 aweskill badge
 
 如果你的项目使用了 aweskill 并且想要表示支持，可以在 README 中添加以下 badge：
 
@@ -80,64 +64,326 @@
 # My Project <a href="https://github.com/Webioinfo01/aweskill"><img src="https://raw.githubusercontent.com/Webioinfo01/aweskill/main/logo/aweskill-badge2.svg" alt="aweskill companion"></a>
 ```
 
-## 安装
+## 快速开始
 
-你可以自己安装 `aweskill`，也可以让 AI 编码 agent 帮你安装。
+`aweskill` 的推荐路径很简单：CLI 只安装一次，先把内置管理 skills 装给 agent，之后就让 agent 用自然语言来日常操作 aweskill。
 
-### 让 AI agent 安装 aweskill
+### 1. 安装 aweskill
 
-如果你正在 Codex、Claude Code、Cursor、Gemini CLI 或其他编码 agent 里工作，可以直接告诉它：
+如果你正在 Codex、Claude Code、Cursor 等编码 agent 里工作，直接把安装整个交给它——agent 会自动完成 CLI 安装、store 初始化和内置 skills 投影。装完调用 skills（Claude Code 输入 `/`，Codex 输入 `$`）确认新 skills 已出现；没出现的话重启 agent 即可。
+
+可以直接对 agent 说：
 
 ```text
 读取 https://github.com/Webioinfo01/aweskill/blob/main/README.ai.md 并按照说明为当前 agent 安装 aweskill。
 ```
 
-agent 会自动完成 CLI 安装、store 初始化和内置 skills 投影。调用 skills（Claude Code 输入 `/`，Codex 输入 `$`）检查新 skills 是否出现——如果出现了，即可直接通过自然语言使用 aweskill；如果没有，请先重启 agent。
-
-### 从 npm 安装（推荐）
-
-需要 [Node.js](https://nodejs.org/) 20 及以上。
-
-```bash
-npm install -g aweskill
-aweskill --help
-```
+不在编码 agent 里、想自己动手的话，用 npm 全局安装（需要 [Node.js](https://nodejs.org/) 20 及以上），再初始化中央仓库，命令收在下面的折叠块里。
 
 包主页：[npmjs.com/package/aweskill](https://www.npmjs.com/package/aweskill)
 
-### 直接从当前仓库安装
+<details>
+<summary>安装与引导的 CLI 命令</summary>
 
 ```bash
+# 安装 aweskill 并初始化中央仓库
+npm install -g aweskill
+aweskill store init
+
+# 看一下 aweskill store 在哪里
+aweskill store where --verbose
+```
+
+</details>
+
+<details>
+<summary>其他安装方式：仓库直装、GitHub dev 分支、本地开发、打包产物</summary>
+
+```bash
+# 直接从当前仓库安装
 npm install
 npm run build
 npm install -g .
-```
 
-### 从 GitHub 安装开发版
-
-想提前体验最新的开发功能：
-
-```bash
+# 从 GitHub 安装开发版（dev 分支包含开发中的改动，可能不稳定）
 npm install -g Webioinfo01/aweskill#dev
-```
 
-`dev` 分支包含正在开发中的改动，可能不稳定。正式使用请安装 npm 正式版。
-
-### 本地开发模式
-
-```bash
+# 本地开发模式
 npm install
 npm link
 aweskill --help
-```
 
-### 用打包产物安装
-
-```bash
+# 用打包产物安装
 npm install
 npm pack
 npm install -g ./aweskill-<version>.tgz
 ```
+
+</details>
+
+### 2. 给 agent 装上管理能力
+
+刚手动装好 aweskill 的话，还差一步：把三个内置管理 skills 投影给当前 agent——`aweskill` 管日常操作、`aweskill-doctor` 管诊断修复、`aweskill-creator` 管创作（各自覆盖范围见[内置 Agent Skills](#内置-agent-skills)）。让 AI agent 安装的，这一步会自动完成。
+
+可以直接对 agent 说：
+
+```text
+查看支持的 agent id，然后把 aweskill、aweskill-doctor、aweskill-creator 投影到 codex 的全局 skills 目录。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 查看支持的 agent id
+aweskill agent supported
+
+# 把内置管理 skills 投影给当前 agent
+aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent codex
+
+# 确认当前投影状态
+aweskill agent list --global --agent codex
+```
+
+</details>
+
+把 `codex` 换成你正在使用的 agent id。
+
+### 3. 开始用自然语言驱动 aweskill
+
+到此为止，日常使用不需要记命令：把意图直接告诉 agent，它会进入对应的 aweskill 工作流。下面是六个常见场景，每个场景先用自然语言说清意图和结果；想手动执行 CLI 或核对具体行为时，再展开等价的命令。
+
+#### 收编已有的 skills
+
+如果你已经在 Claude Code、Codex 等工具里积累了一些 skills，可以让 aweskill 扫描这些目录，把未托管的 skills 收进中央仓库，作为之后的唯一事实来源。扫描默认只发现、不改动，确认结果后再导入；导入后原目录默认替换为指向中央仓库的软链接，也可以选择保留原始文件。
+
+可以直接对 agent 说：
+
+```text
+把我 Claude Code 里已有的 skills 收进 aweskill 统一管理。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 扫描 agent skill 目录（只发现，不导入）
+aweskill store scan
+
+# 扫描并导入所有发现的 skill
+aweskill store scan --import
+
+# 扫描并导入，显示详细输出
+aweskill store scan --import --verbose
+
+# 扫描并导入，覆盖已有的 skill
+aweskill store scan --import --override
+
+# 扫描并导入，保留原始文件（不替换为软链接）
+aweskill store scan --import --keep-source
+
+# 只扫描特定 agent
+aweskill store scan --import --agent claude
+```
+
+</details>
+
+#### 查找、安装并保持更新
+
+想找新 skill 时，让 agent 同时搜索 skills.sh 和 sciskillhub.org，也可以只搜本地中央仓库：远程结果带可直接安装的 source，本地结果直接给出 skill 路径。安装时 aweskill 会记录来源，之后一条命令就能检查或刷新更新，而你在中央仓库里的本地修改始终被保护。安装或更新前，可以用 `store show` 先看一眼 skill 内容。
+
+可以直接对 agent 说：
+
+```text
+找一个蛋白质组学相关的 skill 装上；再检查已装的 skill 有没有来源更新。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 同时搜索 skills.sh 和 sciskillhub.org
+aweskill find protein
+
+# 只搜索一个 provider
+aweskill find protein --provider sciskill
+
+# 搜索本地中央仓库并查看命中的 skill 路径
+aweskill find review --local
+
+# 查看一个本地 skill 的摘要
+aweskill store show paper-review
+
+# 输出完整 markdown 或只输出路径
+aweskill store show paper-review --raw
+aweskill store show paper-review --path
+
+# 安装一个从 skills.sh 发现到的 GitHub 风格 source
+aweskill store install owner/repo
+
+# 从 sciskillhub.org 安装一个科研 skill
+aweskill store install sciskill:open-source/research/lifesciences-proteomics
+
+# 只检查已追踪安装是否有更新，不改文件
+aweskill store update --check
+
+# 按已记录来源刷新一个已追踪 skill
+aweskill store update lifesciences-proteomics
+```
+
+</details>
+
+#### 制作一个新 skill
+
+制作 skill 和安装 skill 走的是同一套生命周期：脚手架进中央仓库、迭代、校验、投影，满意后再发布。
+
+可以直接对 agent 说：
+
+```text
+帮我做一个论文评审的 skill：搭好脚手架、写好触发描述，然后投影给 Codex。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 写新 skill 之前，先查一下是否已有类似 skill
+aweskill find review
+aweskill find review --local
+
+# 新建一个带合法 SKILL.md frontmatter 和 references/ 的 skill 脚手架
+aweskill store create paper-review --description "Use when reviewing academic papers, checking citations, or summarizing manuscripts. 中文触发词：论文评审、审稿、文献总结。"
+
+# 起草内容：编辑生成的 SKILL.md 正文（位于
+# ~/.aweskill/skills/paper-review/SKILL.md），按需在 references/ 下加文档
+
+# 校验 frontmatter（默认 dry-run，不会改文件）
+aweskill doctor fix-skills --skill paper-review
+
+# 投影并迭代；投影是 symlink，中央仓库里的修改即时生效
+aweskill agent add skill paper-review --global --agent codex
+```
+
+</details>
+
+几点说明：
+
+- 投影好内置 `aweskill-creator` skill 后，直接对 agent 说"帮我做一个 xx skill"即可——它会访谈你、查重、脚手架、起草、用真实 prompt 测试、校验并投影
+- 仓库专用、要随 git 共享的 skill，用 `aweskill store create my-skill --dir <repo>/.agents/skills` 直接建在仓库里，之后各机器用 `aweskill store install <path>` 收进中央仓库
+- 要发布时，把成品目录拷进独立 git 仓库，别人就能用 `aweskill install owner/repo` 安装
+- 创建的 skill 不做来源追踪（同 `scan --import`），`store update` 永远不会覆盖你的修改
+
+#### 把常用 skills 组成 bundle
+
+当同一批 skills 总是一起用——比如一个项目的技术栈、一个团队的标准工作流——可以把它们组成 bundle，之后整组投影、整组移除，不必逐个点名。bundle 保存在 `~/.aweskill/bundles/*.yaml`，也可以放进 git 与团队共享。
+
+可以直接对 agent 说：
+
+```text
+新建一个 backend bundle，把 api-design 和 db-schema 加进去。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 创建一个可复用 bundle
+aweskill bundle create backend
+
+# 给 bundle 添加多个 skill
+aweskill bundle add backend api-design,db-schema
+
+# 查看 bundle 内容
+aweskill bundle show backend
+```
+
+</details>
+
+#### 把 skill 投影到目标 agent
+
+中央仓库里的 skill 只有投影到 agent 的技能目录才会生效——投影状态就是启用状态。可以按单个 skill、多个 skill 或整个 bundle，投影到指定 agent 或所有检测到的 agent；投影默认是 symlink，中央仓库里的修改即时生效。想停用某个投影用 `agent remove`；哪天不想再让 aweskill 托管，`agent recover` 会把软链接还原为完整目录。
+
+可以直接对 agent 说：
+
+```text
+把 backend bundle 投影到 Codex 和 Cursor。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 把一个 skill 投影到检测到的全局 agent 目录
+aweskill agent add skill biopython
+
+# 把多个 skill 投影到指定 agent 的全局目录
+aweskill agent add skill biopython,scanpy --global --agent codex
+
+# 把整个 bundle 投影到所有检测到的全局 agent
+aweskill agent add bundle backend --global --agent all
+
+# 把托管 symlink 恢复为完整目录
+aweskill agent recover --global --agent codex
+```
+
+</details>
+
+#### 体检、修复与备份
+
+用久了本地状态难免漂移：投影断链、条目重复、可疑文件、frontmatter 损坏。这些交给 doctor 系列命令——它们默认都是 dry run，加 `--apply` 才会真正修改，改写或移动前还可以先备份原文件。中央仓库整体随时可以用 `store backup` 归档、用 `store restore` 恢复。
+
+可以直接对 agent 说：
+
+```text
+先检查 Codex 下有没有 broken 或 duplicate skill，不要立即修改。
+```
+
+<details>
+<summary>等价的 CLI 命令</summary>
+
+```bash
+# 查看中央仓库位置和目录统计
+aweskill store where --verbose
+
+# 备份当前 store
+aweskill store backup
+
+# 恢复备份归档
+aweskill store restore ~/Downloads/aweskill-backup.tar.gz
+
+# 查看 agent 条目分类
+aweskill agent list
+
+# 清理中央仓库里的可疑条目
+aweskill doctor clean
+
+# 把中央仓库里的重复 skill 移到 dup_skills
+aweskill doctor dedup --apply
+
+# 在移动到 dup_skills 前先备份重复 skill
+aweskill doctor dedup --apply --backup
+
+# 在改写前先备份异常的 SKILL.md
+aweskill doctor fix-skills --apply --backup
+
+# 先看某个 agent 下有哪些可修项
+aweskill doctor sync --global --agent codex
+
+# 修复某个 agent 下的 broken / duplicate / matched 条目
+aweskill doctor sync --global --agent codex --apply
+
+# 只有显式指定时才删除 suspicious agent 条目
+aweskill doctor sync --global --agent codex --apply --remove-suspicious
+```
+
+`aweskill doctor fix-skills` 会报告两类结果：
+
+- 真修复项：`missing-closing-delimiter` 补上 frontmatter 缺失的结束分隔线，`invalid-yaml` 用可恢复字段和正文重建损坏 frontmatter，`added-frontmatter` 在文件直接从正文开始时补最小 frontmatter，`normalized-name` 恢复可用的规范 skill 名称，`normalized-description` 用正文第一句恢复可用描述。
+- 信息项：`normalized-required-permissions` 报告可规范化为标准列表形式的权限，`preserved-unknown-fields` 报告核心字段之外的 frontmatter 字段，`removed-empty-fields` 报告可删除的空数组、空对象或空标量值。
+
+详细说明与修复前后示例见 [docs/fix-skills-categories.md](docs/fix-skills-categories.md)。
+
+</details>
 
 ## FAQ
 
@@ -244,97 +490,6 @@ npm install -g ./aweskill-<version>.tgz
 - `aweskill-creator` 负责创作工作流：用 `store create` 新建 skill 脚手架、起草内容、测试、校验并投影
 - 如果不先投影这些 skill，agent 当然也能直接跑 shell 命令，但它不会自带这些面向 aweskill 的操作指引，也就不容易稳定地从自然语言请求进入合适的工作流
 
-## 快速开始
-
-`aweskill` 的推荐路径很简单：CLI 只安装一次，先把内置管理 skills 装给 agent，之后就让 agent 用自然语言来日常操作 aweskill。
-
-### 1. 一次性完成 aweskill 引导
-
-```bash
-# 安装 aweskill 并初始化中央仓库
-npm install -g aweskill
-aweskill store init
-
-# 看一下 aweskill store 在哪里
-aweskill store where --verbose
-```
-
-### 2. 给 agent 装上管理能力
-
-```bash
-# 查看支持的 agent id
-aweskill agent supported
-
-# 把内置管理 skills 投影给当前 agent
-aweskill agent add skill aweskill,aweskill-doctor,aweskill-creator --global --agent codex
-
-# 确认当前投影状态
-aweskill agent list --global --agent codex
-```
-
-把 `codex` 换成你正在使用的 agent id。
-
-### 3. 开始用自然语言驱动 aweskill
-
-投影好 `aweskill`、`aweskill-doctor` 和 `aweskill-creator` 之后，你就可以直接对编码 agent 说：
-
-```text
-帮我找一个适合 Python 数据分析的 skill，并安装到 aweskill central store。
-
-把 frontend bundle 投影到 Codex 和 Cursor。
-
-帮我做一个论文评审的 skill：搭好脚手架、写好触发描述，然后投影给 Codex。
-
-扫描我现有的 agent skill 目录，把未托管的 skills 导入 aweskill。
-
-检查已安装 skill 是否有来源更新。
-
-先检查 Codex 下有没有 broken 或 duplicate skill，不要立即修改。
-
-修复 Codex 下 broken 和 duplicate 的投影，必要时先备份。
-```
-
-### 4. 常见手动 CLI 流程
-
-```bash
-# 跨支持的 provider 查找 skill
-aweskill find protein
-
-# 只搜索本地中央仓库
-aweskill find review --local
-
-# 把发现到的 skill 安装到中央仓库
-aweskill install sciskill:open-source/research/lifesciences-proteomics
-
-# 检查 tracked install 是否有来源更新
-aweskill update --check
-
-# 更新 aweskill 自身（npm 稳定版）
-aweskill self-update
-
-# 从 GitHub dev 分支更新 aweskill
-aweskill self-update --dev
-
-# 扫描已有 agent 的 skill 目录
-aweskill store scan
-
-# 把扫描到的 agent skill 导入中央仓库
-aweskill store scan --import
-
-# 在中央仓库新建一个 skill 脚手架
-aweskill store create my-skill --description "Use when ..."
-
-# 创建 bundle
-aweskill bundle create frontend
-aweskill bundle add frontend my-skill
-
-# 为一个 agent 启用这个 bundle
-aweskill agent add bundle frontend --global --agent claude-code
-
-# 查看当前投影状态
-aweskill agent list
-```
-
 ## 核心模型
 
 `aweskill` 会把 `~/.aweskill/skills/` 作为唯一技能中央仓库，用 bundle 组织可复用 skill 集合，再把选中的 skill 投影到各个 agent 的技能目录。投影后的文件系统状态本身就是启用状态。
@@ -362,166 +517,6 @@ aweskill agent list
 - 本地中央仓库也可以作为 `local` provider 搜索，读取 `~/.aweskill/skills/*/SKILL.md`
 - `aweskill find` 默认同时搜索 `skills.sh` 和 `sciskill`，按规范化后的名字合并结果；`--limit` 会先按 provider 分别生效，再做合并去重；用 `--local` 或 `--provider local` 可只搜索本地中央仓库
 - `aweskill store install` 当前支持本地路径、GitHub source 和 `sciskill:<skill-id>` 标识
-
-## 常见工作流
-
-### 扫描并导入 skill 到中央仓库
-
-```bash
-# 扫描 agent skill 目录（只发现，不导入）
-aweskill store scan
-
-# 扫描并导入所有发现的 skill
-aweskill store scan --import
-
-# 扫描并导入，显示详细输出
-aweskill store scan --import --verbose
-
-# 扫描并导入，覆盖已有的 skill
-aweskill store scan --import --override
-
-# 扫描并导入，保留原始文件（不替换为软链接）
-aweskill store scan --import --keep-source
-
-# 只扫描特定 agent
-aweskill store scan --import --agent claude
-```
-
-### 查找、安装并更新已追踪 skill
-
-```bash
-# 同时搜索 skills.sh 和 sciskillhub.org
-aweskill find protein
-
-# 只搜索一个 provider
-aweskill find protein --provider sciskill
-
-# 搜索本地中央仓库并查看命中的 skill 路径
-aweskill find review --local
-
-# 查看一个本地 skill 的摘要
-aweskill store show paper-review
-
-# 输出完整 markdown 或只输出路径
-aweskill store show paper-review --raw
-aweskill store show paper-review --path
-
-# 安装一个从 skills.sh 发现到的 GitHub 风格 source
-aweskill store install owner/repo
-
-# 从 sciskillhub.org 安装一个科研 skill
-aweskill store install sciskill:open-source/research/lifesciences-proteomics
-
-# 只检查已追踪安装是否有更新，不改文件
-aweskill store update --check
-
-# 按已记录来源刷新一个已追踪 skill
-aweskill store update lifesciences-proteomics
-```
-
-### 制作一个新 skill
-
-制作 skill 和安装 skill 走的是同一套生命周期：脚手架进中央仓库、迭代、校验、投影，满意后再发布。
-
-```bash
-# 写新 skill 之前，先查一下是否已有类似 skill
-aweskill find review
-aweskill find review --local
-
-# 新建一个带合法 SKILL.md frontmatter 和 references/ 的 skill 脚手架
-aweskill store create paper-review --description "Use when reviewing academic papers, checking citations, or summarizing manuscripts. 中文触发词：论文评审、审稿、文献总结。"
-
-# 起草内容：编辑生成的 SKILL.md 正文（位于
-# ~/.aweskill/skills/paper-review/SKILL.md），按需在 references/ 下加文档
-
-# 校验 frontmatter（默认 dry-run，不会改文件）
-aweskill doctor fix-skills --skill paper-review
-
-# 投影并迭代；投影是 symlink，中央仓库里的修改即时生效
-aweskill agent add skill paper-review --global --agent codex
-```
-
-几点说明：
-
-- 投影好内置 `aweskill-creator` skill 后，直接对 agent 说"帮我做一个 xx skill"即可——它会访谈你、查重、脚手架、起草、用真实 prompt 测试、校验并投影
-- 仓库专用、要随 git 共享的 skill，用 `aweskill store create my-skill --dir <repo>/.agents/skills` 直接建在仓库里，之后各机器用 `aweskill store install <path>` 收进中央仓库
-- 要发布时，把成品目录拷进独立 git 仓库，别人就能用 `aweskill install owner/repo` 安装
-- 创建的 skill 不做来源追踪（同 `scan --import`），`store update` 永远不会覆盖你的修改
-
-### 构建可复用 bundle
-
-```bash
-# 创建一个可复用 bundle
-aweskill bundle create backend
-
-# 给 bundle 添加多个 skill
-aweskill bundle add backend api-design,db-schema
-
-# 查看 bundle 内容
-aweskill bundle show backend
-```
-
-### 把 skill 投影到多个 agent
-
-```bash
-# 把一个 skill 投影到检测到的全局 agent 目录
-aweskill agent add skill biopython
-
-# 把多个 skill 投影到指定 agent 的全局目录
-aweskill agent add skill biopython,scanpy --global --agent codex
-
-# 把整个 bundle 投影到所有检测到的全局 agent
-aweskill agent add bundle backend --global --agent all
-
-# 把托管 symlink 恢复为完整目录
-aweskill agent recover --global --agent codex
-```
-
-### 维护本地仓库
-
-```bash
-# 查看中央仓库位置和目录统计
-aweskill store where --verbose
-
-# 备份当前 store
-aweskill store backup
-
-# 恢复备份归档
-aweskill store restore ~/Downloads/aweskill-backup.tar.gz
-
-# 查看 agent 条目分类
-aweskill agent list
-
-# 清理中央仓库里的可疑条目
-aweskill doctor clean
-
-# 把中央仓库里的重复 skill 移到 dup_skills
-aweskill doctor dedup --apply
-
-# 在移动到 dup_skills 前先备份重复 skill
-aweskill doctor dedup --apply --backup
-
-# 在改写前先备份异常的 SKILL.md
-aweskill doctor fix-skills --apply --backup
-
-# 先看某个 agent 下有哪些可修项
-aweskill doctor sync --global --agent codex
-
-# 修复某个 agent 下的 broken / duplicate / matched 条目
-aweskill doctor sync --global --agent codex --apply
-
-# 只有显式指定时才删除 suspicious agent 条目
-aweskill doctor sync --global --agent codex --apply --remove-suspicious
-```
-
-所有 `doctor` 命令默认为 dry run，加上 `--apply` 才会真正修改。
-
-`aweskill doctor fix-skills` 会报告两类结果：
-
-- 真修复项：`missing-closing-delimiter` 补上 frontmatter 缺失的结束分隔线，`invalid-yaml` 用可恢复字段和正文重建损坏 frontmatter，`added-frontmatter` 在文件直接从正文开始时补最小 frontmatter，`normalized-name` 恢复可用的规范 skill 名称，`normalized-description` 用正文第一句恢复可用描述。
-- 信息项：`normalized-required-permissions` 报告可规范化为标准列表形式的权限，`preserved-unknown-fields` 报告核心字段之外的 frontmatter 字段，`removed-empty-fields` 报告可删除的空数组、空对象或空标量值。
-
-详细说明与修复前后示例见 [docs/fix-skills-categories.md](docs/fix-skills-categories.md)。
 
 ## 命令面
 
