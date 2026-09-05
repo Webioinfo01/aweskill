@@ -17,7 +17,7 @@ Match the user's intent to a task domain, then follow the workflow below.
 | "Scan and import local skills", "what's in the store", "remove a skill from the store" | Store Work | `aweskill store list --verbose` |
 | "Create a bundle", "add skills to a bundle", "show bundle contents" | Bundle Work | `aweskill bundle list --verbose` |
 | "Give Codex skill X", "project a bundle to Cursor", "remove a projection" | Projection Work | `aweskill agent list --verbose` |
-| "Update a skill", "refresh skills", "更新技能" | Source Lifecycle | `aweskill update --check` |
+| "Update a skill", "refresh skills", "更新技能" | Source Lifecycle | `aweskill update --check <skill...>` when skills are named, else `aweskill update --check` |
 | "Update aweskill itself", "upgrade the CLI" | Self-Update | `aweskill self-update --check` |
 | "Make me a skill", "turn this workflow into a skill", "做一个技能" | Authoring | Hand off to `$aweskill-creator` |
 | "Something is broken", "skill not showing up", "duplicate skills" | Escalate | Hand off to `$aweskill-doctor` |
@@ -78,6 +78,7 @@ aweskill install <source> --override       # overwrite existing skills
 
 # Check tracked skills for updates
 aweskill update --check
+aweskill update --check <skill...>         # check only the named skills
 
 # Refresh tracked skills
 aweskill update [skill...]
@@ -89,8 +90,8 @@ Decision order:
 
 1. `find` when the source is not yet known.
 2. `install` when the source is known and the skill should enter the central store.
-3. `update --check` when the user wants visibility before change.
-4. `update` when the skill is already tracked and should be refreshed.
+3. `update --check` when the user wants visibility before change. If the user names specific skills, always pass them (`aweskill update --check <skill...>`) — never check all tracked skills uninvited.
+4. `update` when the skill is already tracked and should be refreshed. Pass the named skills when the user scoped the request.
 
 ### Store Work
 
