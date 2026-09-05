@@ -13,6 +13,8 @@ export interface SkillLockEntry {
   sourceType: DownloadSourceType;
   sourceUrl: string;
   ref?: string;
+  /** Ref that last resolved successfully on the GitHub trees API; avoids ref fallback retries. */
+  resolvedRef?: string;
   subpath?: string;
   computedHash: string;
   remoteTreeSha?: string;

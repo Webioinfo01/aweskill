@@ -17,6 +17,7 @@ describe("github tree helpers", () => {
             { path: "skills/caveman/SKILL.md", type: "blob", sha: "blob" },
             { path: "skills/caveman", type: "tree", sha: "skill-tree" },
           ],
+          truncated: false,
         },
         "skills/caveman",
       ),
@@ -34,10 +35,26 @@ describe("github tree helpers", () => {
       sha: "root",
       ref: "main",
       tree: [{ path: "skills/caveman", type: "tree", sha: "skill-tree" }],
+      truncated: false,
     });
     expect(fetchMock).toHaveBeenCalledWith(
       "https://api.github.com/repos/owner/repo/git/trees/main?recursive=1",
       expect.objectContaining({ headers: expect.objectContaining({ "User-Agent": "aweskill" }) }),
+    );
+  });
+
+  it("tries the preferred ref first when no explicit ref is given", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ sha: "root", tree: [], truncated: false }),
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(fetchGitHubRepoTree("owner/repo", undefined, "main")).resolves.toMatchObject({ ref: "main" });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.github.com/repos/owner/repo/git/trees/main?recursive=1",
+      expect.anything(),
     );
   });
 });

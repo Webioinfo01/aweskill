@@ -2314,6 +2314,95 @@ describe("commands", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("update --check reports update-available from the remote tree SHA alone when the SHA changed", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+    const destination = getSkillPath(workspace.homeDir, "caveman");
+    await writeSkill(destination, "Caveman v1");
+    const computedHash = await computeDirectoryHash(destination);
+    await writeSkillLock(workspace.homeDir, {
+      version: 1,
+      skills: {
+        caveman: {
+          source: "owner/repo",
+          sourceType: "github",
+          sourceUrl: "https://github.com/owner/repo.git",
+          ref: "main",
+          subpath: "skills/caveman",
+          computedHash,
+          remoteTreeSha: "tree-123",
+          installedAt: "2026-04-26T00:00:00.000Z",
+          updatedAt: "2026-04-26T00:00:00.000Z",
+        },
+      },
+    });
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        sha: "root-tree",
+        tree: [{ path: "skills/caveman", type: "tree", sha: "tree-456" }],
+      }),
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await program.parseAsync(["node", "aweskill", "store", "update", "caveman", "--check"], { from: "node" });
+
+    expect(lines.join("\n")).toContain("Update available: caveman.");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("update --check reports local changes without cloning when the remote tree SHA changed", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+    const destination = getSkillPath(workspace.homeDir, "caveman");
+    await writeSkill(destination, "Caveman v1");
+    const computedHash = await computeDirectoryHash(destination);
+    await writeSkill(destination, "Caveman with local edit");
+    await writeSkillLock(workspace.homeDir, {
+      version: 1,
+      skills: {
+        caveman: {
+          source: "owner/repo",
+          sourceType: "github",
+          sourceUrl: "https://github.com/owner/repo.git",
+          ref: "main",
+          subpath: "skills/caveman",
+          computedHash,
+          remoteTreeSha: "tree-123",
+          installedAt: "2026-04-26T00:00:00.000Z",
+          updatedAt: "2026-04-26T00:00:00.000Z",
+        },
+      },
+    });
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        sha: "root-tree",
+        tree: [{ path: "skills/caveman", type: "tree", sha: "tree-456" }],
+      }),
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await program.parseAsync(["node", "aweskill", "store", "update", "caveman", "--check"], { from: "node" });
+
+    expect(lines.join("\n")).toContain(
+      "Skipped caveman: local changes detected. Use --override to discard local changes.",
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("update summarizes source-missing skills and shows a verbose command for their details", async () => {
     const workspace = await createTempWorkspace();
     const lines: string[] = [];

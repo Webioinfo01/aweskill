@@ -8,6 +8,8 @@ export interface GitHubRepoTree {
   sha: string;
   ref: string;
   tree: GitHubTreeEntry[];
+  /** True when GitHub truncated the recursive listing; subpath lookups may be unreliable. */
+  truncated: boolean;
 }
 
 const GITHUB_TREE_TIMEOUT_MS = 10_000;
@@ -24,11 +26,17 @@ export function getGitHubTreeShaForSubpath(tree: GitHubRepoTree, subpath: string
   return tree.tree.find((entry) => entry.type === "tree" && entry.path === normalized)?.sha;
 }
 
-export async function fetchGitHubRepoTree(ownerRepo: string, ref?: string): Promise<GitHubRepoTree | undefined> {
-  const refs = ref ? [ref] : ["HEAD", "main", "master"];
+export async function fetchGitHubRepoTree(
+  ownerRepo: string,
+  ref?: string,
+  preferredRef?: string,
+): Promise<GitHubRepoTree | undefined> {
+  const candidates = ref
+    ? [ref]
+    : [...new Set([preferredRef, "HEAD", "main", "master"].filter((value): value is string => Boolean(value)))];
   const token = getGitHubToken();
 
-  for (const candidateRef of refs) {
+  for (const candidateRef of candidates) {
     try {
       const response = await fetch(
         `https://api.github.com/repos/${ownerRepo}/git/trees/${encodeURIComponent(candidateRef)}?recursive=1`,
@@ -45,11 +53,15 @@ export async function fetchGitHubRepoTree(ownerRepo: string, ref?: string): Prom
         continue;
       }
 
-      const data = (await response.json()) as { sha?: string; tree?: GitHubTreeEntry[] };
+      const data = (await response.json()) as {
+        sha?: string;
+        tree?: GitHubTreeEntry[];
+        truncated?: boolean;
+      };
       if (!data.sha || !Array.isArray(data.tree)) {
         continue;
       }
-      return { sha: data.sha, ref: candidateRef, tree: data.tree };
+      return { sha: data.sha, ref: candidateRef, tree: data.tree, truncated: data.truncated === true };
     } catch {}
   }
 

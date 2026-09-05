@@ -9,12 +9,21 @@ import { pathExists } from "../lib/fs.js";
 import { fetchGitHubRepoTree, getGitHubTreeShaForSubpath } from "../lib/github-tree.js";
 import { computeDirectoryHash } from "../lib/hash.js";
 import { importPath } from "../lib/import.js";
-import { readSkillLock, removeSkillLockEntry, type SkillLockEntry, upsertSkillLockEntry } from "../lib/lock.js";
+import {
+  type NewSkillLockEntry,
+  readSkillLock,
+  removeSkillLockEntry,
+  type SkillLockEntry,
+  upsertSkillLockEntry,
+} from "../lib/lock.js";
 import { getSkillPath } from "../lib/skills.js";
 import { parseDownloadSource } from "../lib/source-parser.js";
 import { formatNoTrackedUpdatesMessage, formatUpdateStatusLines } from "../lib/update.js";
 import type { RuntimeContext } from "../types.js";
 import { resolveSourceRoot } from "./download.js";
+
+/** Max source repos contacted in parallel. Each group is one git clone or archive download. */
+const UPDATE_SOURCE_CONCURRENCY = 6;
 
 export interface UpdateOptions {
   bundle?: string;
@@ -39,12 +48,24 @@ interface UpdateSourceGroup {
 interface PreparedUpdateGroup {
   entries: SelectedSkillEntry[];
   skipped: string[];
+  lines: string[];
+  prunes: string[];
   remoteTreeShas: Map<string, string>;
+  resolvedRef?: string;
 }
 
 interface SourceMissingEntry {
   name: string;
   entry: SkillLockEntry;
+}
+
+interface GroupOutcome {
+  lines: string[];
+  updated: string[];
+  skipped: string[];
+  sourceMissing: SourceMissingEntry[];
+  prunes: string[];
+  lockUpserts: Array<{ name: string; entry: NewSkillLockEntry }>;
 }
 
 function entryMatchesSource(entry: SkillLockEntry, source?: string): boolean {
@@ -78,29 +99,72 @@ export function groupEntriesBySource(entries: SelectedSkillEntry[]): UpdateSourc
   return [...groups.values()];
 }
 
+/**
+ * In check mode, when the remote tree SHA for the skill subpath differs from the
+ * recorded one, we already know an update exists (or the skill drifted locally)
+ * without cloning the source. Only safe when GitHub did not truncate the tree.
+ */
+function canFastPathCheck(
+  options: UpdateOptions,
+  remoteTreeTruncated: boolean,
+  remoteTreeSha: string | undefined,
+  entry: SkillLockEntry,
+): boolean {
+  return (
+    options.check === true &&
+    !remoteTreeTruncated &&
+    remoteTreeSha !== undefined &&
+    entry.remoteTreeSha !== undefined &&
+    remoteTreeSha !== entry.remoteTreeSha
+  );
+}
+
 async function prepareUpdateGroup(
   context: RuntimeContext,
   group: UpdateSourceGroup,
   options: UpdateOptions,
 ): Promise<PreparedUpdateGroup> {
+  const prepared: PreparedUpdateGroup = {
+    entries: group.entries,
+    skipped: [],
+    lines: [],
+    prunes: [],
+    remoteTreeShas: new Map(),
+  };
+
   const firstEntry = group.entries[0]?.entry;
   if (!firstEntry || firstEntry.sourceType !== "github") {
-    return { entries: group.entries, skipped: [], remoteTreeShas: new Map() };
+    return prepared;
   }
 
-  const remoteTree = await fetchGitHubRepoTree(firstEntry.source, firstEntry.ref);
+  const remoteTree = await fetchGitHubRepoTree(firstEntry.source, firstEntry.ref, firstEntry.resolvedRef);
   if (!remoteTree) {
-    return { entries: group.entries, skipped: [], remoteTreeShas: new Map() };
+    return prepared;
   }
+  prepared.resolvedRef = remoteTree.ref;
 
-  const remoteTreeShas = new Map<string, string>();
   const entriesToClone: SelectedSkillEntry[] = [];
-  const skipped: string[] = [];
 
   for (const item of group.entries) {
     const remoteTreeSha = item.entry.subpath ? getGitHubTreeShaForSubpath(remoteTree, item.entry.subpath) : undefined;
     if (remoteTreeSha) {
-      remoteTreeShas.set(item.name, remoteTreeSha);
+      prepared.remoteTreeShas.set(item.name, remoteTreeSha);
+    }
+
+    if (canFastPathCheck(options, remoteTree.truncated, remoteTreeSha, item.entry)) {
+      const destination = getSkillPath(context.homeDir, item.name);
+      if (!(await pathExists(destination))) {
+        prepared.lines.push(...formatUpdateStatusLines(item.name, "missing-local-skill"));
+        prepared.skipped.push(item.name);
+        continue;
+      }
+      const currentHash = await computeDirectoryHash(destination);
+      const reason = currentHash === item.entry.computedHash ? "update-available" : "local-changes-detected";
+      prepared.lines.push(...formatUpdateStatusLines(item.name, reason));
+      if (reason === "local-changes-detected") {
+        prepared.skipped.push(item.name);
+      }
+      continue;
     }
 
     if (!remoteTreeSha || !item.entry.remoteTreeSha || remoteTreeSha !== item.entry.remoteTreeSha) {
@@ -112,15 +176,13 @@ async function prepareUpdateGroup(
     if (!(await pathExists(destination))) {
       if (!options.override) {
         if (options.prune) {
-          await removeSkillLockEntry(context.homeDir, item.name);
-          context.write(`Pruned ${item.name} from update tracking.`);
-          skipped.push(item.name);
+          prepared.prunes.push(item.name);
+          prepared.lines.push(`Pruned ${item.name} from update tracking.`);
+          prepared.skipped.push(item.name);
           continue;
         }
-        for (const line of formatUpdateStatusLines(item.name, "missing-local-skill")) {
-          context.write(line);
-        }
-        skipped.push(item.name);
+        prepared.lines.push(...formatUpdateStatusLines(item.name, "missing-local-skill"));
+        prepared.skipped.push(item.name);
         continue;
       }
       entriesToClone.push(item);
@@ -129,24 +191,21 @@ async function prepareUpdateGroup(
 
     const currentHash = await computeDirectoryHash(destination);
     if (currentHash === item.entry.computedHash) {
-      for (const line of formatUpdateStatusLines(item.name, "up-to-date")) {
-        context.write(line);
-      }
+      prepared.lines.push(...formatUpdateStatusLines(item.name, "up-to-date"));
       continue;
     }
 
     if (!options.override) {
-      for (const line of formatUpdateStatusLines(item.name, "local-changes-detected")) {
-        context.write(line);
-      }
-      skipped.push(item.name);
+      prepared.lines.push(...formatUpdateStatusLines(item.name, "local-changes-detected"));
+      prepared.skipped.push(item.name);
       continue;
     }
 
     entriesToClone.push(item);
   }
 
-  return { entries: entriesToClone, skipped, remoteTreeShas };
+  prepared.entries = entriesToClone;
+  return prepared;
 }
 
 function formatSourceMissingSummary(entries: SourceMissingEntry[], options: Pick<UpdateOptions, "verbose">): string {
@@ -195,6 +254,130 @@ function formatSourceMissingSummary(entries: SourceMissingEntry[], options: Pick
   return lines.join("\n");
 }
 
+async function processUpdateGroup(
+  context: RuntimeContext,
+  group: UpdateSourceGroup,
+  options: UpdateOptions,
+): Promise<GroupOutcome> {
+  const outcome: GroupOutcome = {
+    lines: [],
+    updated: [],
+    skipped: [],
+    sourceMissing: [],
+    prunes: [],
+    lockUpserts: [],
+  };
+
+  const preparedGroup = await prepareUpdateGroup(context, group, options);
+  outcome.lines.push(...preparedGroup.lines);
+  outcome.skipped.push(...preparedGroup.skipped);
+  outcome.prunes.push(...preparedGroup.prunes);
+  if (preparedGroup.entries.length === 0) {
+    return outcome;
+  }
+
+  const sourceRoot = await resolveUpdateRoot(context, preparedGroup.entries[0]!.entry);
+  try {
+    for (const { name, entry } of preparedGroup.entries) {
+      let remoteSkill: DownloadableSkill | undefined;
+      try {
+        remoteSkill = await findDownloadableSkillForLockEntry(sourceRoot.root, name, entry);
+      } catch (error) {
+        if (error instanceof DuplicateSkillNameError) {
+          outcome.lines.push(
+            ...formatDuplicateSkillNameConflict(error, {
+              source: entry.sourceType === "local" ? entry.source : undefined,
+              sourceUrl: entry.sourceUrl,
+              ref: entry.ref,
+              commandName: "aweskill store install",
+            }),
+          );
+          outcome.skipped.push(name);
+          continue;
+        }
+        throw error;
+      }
+      if (!remoteSkill) {
+        outcome.sourceMissing.push({ name, entry });
+        outcome.skipped.push(name);
+        continue;
+      }
+
+      const remoteHash = await computeDirectoryHash(remoteSkill.path);
+      const destination = getSkillPath(context.homeDir, name);
+      if (!(await pathExists(destination))) {
+        if (!options.override) {
+          if (options.prune) {
+            outcome.prunes.push(name);
+            outcome.lines.push(`Pruned ${name} from update tracking.`);
+            outcome.skipped.push(name);
+            continue;
+          }
+          outcome.lines.push(...formatUpdateStatusLines(name, "missing-local-skill"));
+          outcome.skipped.push(name);
+          continue;
+        }
+      } else {
+        const currentHash = await computeDirectoryHash(destination);
+        if (currentHash === remoteHash) {
+          outcome.lines.push(...formatUpdateStatusLines(name, "up-to-date"));
+          continue;
+        }
+        if (currentHash !== entry.computedHash && !options.override) {
+          outcome.lines.push(...formatUpdateStatusLines(name, "local-changes-detected"));
+          outcome.skipped.push(name);
+          continue;
+        }
+      }
+
+      if (options.check) {
+        outcome.lines.push(...formatUpdateStatusLines(name, "update-available"));
+        continue;
+      }
+
+      await importPath({
+        homeDir: context.homeDir,
+        sourcePath: remoteSkill.path,
+        skillName: name,
+        override: true,
+      });
+      outcome.lockUpserts.push({
+        name,
+        entry: {
+          source: entry.source,
+          sourceType: entry.sourceType,
+          sourceUrl: entry.sourceUrl,
+          ref: entry.ref,
+          resolvedRef: preparedGroup.resolvedRef,
+          subpath: remoteSkill.subpath,
+          computedHash: remoteHash,
+          remoteTreeSha: preparedGroup.remoteTreeShas.get(name),
+        },
+      });
+      outcome.updated.push(name);
+      outcome.lines.push(...formatUpdateStatusLines(name, "updated"));
+    }
+  } finally {
+    await sourceRoot.cleanup?.();
+  }
+
+  return outcome;
+}
+
+async function runWithConcurrency<T>(items: T[], limit: number, task: (item: T, index: number) => Promise<void>) {
+  let next = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (true) {
+      const index = next++;
+      if (index >= items.length) {
+        return;
+      }
+      await task(items[index]!, index);
+    }
+  });
+  await Promise.all(workers);
+}
+
 export async function runUpdate(context: RuntimeContext, options: UpdateOptions = {}) {
   const lock = await readSkillLock(context.homeDir);
   const selectedNames = new Set(options.skills ?? []);
@@ -217,107 +400,42 @@ export async function runUpdate(context: RuntimeContext, options: UpdateOptions 
     return { updated: [], skipped: [] };
   }
 
+  const groups = groupEntriesBySource(entries.map(([name, entry]) => ({ name, entry })));
+  const outcomes: Array<GroupOutcome | undefined> = new Array(groups.length);
+
+  // Groups run in parallel, but lines are flushed in original group order so the
+  // output stays deterministic regardless of completion order.
+  let nextToFlush = 0;
+  const flushReadyOutcomes = () => {
+    while (nextToFlush < outcomes.length && outcomes[nextToFlush]) {
+      for (const line of outcomes[nextToFlush]!.lines) {
+        context.write(line);
+      }
+      nextToFlush++;
+    }
+  };
+
+  await runWithConcurrency(groups, UPDATE_SOURCE_CONCURRENCY, async (group, index) => {
+    outcomes[index] = await processUpdateGroup(context, group, options);
+    flushReadyOutcomes();
+  });
+  flushReadyOutcomes();
+
+  // Lock writes are serialized after all groups finish: parallel groups share one
+  // lock file and concurrent read-modify-write would lose entries.
   const updated: string[] = [];
   const skipped: string[] = [];
   const sourceMissing: SourceMissingEntry[] = [];
-
-  for (const group of groupEntriesBySource(entries.map(([name, entry]) => ({ name, entry })))) {
-    const preparedGroup = await prepareUpdateGroup(context, group, options);
-    skipped.push(...preparedGroup.skipped);
-    if (preparedGroup.entries.length === 0) {
-      continue;
+  for (const outcome of outcomes) {
+    for (const name of outcome?.prunes ?? []) {
+      await removeSkillLockEntry(context.homeDir, name);
     }
-
-    const sourceRoot = await resolveUpdateRoot(context, preparedGroup.entries[0]!.entry);
-    try {
-      for (const { name, entry } of preparedGroup.entries) {
-        let remoteSkill: DownloadableSkill | undefined;
-        try {
-          remoteSkill = await findDownloadableSkillForLockEntry(sourceRoot.root, name, entry);
-        } catch (error) {
-          if (error instanceof DuplicateSkillNameError) {
-            for (const line of formatDuplicateSkillNameConflict(error, {
-              source: entry.sourceType === "local" ? entry.source : undefined,
-              sourceUrl: entry.sourceUrl,
-              ref: entry.ref,
-              commandName: "aweskill store install",
-            })) {
-              context.write(line);
-            }
-            skipped.push(name);
-            continue;
-          }
-          throw error;
-        }
-        if (!remoteSkill) {
-          sourceMissing.push({ name, entry });
-          skipped.push(name);
-          continue;
-        }
-
-        const remoteHash = await computeDirectoryHash(remoteSkill.path);
-        const destination = getSkillPath(context.homeDir, name);
-        if (!(await pathExists(destination))) {
-          if (!options.override) {
-            if (options.prune) {
-              await removeSkillLockEntry(context.homeDir, name);
-              context.write(`Pruned ${name} from update tracking.`);
-              skipped.push(name);
-              continue;
-            }
-            for (const line of formatUpdateStatusLines(name, "missing-local-skill")) {
-              context.write(line);
-            }
-            skipped.push(name);
-            continue;
-          }
-        } else {
-          const currentHash = await computeDirectoryHash(destination);
-          if (currentHash === remoteHash) {
-            for (const line of formatUpdateStatusLines(name, "up-to-date")) {
-              context.write(line);
-            }
-            continue;
-          }
-          if (currentHash !== entry.computedHash && !options.override) {
-            for (const line of formatUpdateStatusLines(name, "local-changes-detected")) {
-              context.write(line);
-            }
-            skipped.push(name);
-            continue;
-          }
-        }
-
-        if (options.check) {
-          for (const line of formatUpdateStatusLines(name, "update-available")) {
-            context.write(line);
-          }
-          continue;
-        }
-
-        await importPath({
-          homeDir: context.homeDir,
-          sourcePath: remoteSkill.path,
-          skillName: name,
-          override: true,
-        });
-        await upsertSkillLockEntry(context.homeDir, name, {
-          source: entry.source,
-          sourceType: entry.sourceType,
-          sourceUrl: entry.sourceUrl,
-          ref: entry.ref,
-          subpath: remoteSkill.subpath,
-          computedHash: remoteHash,
-          remoteTreeSha: preparedGroup.remoteTreeShas.get(name),
-        });
-        updated.push(name);
-        for (const line of formatUpdateStatusLines(name, "updated")) {
-          context.write(line);
-        }
-      }
-    } finally {
-      await sourceRoot.cleanup?.();
+    for (const upsert of outcome?.lockUpserts ?? []) {
+      await upsertSkillLockEntry(context.homeDir, upsert.name, upsert.entry);
     }
+    updated.push(...(outcome?.updated ?? []));
+    skipped.push(...(outcome?.skipped ?? []));
+    sourceMissing.push(...(outcome?.sourceMissing ?? []));
   }
 
   if (sourceMissing.length > 0) {
