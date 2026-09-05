@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+## v0.4.4 - 2026-09-05
+
+`v0.4.4` makes `update --check` dramatically faster and keeps the `aweskill` meta-skill from checking skills the user did not ask about. Checking for updates no longer needs to clone every tracked source: when the recorded remote tree SHA for a skill differs, aweskill reports an update (or local drift) straight from the upstream tree listing. Source repos are also checked in parallel instead of one at a time, and the resolved branch ref is cached in the lock so later checks skip the HEAD/main/master fallback.
+
+### Update performance
+
+`aweskill update --check <skill>` now resolves most outcomes from the GitHub trees API without cloning the source into a temp directory. When the tree SHA for a skill's subpath differs from the recorded value, it reports `Update available:` or `Skipped ...: local changes detected.` directly, and only a real `update` clones the source. Source groups are processed with a small bounded concurrency pool, with output still flushed in deterministic group order; lock metadata (including the newly persisted `resolvedRef`) is written serially after all groups finish to avoid a read-modify-write race on the lock file.
+
+### Meta-skill scoping
+
+- The `aweskill` meta-skill now instructs agents to pass named skills to `update --check` instead of running a full check over all tracked skills uninvited, plus `update [skill...]` for scoped refreshes.
+
+### README reorganization
+
+- Reworked both READMEs and `README.ai.md`: moved the "Powered by aweskill" listing into a dedicated getting-started flow and refreshed install/usage guidance.
+
+### Highlights
+
+- `update --check` avoids cloning sources when the remote tree SHA changes (the largest single speedup)
+- Parallelize source groups with bounded concurrency, keeping deterministic output order
+- Persist `resolvedRef` in the skill lock to skip HEAD/main iteration on later checks
+- Scope meta-skill update instructions to the named skills; agents no longer check the whole store uninvited
+- Refresh READMEs and sync the version badge to 0.4.4
+
 ## v0.4.3 - 2026-09-04
 
 `Unreleased` adds skill authoring support. Creating a skill now has the same first-class lifecycle as installing one: `store create` scaffolds a valid skill into the central store (or a repo directory with `--dir`), and a third built-in meta-skill, `aweskill-creator`, teaches agents the full authoring loop — capture intent, check for existing skills, scaffold, draft, test, validate, and project.
