@@ -5,3 +5,11 @@ skills:
   - compress
   - caveman-help
   - caveman-review
+sources:
+  - source: JuliusBrussee/caveman
+    skills:
+      - caveman
+      - caveman-commit
+      - compress
+      - caveman-help
+      - caveman-review

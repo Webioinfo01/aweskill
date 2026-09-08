@@ -12,3 +12,18 @@ skills:
   - security-guardian
   - ship
   - tdd-rust
+sources:
+  - source: rtk-ai/rtk
+    skills:
+      - code-simplifier
+      - design-patterns
+      - issue-triage
+      - performance
+      - pr-review
+      - pr-triage
+      - repo-recap
+      - rtk-tdd
+      - rtk-triage
+      - security-guardian
+      - ship
+      - tdd-rust

@@ -3,3 +3,9 @@ skills:
   - aweskill
   - aweskill-doctor
   - aweskill-creator
+sources:
+  - source: Webioinfo01/aweskill
+    skills:
+      - aweskill
+      - aweskill-doctor
+      - aweskill-creator

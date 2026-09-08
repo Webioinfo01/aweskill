@@ -8,3 +8,18 @@ skills:
   - baoyu-cover-image
   - baoyu-image-cards
   - baoyu-article-illustrator
+sources:
+  - source: mugpeng/oh-my-skills-diy
+    skills:
+      - peng-crosspost-workflow
+      - peng-post-to-devto
+  - source: JimLiu/baoyu-skills
+    skills:
+      - baoyu-post-to-wechat
+      - baoyu-post-to-x
+      - baoyu-cover-image
+      - baoyu-image-cards
+      - baoyu-article-illustrator
+  - source: zhjiang22/openclaw-xhs
+    skills:
+      - xiaohongshu

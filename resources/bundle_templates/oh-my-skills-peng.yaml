@@ -7,3 +7,13 @@ skills:
   - peng-post-to-devto
   - peng-post-to-x-thread
   - peng-post-to-xhs
+sources:
+  - source: mugpeng/oh-my-skills-diy
+    skills:
+      - peng-code-zen
+      - peng-crosspost-workflow
+      - peng-github-release-workflow
+      - peng-karpathy-guidelines
+      - peng-post-to-devto
+      - peng-post-to-x-thread
+      - peng-post-to-xhs
