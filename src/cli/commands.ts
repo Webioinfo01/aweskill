@@ -8,6 +8,7 @@ import {
   runBundleDelete,
   runBundleRemoveSkill,
   runBundleShow,
+  runBundleTemplateInstall,
   runBundleTemplateShow,
 } from "../commands/bundle.js";
 import { runClean } from "../commands/clean.js";
@@ -231,6 +232,18 @@ export function createProgram(overrides: Partial<RuntimeContext> = {}) {
     .action(async (name, options) => {
       await runFramedCommand(" aweskill bundle template import ", async () =>
         runBundleAddTemplate(context, name, { override: options.override }),
+      );
+    });
+  bundleTemplate
+    .command("install")
+    .argument("<name>")
+    .description(
+      "Install bundle skills from their recorded template sources (falls back to import when a template has no sources)",
+    )
+    .option("--override", "overwrite existing skills and bundles when installing", false)
+    .action(async (name, options) => {
+      await runFramedCommand(" aweskill bundle template install ", async () =>
+        runBundleTemplateInstall(context, name, { override: options.override }),
       );
     });
 

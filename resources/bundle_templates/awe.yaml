@@ -1,0 +1,43 @@
+name: awe
+skills:
+  - awecompress
+  - awerouter
+  - awescholar
+  - aweshare
+  - aweshelf
+  - aweskill
+  - aweskill-creator
+  - aweskill-doctor
+  - aweswitch
+  - awewarm
+  - awewarm-hub
+sources:
+  - source: wehuman01/awecompress
+    skills:
+      - awecompress
+  - source: wehuman01/awerouter
+    skills:
+      - awerouter
+  - source: Webioinfo01/awescholar
+    skills:
+      - awescholar
+  - source: wehuman01/aweshare
+    skills:
+      - aweshare
+  - source: Webioinfo01/aweshelf
+    skills:
+      - aweshelf
+  - source: Webioinfo01/aweskill
+    skills:
+      - aweskill
+      - aweskill-creator
+      - aweskill-doctor
+  - source: Webioinfo01/aweswitch
+    skills:
+      - aweswitch
+  - source: wehuman01/awewarm
+    skills:
+      - awewarm
+  - source: wehuman01/awewarm-hub
+    skills:
+      - awewarm-hub

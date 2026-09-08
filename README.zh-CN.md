@@ -562,6 +562,7 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 | `aweskill bundle show <name>` | 查看 bundle 内容 |
 | `aweskill bundle template list [--verbose]` | 列出内置 bundle 模板 |
 | `aweskill bundle template import <name>` | 把内置模板复制到本地仓库 |
+| `aweskill bundle template install <name> [--override]` | 按模板记录的来源安装全部 skill 并导入 bundle；无来源的模板退化为普通导入 |
 | `aweskill agent supported` | 列出全部支持的 agent id，用 `✓` / `x` 标记 global 安装状态，并显示已检测到的 global skills 路径 |
 | `aweskill agent add bundle\|skill ...` | 把托管 skill 投影到 agent 目录 |
 | `aweskill agent remove bundle\|skill ... [--force]` | 删除托管投影 |
@@ -729,14 +730,23 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 
 aweskill 是一个不断壮大的 "awesome" 工具家族中的技能管理器 — 围绕 AI 编程 agent 打造，local-first、可被 agent 直接操作。
 
+用内置的 `awe` bundle 模板一条命令安装整个家族 — 每个 skill 仍然从各自的项目仓库下载，项目仓库始终是唯一权威源：
+
+```bash
+aweskill bundle template install awe
+aweskill agent add bundle awe --agent claude-code
+```
+
 ### CLI 工具
 
 - **[aweskill](https://aweskill.webioinfo.top/)** — CLI 优先的技能包管理器，支持 47+ AI 编程 agent。
 - **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Claude Code、Codex、OpenCode 的 agent 配置切换器。
-- **[awerouter](https://github.com/mugpeng/awerouter)** — 智能路由器，用结构信号把请求分给 Flash 或 Pro 模型，减少不必要的模型开销。
+- **[awerouter](https://github.com/wehuman01/awerouter)** — 智能路由器，用结构信号把请求分给 Flash 或 Pro 模型，减少不必要的模型开销。
+- **[awecompress](https://github.com/wehuman01/awecompress)** — 面向编程 agent 的透明上下文压缩代理：长会话冻结摘要，可与 awerouter 叠加使用。
 - **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — 收藏、分类、恢复 AI 编程会话，还能搭配 aweswitch 实现保存配置，一键启动。
 - **[aweshare](https://github.com/wehuman01/aweshare)** — 通过自建 Hub 共享本地 Ollama/vLLM，或国产厂商 coding plan，或已授权的 OpenAI/Anthropic 帐号订阅，实现 token 的共享经济。
 - **[awewarm](https://github.com/wehuman01/awewarm)** — 订阅窗口保持器，让 AI 编程套餐的窗口持续激活，无论是本地设置，还是通过远程连接的服务器。
+- **[awewarm-hub](https://github.com/wehuman01/awewarm-hub)** — awewarm 的多租户 Hub 服务器：邀请码、租户容量上限、共享保温窗口。
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI agent 可自主执行的科学文献发现与策展，搜索、标注、筛选和报告学术论文。
 
 ### 桌面应用

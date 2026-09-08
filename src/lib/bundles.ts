@@ -18,10 +18,20 @@ function bundleFilePathInDirectory(bundlesDir: string, bundleName: string): stri
 
 function normalizeBundle(raw: unknown, fallbackName: string): BundleDefinition {
   const data = (raw ?? {}) as Partial<BundleDefinition>;
-  return {
+  const sources = (data.sources ?? [])
+    .map((group) => ({
+      source: String(group?.source ?? "").trim(),
+      skills: uniqueSorted((group?.skills ?? []).map((skill) => sanitizeName(String(skill))).filter(Boolean)),
+    }))
+    .filter((group) => group.source !== "" && group.skills.length > 0);
+  const bundle: BundleDefinition = {
     name: sanitizeName(data.name ?? fallbackName),
     skills: uniqueSorted((data.skills ?? []).map((skill) => sanitizeName(String(skill))).filter(Boolean)),
   };
+  if (sources.length > 0) {
+    bundle.sources = sources;
+  }
+  return bundle;
 }
 
 export async function listBundles(homeDir: string): Promise<BundleDefinition[]> {

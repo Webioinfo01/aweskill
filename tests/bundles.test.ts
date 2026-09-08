@@ -7,6 +7,7 @@ import {
   listBundles,
   readBundle,
   removeSkillFromBundle,
+  writeBundle,
 } from "../src/lib/bundles.js";
 import { getSkillPath } from "../src/lib/skills.js";
 import { createTempWorkspace, writeSkill } from "./helpers.js";
@@ -44,5 +45,29 @@ describe("bundles", () => {
     await expect(addSkillToBundle(workspace.homeDir, "backend", "missing-skill")).rejects.toThrow(
       "Unknown skill: missing-skill",
     );
+  });
+
+  it("round-trips source groups and drops empty ones", async () => {
+    const workspace = await createTempWorkspace();
+
+    await writeBundle(workspace.homeDir, {
+      name: "family",
+      skills: ["alpha", "beta"],
+      sources: [
+        { source: "wehuman01/alpha", skills: ["alpha"] },
+        { source: "", skills: ["beta"] },
+        { source: "wehuman01/gamma", skills: [] },
+        { source: "wehuman01/beta", skills: ["beta"] },
+      ],
+    });
+
+    await expect(readBundle(workspace.homeDir, "family")).resolves.toEqual({
+      name: "family",
+      skills: ["alpha", "beta"],
+      sources: [
+        { source: "wehuman01/alpha", skills: ["alpha"] },
+        { source: "wehuman01/beta", skills: ["beta"] },
+      ],
+    });
   });
 });

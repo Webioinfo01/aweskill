@@ -573,6 +573,7 @@ Top-level convenience commands are available for high-frequency search and track
 | `aweskill bundle show <name>` | Inspect bundle contents |
 | `aweskill bundle template list [--verbose]` | List built-in bundle templates |
 | `aweskill bundle template import <name>` | Copy a built-in template bundle into the store |
+| `aweskill bundle template install <name> [--override]` | Install every skill of a template from its recorded sources, then import the bundle; templates without sources fall back to plain import |
 | `aweskill agent supported` | List all supported agent ids, mark global install status with `✓` / `x`, and show detected global skills paths |
 | `aweskill agent add bundle\|skill ...` | Project managed skills into agent directories |
 | `aweskill agent remove bundle\|skill ... [--force]` | Remove managed projections |
@@ -740,14 +741,23 @@ See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for setup, testing, and code st
 
 aweskill is the skill manager at the center of a growing family of "awesome" tools built around AI coding agents — local-first and agent-operable.
 
+Install the whole family in one command with the built-in `awe` bundle template — each skill still downloads from its own repository, so every project stays the single source of truth for its skill:
+
+```bash
+aweskill bundle template install awe
+aweskill agent add bundle awe --agent claude-code
+```
+
 ### CLI Tools
 
 - **[aweskill](https://aweskill.webioinfo.top/)** — CLI-first skill package manager supporting 47+ AI coding agents.
 - **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Agent profile switcher for Claude Code, Codex, and OpenCode.
-- **[awerouter](https://github.com/mugpeng/awerouter)** — Smart router that splits requests between Flash and Pro models using structural signals, cutting unnecessary model spend.
+- **[awerouter](https://github.com/wehuman01/awerouter)** — Smart router that splits requests between Flash and Pro models using structural signals, cutting unnecessary model spend.
+- **[awecompress](https://github.com/wehuman01/awecompress)** — Transparent context-compression proxy for coding agents: frozen summaries for long sessions, stackable with awerouter.
 - **[aweshelf](https://github.com/Webioinfo01/aweshelf)** — Bookmark, categorize, and restore AI coding sessions; pairs with aweswitch to save profiles and launch with one command.
 - **[aweshare](https://github.com/wehuman01/aweshare)** — Share local Ollama/vLLM backends, domestic coding plans, or authorized OpenAI/Anthropic subscriptions through a self-hosted hub — a sharing economy for tokens.
 - **[awewarm](https://github.com/wehuman01/awewarm)** — Subscription window warmer that keeps AI coding-plan windows active, for local setups and through a remote hub server.
+- **[awewarm-hub](https://github.com/wehuman01/awewarm-hub)** — Multi-tenant hub server for awewarm: invites, tenant capacity limits, and shared warm-up windows.
 - **[awescholar](https://github.com/Webioinfo01/awescholar)** — AI-agent-operable scientific literature discovery and curation. Search, annotate, filter, and report on academic papers.
 
 ### Desktop Apps

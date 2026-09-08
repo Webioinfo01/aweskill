@@ -8,15 +8,25 @@ import {
   writeBundle,
 } from "../lib/bundles.js";
 import { normalizeNameList } from "../lib/path.js";
+import { skillExists } from "../lib/skills.js";
 import { getTemplateBundlesDir } from "../lib/templates.js";
-import type { RuntimeContext } from "../types.js";
+import type { BundleDefinition, RuntimeContext } from "../types.js";
+import { runDownload } from "./download.js";
+
+function formatBundle(bundle: BundleDefinition): string {
+  const lines = [`${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`];
+  for (const group of bundle.sources ?? []) {
+    lines.push(`  ${group.source}: ${group.skills.join(", ")}`);
+  }
+  return lines.join("\n");
+}
 
 export async function runBundleTemplateShow(context: RuntimeContext, bundleName: string) {
   const templateBundlesDir = await getTemplateBundlesDir();
   const bundles = await Promise.all(
     parseNames(bundleName).map((name) => readBundleFromDirectory(templateBundlesDir, name)),
   );
-  context.write(bundles.map((bundle) => `${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`).join("\n"));
+  context.write(bundles.map(formatBundle).join("\n"));
   return bundles;
 }
 
@@ -32,7 +42,7 @@ export async function runBundleCreate(context: RuntimeContext, bundleName: strin
 
 export async function runBundleShow(context: RuntimeContext, bundleName: string) {
   const bundles = await Promise.all(parseNames(bundleName).map((name) => readBundle(context.homeDir, name)));
-  context.write(bundles.map((bundle) => `${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`).join("\n"));
+  context.write(bundles.map(formatBundle).join("\n"));
   return bundles;
 }
 
@@ -128,4 +138,32 @@ export async function runBundleAddTemplate(
       .join("\n"),
   );
   return bundles;
+}
+
+export async function runBundleTemplateInstall(
+  context: RuntimeContext,
+  bundleName: string,
+  options: { override?: boolean } = {},
+) {
+  const override = options.override ?? false;
+  const templateBundlesDir = await getTemplateBundlesDir();
+  const templates = await Promise.all(
+    parseNames(bundleName).map((name) => readBundleFromDirectory(templateBundlesDir, name)),
+  );
+
+  const providedSkills = new Set(
+    templates.flatMap((template) => template.sources?.flatMap((group) => group.skills) ?? []),
+  );
+  for (const template of templates) {
+    for (const group of template.sources ?? []) {
+      await runDownload(context, group.source, { skill: group.skills, override });
+    }
+    for (const skill of template.skills) {
+      if (!providedSkills.has(skill) && !(await skillExists(context.homeDir, skill))) {
+        context.write(`Warning: ${skill} has no template source and is not installed; install it before projecting.`);
+      }
+    }
+  }
+
+  return runBundleAddTemplate(context, bundleName, { override });
 }

@@ -2768,6 +2768,70 @@ describe("commands", () => {
     }
   });
 
+  it("bundle template install installs skills from template sources and imports the bundle", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: (message) => lines.push(`ERR:${message}`),
+    });
+
+    const sourceRoot = path.join(workspace.rootDir, "template-source");
+    await writeSkill(path.join(sourceRoot, "alpha"), "Alpha");
+    await writeSkill(path.join(sourceRoot, "beta"), "Beta");
+
+    const templateBundlesDir = await getTemplateBundlesDir();
+    const temporaryTemplatePath = path.join(templateBundlesDir, "temporary-install.yaml");
+    await writeFile(
+      temporaryTemplatePath,
+      [
+        "name: temporary-install",
+        "skills:",
+        "  - alpha",
+        "  - beta",
+        "  - missing-local",
+        "sources:",
+        `  - source: ${sourceRoot}`,
+        "    skills:",
+        "      - alpha",
+        "      - beta",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+
+    try {
+      await program.parseAsync(["node", "aweskill", "bundle", "template", "install", "temporary-install"], {
+        from: "node",
+      });
+
+      const output = lines.join("\n");
+      expect(output).toContain("Installed alpha");
+      expect(output).toContain("Installed beta");
+      expect(output).toContain("Warning: missing-local has no template source and is not installed");
+      expect(output).toContain("Added bundle temporary-install from template");
+
+      const bundleYaml = await readFile(
+        path.join(workspace.homeDir, ".aweskill", "bundles", "temporary-install.yaml"),
+        "utf8",
+      );
+      expect(bundleYaml).toContain("- alpha");
+      expect(bundleYaml).toContain("- missing-local");
+      expect(bundleYaml).toContain(sourceRoot);
+
+      await expect(access(getSkillPath(workspace.homeDir, "alpha"))).resolves.toBeUndefined();
+      await expect(access(getSkillPath(workspace.homeDir, "beta"))).resolves.toBeUndefined();
+
+      const lock = await readSkillLock(workspace.homeDir);
+      expect(lock.skills.alpha?.source).toBe(sourceRoot);
+      expect(lock.skills.beta?.source).toBe(sourceRoot);
+    } finally {
+      await rm(temporaryTemplatePath, { force: true });
+    }
+  });
+
   it('prints an explicit error for the removed top-level "skill" command even with help flags', async () => {
     const workspace = await createTempWorkspace();
     const previousCwd = process.cwd();
