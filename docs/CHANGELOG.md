@@ -1,5 +1,11 @@
 # change log
 
+## v0.4.5 - 2026-09-09
+
+### Features
+- Add `bundle template install` command to install skills from recorded source groups, with fallback to plain import for templates without sources
+- Add verified source groups for nine bundle templates (awe, aweskill, baoyu-skills, caveman, nature-paper-skills, oh-my-skills-peng, rtk-skills, taste-skill, peng-crosspost-publishing)
+
 ## Unreleased
 
 ## v0.4.4 - 2026-09-05
