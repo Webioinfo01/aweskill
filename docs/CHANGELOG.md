@@ -1,12 +1,21 @@
 # change log
 
+## v0.4.6 - 2026-09-09
+
+`v0.4.6` is a docs-alignment patch for the v0.4.5 release: the README version badges were still on 0.4.4, a leftover empty `## Unreleased` heading sat between the v0.4.5 and v0.4.4 entries, and the v0.4.3 overview still opened with "`Unreleased`" instead of the version number.
+
+### Fixes
+
+- Sync the version badges in `README.md` and `README.zh-CN.md` to the released version
+- Move the empty `## Unreleased` heading back to the top of the changelog and fix the stale "`Unreleased`" wording in the v0.4.3 entry
+
+## Unreleased
+
 ## v0.4.5 - 2026-09-09
 
 ### Features
 - Add `bundle template install` command to install skills from recorded source groups, with fallback to plain import for templates without sources
 - Add verified source groups for nine bundle templates (awe, aweskill, baoyu-skills, caveman, nature-paper-skills, oh-my-skills-peng, rtk-skills, taste-skill, peng-crosspost-publishing)
-
-## Unreleased
 
 ## v0.4.4 - 2026-09-05
 
@@ -34,7 +43,7 @@
 
 ## v0.4.3 - 2026-09-04
 
-`Unreleased` adds skill authoring support. Creating a skill now has the same first-class lifecycle as installing one: `store create` scaffolds a valid skill into the central store (or a repo directory with `--dir`), and a third built-in meta-skill, `aweskill-creator`, teaches agents the full authoring loop — capture intent, check for existing skills, scaffold, draft, test, validate, and project.
+`v0.4.3` adds skill authoring support. Creating a skill now has the same first-class lifecycle as installing one: `store create` scaffolds a valid skill into the central store (or a repo directory with `--dir`), and a third built-in meta-skill, `aweskill-creator`, teaches agents the full authoring loop — capture intent, check for existing skills, scaffold, draft, test, validate, and project.
 
 ### Skill authoring
 
