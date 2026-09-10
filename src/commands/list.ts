@@ -2,7 +2,7 @@ import { listBundlesInDirectory } from "../lib/bundles.js";
 import { formatHygieneHint, scanStoreHygiene } from "../lib/hygiene.js";
 import { getAweskillPaths } from "../lib/path.js";
 import { getTemplateBundlesDir } from "../lib/templates.js";
-import type { RuntimeContext } from "../types.js";
+import type { BundleSkill, RuntimeContext } from "../types.js";
 
 const DEFAULT_PREVIEW_COUNT = 5;
 
@@ -34,7 +34,11 @@ export async function runListSkills(context: RuntimeContext, options: { verbose?
   return skills;
 }
 
-function formatBundleLines(title: string, bundles: { name: string; skills: string[] }[], verbose?: boolean): string[] {
+function formatBundleLines(
+  title: string,
+  bundles: { name: string; skills: BundleSkill[] }[],
+  verbose?: boolean,
+): string[] {
   if (bundles.length === 0) {
     return [title, "(none)"];
   }
@@ -49,7 +53,7 @@ function formatBundleLines(title: string, bundles: { name: string; skills: strin
   const lines = [`${title}: ${bundles.length} total`];
   for (const bundle of bundles) {
     lines.push(
-      `  - ${bundle.name}: ${bundle.skills.length} skills${bundle.skills.length > 0 ? ` -> ${bundle.skills.join(", ")}` : " -> (empty)"}`,
+      `  - ${bundle.name}: ${bundle.skills.length} skills${bundle.skills.length > 0 ? ` -> ${bundle.skills.map((skill) => skill.name).join(", ")}` : " -> (empty)"}`,
     );
   }
   return lines;

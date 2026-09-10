@@ -3,9 +3,9 @@ import path from "node:path";
 
 import { parse, stringify } from "yaml";
 
-import type { BundleDefinition } from "../types.js";
+import type { BundleDefinition, BundleSkill } from "../types.js";
 import { pathExists } from "./fs.js";
-import { getAweskillPaths, sanitizeName, uniqueSorted } from "./path.js";
+import { getAweskillPaths, sanitizeName } from "./path.js";
 import { skillExists } from "./skills.js";
 
 function bundleFilePath(homeDir: string, bundleName: string): string {
@@ -16,22 +16,78 @@ function bundleFilePathInDirectory(bundlesDir: string, bundleName: string): stri
   return path.join(bundlesDir, `${sanitizeName(bundleName)}.yaml`);
 }
 
-function normalizeBundle(raw: unknown, fallbackName: string): BundleDefinition {
-  const data = (raw ?? {}) as Partial<BundleDefinition>;
-  const sources = (data.sources ?? [])
-    .map((group) => ({
-      source: String(group?.source ?? "").trim(),
-      skills: uniqueSorted((group?.skills ?? []).map((skill) => sanitizeName(String(skill))).filter(Boolean)),
-    }))
-    .filter((group) => group.source !== "" && group.skills.length > 0);
-  const bundle: BundleDefinition = {
-    name: sanitizeName(data.name ?? fallbackName),
-    skills: uniqueSorted((data.skills ?? []).map((skill) => sanitizeName(String(skill))).filter(Boolean)),
-  };
-  if (sources.length > 0) {
-    bundle.sources = sources;
+/**
+ * Normalizes a raw bundle document into the per-skill format. Accepts both
+ * the current format (`skills: [{name, source}]`, `source: null` for skills
+ * without one) and the legacy format (`skills: [name...]` plus optional
+ * `sources: [{source, skills}]` groups, merged in per skill name).
+ */
+export function normalizeBundle(raw: unknown, fallbackName: string): BundleDefinition {
+  const data = (raw ?? {}) as { name?: unknown; skills?: unknown; sources?: unknown };
+
+  const legacySources = new Map<string, string>();
+  if (Array.isArray(data.sources)) {
+    for (const group of data.sources as { source?: unknown; skills?: unknown }[]) {
+      const source = String(group?.source ?? "").trim();
+      if (source === "" || !Array.isArray(group?.skills)) {
+        continue;
+      }
+      for (const skill of group.skills) {
+        const name = sanitizeName(String(skill));
+        if (name !== "") {
+          legacySources.set(name, source);
+        }
+      }
+    }
   }
-  return bundle;
+
+  const entries = new Map<string, string | null>();
+  const record = (rawName: unknown, rawSource: unknown) => {
+    const name = sanitizeName(String(rawName ?? ""));
+    if (name === "") {
+      return;
+    }
+    const trimmed = rawSource == null ? "" : String(rawSource).trim();
+    const source = trimmed === "" ? (legacySources.get(name) ?? null) : trimmed;
+    const existing = entries.get(name);
+    if (existing === undefined || (existing === null && source !== null)) {
+      entries.set(name, source);
+    }
+  };
+
+  if (Array.isArray(data.skills)) {
+    for (const skill of data.skills) {
+      if (typeof skill === "string" || skill === null || skill === undefined) {
+        record(skill, undefined);
+      } else {
+        record((skill as { name?: unknown }).name, (skill as { source?: unknown }).source);
+      }
+    }
+  }
+
+  return {
+    name: sanitizeName(String(data.name ?? fallbackName)),
+    skills: [...entries]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([name, source]) => ({ name, source })),
+  };
+}
+
+export function bundleSkillNames(bundle: BundleDefinition): string[] {
+  return bundle.skills.map((skill) => skill.name);
+}
+
+export function groupSkillsBySource(skills: BundleSkill[]): Map<string, string[]> {
+  const groups = new Map<string, string[]>();
+  for (const skill of skills) {
+    if (!skill.source) {
+      continue;
+    }
+    const names = groups.get(skill.source) ?? [];
+    names.push(skill.name);
+    groups.set(skill.source, names);
+  }
+  return groups;
 }
 
 export async function listBundles(homeDir: string): Promise<BundleDefinition[]> {
@@ -112,7 +168,10 @@ export async function addSkillToBundle(
   }
 
   const bundle = await readBundle(homeDir, bundleName);
-  bundle.skills = uniqueSorted([...bundle.skills, normalizedSkill].filter(Boolean));
+  const nextSkills = bundle.skills.some((skill) => skill.name === normalizedSkill)
+    ? bundle.skills
+    : [...bundle.skills, { name: normalizedSkill, source: null }];
+  bundle.skills = nextSkills.sort((left, right) => left.name.localeCompare(right.name));
   return writeBundle(homeDir, bundle);
 }
 
@@ -123,7 +182,7 @@ export async function removeSkillFromBundle(
 ): Promise<BundleDefinition> {
   const bundle = await readBundle(homeDir, bundleName);
   const normalizedSkill = sanitizeName(skillName);
-  bundle.skills = bundle.skills.filter((skill) => skill !== normalizedSkill);
+  bundle.skills = bundle.skills.filter((skill) => skill.name !== normalizedSkill);
   return writeBundle(homeDir, bundle);
 }
 

@@ -6,7 +6,7 @@ import {
   resolveAgentSkillsDir,
   resolveAgentsForMutation,
 } from "../lib/agents.js";
-import { listBundles } from "../lib/bundles.js";
+import { bundleSkillNames, listBundles } from "../lib/bundles.js";
 import { pathExists } from "../lib/fs.js";
 import { getAweskillPaths, normalizeNameList, sanitizeName, uniqueSorted } from "../lib/path.js";
 import { skillExists } from "../lib/skills.js";
@@ -40,7 +40,7 @@ async function resolveDisableTargets(
         requestedNames: ["all"],
         existingTargetNames: ["all"],
         missingTargetNames: [],
-        skillNames: uniqueSorted(bundles.flatMap((bundle) => bundle.skills)),
+        skillNames: uniqueSorted(bundles.flatMap((bundle) => bundleSkillNames(bundle))),
       };
     }
 
@@ -67,7 +67,9 @@ async function resolveDisableTargets(
     const existingTargetNames = normalizedNames.filter((bundleName) => bundleMap.has(bundleName));
     const missingTargetNames = normalizedNames.filter((bundleName) => !bundleMap.has(bundleName));
     const skillNames = uniqueSorted(
-      existingTargetNames.flatMap((bundleName) => bundleMap.get(bundleName)?.skills ?? []),
+      existingTargetNames.flatMap((bundleName) =>
+        bundleSkillNames(bundleMap.get(bundleName) ?? { name: bundleName, skills: [] }),
+      ),
     );
     return {
       requestedNames: normalizedNames,
@@ -129,10 +131,11 @@ async function bundlesWithCoEnabledSiblings(options: {
   const hit = new Set<string>();
 
   for (const bundle of bundles) {
-    if (!bundle.skills.includes(normalized)) {
+    const names = bundleSkillNames(bundle);
+    if (!names.includes(normalized)) {
       continue;
     }
-    const siblings = bundle.skills.filter((s) => s !== normalized);
+    const siblings = names.filter((s) => s !== normalized);
     if (siblings.length === 0) {
       continue;
     }

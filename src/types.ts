@@ -2,15 +2,14 @@ export type ActivationType = "bundle" | "skill";
 export type ProjectionMode = "symlink" | "copy";
 export type Scope = "global" | "project";
 
-export interface BundleSourceGroup {
-  source: string;
-  skills: string[];
+export interface BundleSkill {
+  name: string;
+  source: string | null;
 }
 
 export interface BundleDefinition {
   name: string;
-  skills: string[];
-  sources?: BundleSourceGroup[];
+  skills: BundleSkill[];
 }
 
 export interface AweskillPaths {

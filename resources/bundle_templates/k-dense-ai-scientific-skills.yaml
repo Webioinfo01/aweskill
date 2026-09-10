@@ -1,144 +1,286 @@
 name: k-dense-ai-scientific-skills
 skills:
-  - adaptyv
-  - aeon
-  - alphafold-database
-  - anndata
-  - arboreto
-  - astropy
-  - benchling-integration
-  - biopython
-  - biorxiv-database
-  - bioservices
-  - brenda-database
-  - cellxgene-census
-  - chembl-database
-  - cirq
-  - citation-management
-  - clinical-decision-support
-  - clinical-reports
-  - clinicaltrials-database
-  - clinpgx-database
-  - clinvar-database
-  - cobrapy
-  - cosmic-database
-  - dask
-  - datacommons-client
-  - datamol
-  - deepchem
-  - deeptools
-  - denario
-  - diffdock
-  - dnanexus-integration
-  - docx
-  - drugbank-database
-  - ena-database
-  - ensembl-database
-  - esm
-  - etetoolkit
-  - exploratory-data-analysis
-  - fda-database
-  - flowio
-  - fluidsim
-  - fred-economic-data
-  - gene-database
-  - generate-image
-  - geniml
-  - geo-database
-  - geopandas
-  - get-available-resources
-  - gget
-  - gtars
-  - gwas-database
-  - histolab
-  - hmdb-database
-  - hypogenic
-  - hypothesis-generation
-  - imaging-data-commons
-  - iso-13485-certification
-  - kegg-database
-  - labarchive-integration
-  - lamindb
-  - latchbio-integration
-  - latex-posters
-  - literature-review
-  - market-research-reports
-  - markitdown
-  - matchms
-  - matlab
-  - matplotlib
-  - medchem
-  - metabolomics-workbench-database
-  - modal
-  - molfeat
-  - networkx
-  - neurokit2
-  - neuropixels-analysis
-  - omero-integration
-  - openalex-database
-  - opentargets-database
-  - opentrons-integration
-  - paper-2-web
-  - pathml
-  - pdb-database
-  - pdf
-  - peer-review
-  - pennylane
-  - perplexity-search
-  - plotly
-  - polars
-  - pptx
-  - pptx-posters
-  - protocolsio-integration
-  - pubchem-database
-  - pubmed-database
-  - pufferlib
-  - pydeseq2
-  - pydicom
-  - pyhealth
-  - pylabrobot
-  - pymatgen
-  - pymc
-  - pymoo
-  - pyopenms
-  - pysam
-  - pytdc
-  - pytorch-lightning
-  - qiskit
-  - qutip
-  - rdkit
-  - reactome-database
-  - research-grants
-  - research-lookup
-  - rowan
-  - scanpy
-  - scholar-evaluation
-  - scientific-brainstorming
-  - scientific-critical-thinking
-  - scientific-schematics
-  - scientific-slides
-  - scientific-visualization
-  - scientific-writing
-  - scikit-bio
-  - scikit-learn
-  - scikit-survival
-  - scvi-tools
-  - seaborn
-  - shap
-  - simpy
-  - stable-baselines3
-  - statistical-analysis
-  - statsmodels
-  - string-database
-  - sympy
-  - torchdrug
-  - transformers
-  - treatment-plans
-  - umap-learn
-  - uniprot-database
-  - uspto-database
-  - vaex
-  - venue-templates
-  - xlsx
-  - zarr-python
-  - zinc-database
+  - name: adaptyv
+    source: K-Dense-AI/scientific-agent-skills
+  - name: aeon
+    source: K-Dense-AI/scientific-agent-skills
+  - name: alphafold-database
+    source: null
+  - name: anndata
+    source: K-Dense-AI/scientific-agent-skills
+  - name: arboreto
+    source: K-Dense-AI/scientific-agent-skills
+  - name: astropy
+    source: K-Dense-AI/scientific-agent-skills
+  - name: benchling-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: biopython
+    source: K-Dense-AI/scientific-agent-skills
+  - name: biorxiv-database
+    source: null
+  - name: bioservices
+    source: K-Dense-AI/scientific-agent-skills
+  - name: brenda-database
+    source: null
+  - name: cellxgene-census
+    source: K-Dense-AI/scientific-agent-skills
+  - name: chembl-database
+    source: null
+  - name: cirq
+    source: K-Dense-AI/scientific-agent-skills
+  - name: citation-management
+    source: K-Dense-AI/scientific-agent-skills
+  - name: clinical-decision-support
+    source: K-Dense-AI/scientific-agent-skills
+  - name: clinical-reports
+    source: K-Dense-AI/scientific-agent-skills
+  - name: clinicaltrials-database
+    source: null
+  - name: clinpgx-database
+    source: null
+  - name: clinvar-database
+    source: null
+  - name: cobrapy
+    source: K-Dense-AI/scientific-agent-skills
+  - name: cosmic-database
+    source: null
+  - name: dask
+    source: K-Dense-AI/scientific-agent-skills
+  - name: datacommons-client
+    source: null
+  - name: datamol
+    source: K-Dense-AI/scientific-agent-skills
+  - name: deepchem
+    source: K-Dense-AI/scientific-agent-skills
+  - name: deeptools
+    source: K-Dense-AI/scientific-agent-skills
+  - name: denario
+    source: null
+  - name: diffdock
+    source: K-Dense-AI/scientific-agent-skills
+  - name: dnanexus-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: docx
+    source: K-Dense-AI/scientific-agent-skills
+  - name: drugbank-database
+    source: null
+  - name: ena-database
+    source: null
+  - name: ensembl-database
+    source: null
+  - name: esm
+    source: K-Dense-AI/scientific-agent-skills
+  - name: etetoolkit
+    source: K-Dense-AI/scientific-agent-skills
+  - name: exploratory-data-analysis
+    source: K-Dense-AI/scientific-agent-skills
+  - name: fda-database
+    source: null
+  - name: flowio
+    source: K-Dense-AI/scientific-agent-skills
+  - name: fluidsim
+    source: K-Dense-AI/scientific-agent-skills
+  - name: fred-economic-data
+    source: null
+  - name: gene-database
+    source: null
+  - name: generate-image
+    source: K-Dense-AI/scientific-agent-skills
+  - name: geniml
+    source: K-Dense-AI/scientific-agent-skills
+  - name: geo-database
+    source: null
+  - name: geopandas
+    source: K-Dense-AI/scientific-agent-skills
+  - name: get-available-resources
+    source: K-Dense-AI/scientific-agent-skills
+  - name: gget
+    source: K-Dense-AI/scientific-agent-skills
+  - name: gtars
+    source: K-Dense-AI/scientific-agent-skills
+  - name: gwas-database
+    source: null
+  - name: histolab
+    source: K-Dense-AI/scientific-agent-skills
+  - name: hmdb-database
+    source: null
+  - name: hypogenic
+    source: K-Dense-AI/scientific-agent-skills
+  - name: hypothesis-generation
+    source: K-Dense-AI/scientific-agent-skills
+  - name: imaging-data-commons
+    source: K-Dense-AI/scientific-agent-skills
+  - name: iso-13485-certification
+    source: null
+  - name: kegg-database
+    source: null
+  - name: labarchive-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: lamindb
+    source: K-Dense-AI/scientific-agent-skills
+  - name: latchbio-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: latex-posters
+    source: K-Dense-AI/scientific-agent-skills
+  - name: literature-review
+    source: K-Dense-AI/scientific-agent-skills
+  - name: market-research-reports
+    source: K-Dense-AI/scientific-agent-skills
+  - name: markitdown
+    source: K-Dense-AI/scientific-agent-skills
+  - name: matchms
+    source: K-Dense-AI/scientific-agent-skills
+  - name: matlab
+    source: K-Dense-AI/scientific-agent-skills
+  - name: matplotlib
+    source: K-Dense-AI/scientific-agent-skills
+  - name: medchem
+    source: K-Dense-AI/scientific-agent-skills
+  - name: metabolomics-workbench-database
+    source: null
+  - name: modal
+    source: K-Dense-AI/scientific-agent-skills
+  - name: molfeat
+    source: K-Dense-AI/scientific-agent-skills
+  - name: networkx
+    source: K-Dense-AI/scientific-agent-skills
+  - name: neurokit2
+    source: K-Dense-AI/scientific-agent-skills
+  - name: neuropixels-analysis
+    source: K-Dense-AI/scientific-agent-skills
+  - name: omero-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: openalex-database
+    source: null
+  - name: opentargets-database
+    source: null
+  - name: opentrons-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: paper-2-web
+    source: null
+  - name: pathml
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pdb-database
+    source: null
+  - name: pdf
+    source: K-Dense-AI/scientific-agent-skills
+  - name: peer-review
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pennylane
+    source: K-Dense-AI/scientific-agent-skills
+  - name: perplexity-search
+    source: null
+  - name: plotly
+    source: null
+  - name: polars
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pptx
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pptx-posters
+    source: K-Dense-AI/scientific-agent-skills
+  - name: protocolsio-integration
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pubchem-database
+    source: null
+  - name: pubmed-database
+    source: null
+  - name: pufferlib
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pydeseq2
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pydicom
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pyhealth
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pylabrobot
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pymatgen
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pymc
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pymoo
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pyopenms
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pysam
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pytdc
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pytorch-lightning
+    source: K-Dense-AI/scientific-agent-skills
+  - name: qiskit
+    source: K-Dense-AI/scientific-agent-skills
+  - name: qutip
+    source: K-Dense-AI/scientific-agent-skills
+  - name: rdkit
+    source: K-Dense-AI/scientific-agent-skills
+  - name: reactome-database
+    source: null
+  - name: research-grants
+    source: K-Dense-AI/scientific-agent-skills
+  - name: research-lookup
+    source: K-Dense-AI/scientific-agent-skills
+  - name: rowan
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scanpy
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scholar-evaluation
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scientific-brainstorming
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scientific-critical-thinking
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scientific-schematics
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scientific-slides
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scientific-visualization
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scientific-writing
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scikit-bio
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scikit-learn
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scikit-survival
+    source: K-Dense-AI/scientific-agent-skills
+  - name: scvi-tools
+    source: K-Dense-AI/scientific-agent-skills
+  - name: seaborn
+    source: K-Dense-AI/scientific-agent-skills
+  - name: shap
+    source: K-Dense-AI/scientific-agent-skills
+  - name: simpy
+    source: K-Dense-AI/scientific-agent-skills
+  - name: stable-baselines3
+    source: K-Dense-AI/scientific-agent-skills
+  - name: statistical-analysis
+    source: K-Dense-AI/scientific-agent-skills
+  - name: statsmodels
+    source: K-Dense-AI/scientific-agent-skills
+  - name: string-database
+    source: null
+  - name: sympy
+    source: K-Dense-AI/scientific-agent-skills
+  - name: torchdrug
+    source: K-Dense-AI/scientific-agent-skills
+  - name: transformers
+    source: K-Dense-AI/scientific-agent-skills
+  - name: treatment-plans
+    source: K-Dense-AI/scientific-agent-skills
+  - name: umap-learn
+    source: K-Dense-AI/scientific-agent-skills
+  - name: uniprot-database
+    source: null
+  - name: uspto-database
+    source: null
+  - name: vaex
+    source: K-Dense-AI/scientific-agent-skills
+  - name: venue-templates
+    source: K-Dense-AI/scientific-agent-skills
+  - name: xlsx
+    source: K-Dense-AI/scientific-agent-skills
+  - name: zarr-python
+    source: K-Dense-AI/scientific-agent-skills
+  - name: zinc-database
+    source: null

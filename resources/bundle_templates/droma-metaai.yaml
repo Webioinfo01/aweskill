@@ -1,9 +1,16 @@
 name: droma-metaai
 skills:
-  - droma-dgidb-provider
-  - droma-literature-pubmed-provider
-  - droma-literature-semantic-provider
-  - droma-literature-web-provider
-  - droma-meta-provider
-  - droma-metaai-orchestrator
-  - droma-opentargets-provider
+  - name: droma-dgidb-provider
+    source: mugpeng/droma_ai_v3
+  - name: droma-literature-pubmed-provider
+    source: mugpeng/droma_ai_v3
+  - name: droma-literature-semantic-provider
+    source: mugpeng/droma_ai_v3
+  - name: droma-literature-web-provider
+    source: mugpeng/droma_ai_v3
+  - name: droma-meta-provider
+    source: mugpeng/droma_ai_v3
+  - name: droma-metaai-orchestrator
+    source: mugpeng/droma_ai_v3
+  - name: droma-opentargets-provider
+    source: mugpeng/droma_ai_v3

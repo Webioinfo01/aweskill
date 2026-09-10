@@ -1,7 +1,9 @@
 import {
   addSkillToBundle,
+  bundleSkillNames,
   createBundle,
   deleteBundle,
+  groupSkillsBySource,
   readBundle,
   readBundleFromDirectory,
   removeSkillFromBundle,
@@ -14,11 +16,8 @@ import type { BundleDefinition, RuntimeContext } from "../types.js";
 import { runDownload } from "./download.js";
 
 function formatBundle(bundle: BundleDefinition): string {
-  const lines = [`${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`];
-  for (const group of bundle.sources ?? []) {
-    lines.push(`  ${group.source}: ${group.skills.join(", ")}`);
-  }
-  return lines.join("\n");
+  const skills = bundle.skills.map((skill) => (skill.source ? `${skill.name} [${skill.source}]` : skill.name));
+  return `${bundle.name}: ${skills.join(", ") || "(empty)"}`;
 }
 
 export async function runBundleTemplateShow(context: RuntimeContext, bundleName: string) {
@@ -61,7 +60,9 @@ export async function runBundleAddSkill(
     }
     bundles.push(bundle);
   }
-  context.write(bundles.map((bundle) => `Bundle ${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`).join("\n"));
+  context.write(
+    bundles.map((bundle) => `Bundle ${bundle.name}: ${bundleSkillNames(bundle).join(", ") || "(empty)"}`).join("\n"),
+  );
   return bundles;
 }
 
@@ -80,7 +81,9 @@ export async function runBundleRemoveSkill(
     }
     bundles.push(bundle);
   }
-  context.write(bundles.map((bundle) => `Bundle ${bundle.name}: ${bundle.skills.join(", ") || "(empty)"}`).join("\n"));
+  context.write(
+    bundles.map((bundle) => `Bundle ${bundle.name}: ${bundleSkillNames(bundle).join(", ") || "(empty)"}`).join("\n"),
+  );
   return bundles;
 }
 
@@ -151,16 +154,15 @@ export async function runBundleTemplateInstall(
     parseNames(bundleName).map((name) => readBundleFromDirectory(templateBundlesDir, name)),
   );
 
-  const providedSkills = new Set(
-    templates.flatMap((template) => template.sources?.flatMap((group) => group.skills) ?? []),
-  );
   for (const template of templates) {
-    for (const group of template.sources ?? []) {
-      await runDownload(context, group.source, { skill: group.skills, override });
+    for (const [source, skills] of groupSkillsBySource(template.skills)) {
+      await runDownload(context, source, { skill: skills, override });
     }
     for (const skill of template.skills) {
-      if (!providedSkills.has(skill) && !(await skillExists(context.homeDir, skill))) {
-        context.write(`Warning: ${skill} has no template source and is not installed; install it before projecting.`);
+      if (!skill.source && !(await skillExists(context.homeDir, skill.name))) {
+        context.write(
+          `Warning: ${skill.name} has no template source and is not installed; install it before projecting.`,
+        );
       }
     }
   }

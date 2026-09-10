@@ -24,14 +24,25 @@ describe("bundles", () => {
 
     await expect(readBundle(workspace.homeDir, "backend")).resolves.toEqual({
       name: "backend",
-      skills: ["python", "shell"],
+      skills: [
+        { name: "python", source: null },
+        { name: "shell", source: null },
+      ],
     });
-    await expect(listBundles(workspace.homeDir)).resolves.toEqual([{ name: "backend", skills: ["python", "shell"] }]);
+    await expect(listBundles(workspace.homeDir)).resolves.toEqual([
+      {
+        name: "backend",
+        skills: [
+          { name: "python", source: null },
+          { name: "shell", source: null },
+        ],
+      },
+    ]);
 
     await removeSkillFromBundle(workspace.homeDir, "backend", "shell");
     await expect(readBundle(workspace.homeDir, "backend")).resolves.toEqual({
       name: "backend",
-      skills: ["python"],
+      skills: [{ name: "python", source: null }],
     });
 
     await expect(deleteBundle(workspace.homeDir, "backend")).resolves.toBe(true);
@@ -47,7 +58,7 @@ describe("bundles", () => {
     );
   });
 
-  it("round-trips source groups and drops empty ones", async () => {
+  it("merges legacy source groups into per-skill sources and keeps unmatched skills null", async () => {
     const workspace = await createTempWorkspace();
 
     await writeBundle(workspace.homeDir, {
@@ -59,14 +70,30 @@ describe("bundles", () => {
         { source: "wehuman01/gamma", skills: [] },
         { source: "wehuman01/beta", skills: ["beta"] },
       ],
-    });
+    } as never);
 
     await expect(readBundle(workspace.homeDir, "family")).resolves.toEqual({
       name: "family",
+      skills: [
+        { name: "alpha", source: "wehuman01/alpha" },
+        { name: "beta", source: "wehuman01/beta" },
+      ],
+    });
+  });
+
+  it("reads plain legacy bundles as skills with null sources", async () => {
+    const workspace = await createTempWorkspace();
+
+    await writeBundle(workspace.homeDir, {
+      name: "legacy",
       skills: ["alpha", "beta"],
-      sources: [
-        { source: "wehuman01/alpha", skills: ["alpha"] },
-        { source: "wehuman01/beta", skills: ["beta"] },
+    } as never);
+
+    await expect(readBundle(workspace.homeDir, "legacy")).resolves.toEqual({
+      name: "legacy",
+      skills: [
+        { name: "alpha", source: null },
+        { name: "beta", source: null },
       ],
     });
   });

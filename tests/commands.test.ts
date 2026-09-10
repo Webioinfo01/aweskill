@@ -2817,8 +2817,9 @@ describe("commands", () => {
         path.join(workspace.homeDir, ".aweskill", "bundles", "temporary-install.yaml"),
         "utf8",
       );
-      expect(bundleYaml).toContain("- alpha");
-      expect(bundleYaml).toContain("- missing-local");
+      expect(bundleYaml).toContain("name: alpha");
+      expect(bundleYaml).toContain("name: missing-local");
+      expect(bundleYaml).toContain("source: null");
       expect(bundleYaml).toContain(sourceRoot);
 
       await expect(access(getSkillPath(workspace.homeDir, "alpha"))).resolves.toBeUndefined();

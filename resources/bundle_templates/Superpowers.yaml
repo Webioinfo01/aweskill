@@ -1,33 +1,30 @@
 name: Superpowers
 skills:
-  - brainstorming
-  - dispatching-parallel-agents
-  - executing-plans
-  - finishing-a-development-branch
-  - receiving-code-review
-  - requesting-code-review
-  - subagent-driven-development
-  - systematic-debugging
-  - test-driven-development
-  - using-git-worktrees
-  - using-superpowers
-  - verification-before-completion
-  - writing-plans
-  - writing-skills
-sources:
-  - source: obra/superpowers
-    skills:
-      - brainstorming
-      - dispatching-parallel-agents
-      - executing-plans
-      - finishing-a-development-branch
-      - receiving-code-review
-      - requesting-code-review
-      - subagent-driven-development
-      - systematic-debugging
-      - test-driven-development
-      - using-git-worktrees
-      - using-superpowers
-      - verification-before-completion
-      - writing-plans
-      - writing-skills
+  - name: brainstorming
+    source: obra/superpowers
+  - name: dispatching-parallel-agents
+    source: obra/superpowers
+  - name: executing-plans
+    source: obra/superpowers
+  - name: finishing-a-development-branch
+    source: obra/superpowers
+  - name: receiving-code-review
+    source: obra/superpowers
+  - name: requesting-code-review
+    source: obra/superpowers
+  - name: subagent-driven-development
+    source: obra/superpowers
+  - name: systematic-debugging
+    source: obra/superpowers
+  - name: test-driven-development
+    source: obra/superpowers
+  - name: using-git-worktrees
+    source: obra/superpowers
+  - name: using-superpowers
+    source: obra/superpowers
+  - name: verification-before-completion
+    source: obra/superpowers
+  - name: writing-plans
+    source: obra/superpowers
+  - name: writing-skills
+    source: obra/superpowers

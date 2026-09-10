@@ -4,6 +4,7 @@ import path from "node:path";
 import { parse } from "yaml";
 
 import type { BundleDefinition, SkillEntry } from "../types.js";
+import { normalizeBundle } from "./bundles.js";
 import { pathExists } from "./fs.js";
 
 export type HygieneFindingKind =
@@ -83,18 +84,8 @@ export async function scanStoreHygiene(options: {
       }
 
       try {
-        const parsed = parse(await readFile(entryPath, "utf8")) as Partial<BundleDefinition> | null;
-        validBundles.push({
-          name: String(parsed?.name ?? entry.name.replace(/\.yaml$/, ""))
-            .trim()
-            .toLowerCase(),
-          skills: Array.isArray(parsed?.skills)
-            ? parsed.skills
-                .map((skill) => String(skill).trim().toLowerCase())
-                .filter(Boolean)
-                .sort()
-            : [],
-        });
+        const parsed = parse(await readFile(entryPath, "utf8"));
+        validBundles.push(normalizeBundle(parsed, entry.name.replace(/\.yaml$/, "")));
       } catch {
         findings.push({
           kind: "invalid-bundle-yaml",

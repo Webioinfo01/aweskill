@@ -1,10 +1,18 @@
 name: awereviewer
 skills:
-  - citation-management
-  - citation-verifier
-  - literature-review
-  - manuscript-optimizer
-  - paper-lookup
-  - scientific-writing
-  - submission-audit
-  - pubmed-database
+  - name: citation-management
+    source: K-Dense-AI/scientific-agent-skills
+  - name: citation-verifier
+    source: Boom5426/Nature-Paper-Skills
+  - name: literature-review
+    source: K-Dense-AI/scientific-agent-skills
+  - name: manuscript-optimizer
+    source: Boom5426/Nature-Paper-Skills
+  - name: paper-lookup
+    source: K-Dense-AI/scientific-agent-skills
+  - name: pubmed-database
+    source: null
+  - name: scientific-writing
+    source: Boom5426/Nature-Paper-Skills
+  - name: submission-audit
+    source: Boom5426/Nature-Paper-Skills

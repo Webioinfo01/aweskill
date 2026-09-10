@@ -1,25 +1,18 @@
 name: peng-crosspost-publishing
 skills:
-  - peng-crosspost-workflow
-  - baoyu-post-to-wechat
-  - xiaohongshu
-  - baoyu-post-to-x
-  - peng-post-to-devto
-  - baoyu-cover-image
-  - baoyu-image-cards
-  - baoyu-article-illustrator
-sources:
-  - source: mugpeng/oh-my-skills-diy
-    skills:
-      - peng-crosspost-workflow
-      - peng-post-to-devto
-  - source: JimLiu/baoyu-skills
-    skills:
-      - baoyu-post-to-wechat
-      - baoyu-post-to-x
-      - baoyu-cover-image
-      - baoyu-image-cards
-      - baoyu-article-illustrator
-  - source: zhjiang22/openclaw-xhs
-    skills:
-      - xiaohongshu
+  - name: baoyu-article-illustrator
+    source: JimLiu/baoyu-skills
+  - name: baoyu-cover-image
+    source: JimLiu/baoyu-skills
+  - name: baoyu-image-cards
+    source: JimLiu/baoyu-skills
+  - name: baoyu-post-to-wechat
+    source: JimLiu/baoyu-skills
+  - name: baoyu-post-to-x
+    source: JimLiu/baoyu-skills
+  - name: peng-crosspost-workflow
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-post-to-devto
+    source: mugpeng/oh-my-skills-diy
+  - name: xiaohongshu
+    source: zhjiang22/openclaw-xhs

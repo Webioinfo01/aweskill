@@ -1,19 +1,16 @@
 name: oh-my-skills-peng
 skills:
-  - peng-code-zen
-  - peng-crosspost-workflow
-  - peng-github-release-workflow
-  - peng-karpathy-guidelines
-  - peng-post-to-devto
-  - peng-post-to-x-thread
-  - peng-post-to-xhs
-sources:
-  - source: mugpeng/oh-my-skills-diy
-    skills:
-      - peng-code-zen
-      - peng-crosspost-workflow
-      - peng-github-release-workflow
-      - peng-karpathy-guidelines
-      - peng-post-to-devto
-      - peng-post-to-x-thread
-      - peng-post-to-xhs
+  - name: peng-code-zen
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-crosspost-workflow
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-github-release-workflow
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-karpathy-guidelines
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-post-to-devto
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-post-to-x-thread
+    source: mugpeng/oh-my-skills-diy
+  - name: peng-post-to-xhs
+    source: mugpeng/oh-my-skills-diy

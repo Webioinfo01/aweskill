@@ -1,39 +1,36 @@
 name: nature-paper-skills
 skills:
-  - academic-presentations
-  - academic-researcher
-  - citation-verifier
-  - conference-paper-writing
-  - figure-planner
-  - manuscript-optimizer
-  - nature-portfolio-playbook
-  - paper-analyzer
-  - paper-bootstrap
-  - paper-reviewer
-  - paper-workflow
-  - rebuttal-response
-  - reference-audit-guide
-  - results-analysis
-  - results-section-revision
-  - scientific-writing
-  - submission-audit
-sources:
-  - source: Boom5426/Nature-Paper-Skills
-    skills:
-      - academic-presentations
-      - academic-researcher
-      - citation-verifier
-      - conference-paper-writing
-      - figure-planner
-      - manuscript-optimizer
-      - nature-portfolio-playbook
-      - paper-analyzer
-      - paper-bootstrap
-      - paper-reviewer
-      - paper-workflow
-      - rebuttal-response
-      - reference-audit-guide
-      - results-analysis
-      - results-section-revision
-      - scientific-writing
-      - submission-audit
+  - name: academic-presentations
+    source: Boom5426/Nature-Paper-Skills
+  - name: academic-researcher
+    source: Boom5426/Nature-Paper-Skills
+  - name: citation-verifier
+    source: Boom5426/Nature-Paper-Skills
+  - name: conference-paper-writing
+    source: Boom5426/Nature-Paper-Skills
+  - name: figure-planner
+    source: Boom5426/Nature-Paper-Skills
+  - name: manuscript-optimizer
+    source: Boom5426/Nature-Paper-Skills
+  - name: nature-portfolio-playbook
+    source: Boom5426/Nature-Paper-Skills
+  - name: paper-analyzer
+    source: Boom5426/Nature-Paper-Skills
+  - name: paper-bootstrap
+    source: Boom5426/Nature-Paper-Skills
+  - name: paper-reviewer
+    source: Boom5426/Nature-Paper-Skills
+  - name: paper-workflow
+    source: Boom5426/Nature-Paper-Skills
+  - name: rebuttal-response
+    source: Boom5426/Nature-Paper-Skills
+  - name: reference-audit-guide
+    source: Boom5426/Nature-Paper-Skills
+  - name: results-analysis
+    source: Boom5426/Nature-Paper-Skills
+  - name: results-section-revision
+    source: Boom5426/Nature-Paper-Skills
+  - name: scientific-writing
+    source: Boom5426/Nature-Paper-Skills
+  - name: submission-audit
+    source: Boom5426/Nature-Paper-Skills

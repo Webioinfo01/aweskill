@@ -1,29 +1,26 @@
 name: rtk-skills
 skills:
-  - code-simplifier
-  - design-patterns
-  - issue-triage
-  - performance
-  - pr-review
-  - pr-triage
-  - repo-recap
-  - rtk-tdd
-  - rtk-triage
-  - security-guardian
-  - ship
-  - tdd-rust
-sources:
-  - source: rtk-ai/rtk
-    skills:
-      - code-simplifier
-      - design-patterns
-      - issue-triage
-      - performance
-      - pr-review
-      - pr-triage
-      - repo-recap
-      - rtk-tdd
-      - rtk-triage
-      - security-guardian
-      - ship
-      - tdd-rust
+  - name: code-simplifier
+    source: rtk-ai/rtk
+  - name: design-patterns
+    source: rtk-ai/rtk
+  - name: issue-triage
+    source: rtk-ai/rtk
+  - name: performance
+    source: rtk-ai/rtk
+  - name: pr-review
+    source: rtk-ai/rtk
+  - name: pr-triage
+    source: rtk-ai/rtk
+  - name: repo-recap
+    source: rtk-ai/rtk
+  - name: rtk-tdd
+    source: rtk-ai/rtk
+  - name: rtk-triage
+    source: rtk-ai/rtk
+  - name: security-guardian
+    source: rtk-ai/rtk
+  - name: ship
+    source: rtk-ai/rtk
+  - name: tdd-rust
+    source: rtk-ai/rtk

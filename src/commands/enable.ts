@@ -6,7 +6,7 @@ import {
   resolveAgentSkillsDir,
   resolveAgentsForMutation,
 } from "../lib/agents.js";
-import { listBundles, readBundle } from "../lib/bundles.js";
+import { bundleSkillNames, listBundles, readBundle } from "../lib/bundles.js";
 import { pathExists } from "../lib/fs.js";
 import { getAweskillPaths, normalizeNameList, uniqueSorted } from "../lib/path.js";
 import { getSkillPath, listSkills, skillExists } from "../lib/skills.js";
@@ -27,7 +27,7 @@ async function resolveSkillNames(
   if (normalizedNames.includes("all")) {
     if (type === "bundle") {
       const bundles = await listBundles(context.homeDir);
-      const skillNames = uniqueSorted(bundles.flatMap((bundle) => bundle.skills));
+      const skillNames = uniqueSorted(bundles.flatMap((bundle) => bundleSkillNames(bundle)));
       for (const skillName of skillNames) {
         if (!(await skillExists(context.homeDir, skillName))) {
           throw new Error(`A bundle in "all" references unknown skill: ${skillName}`);
@@ -42,10 +42,10 @@ async function resolveSkillNames(
 
   if (type === "bundle") {
     const bundles = await Promise.all(normalizedNames.map((bundleName) => readBundle(context.homeDir, bundleName)));
-    const skillNames = uniqueSorted(bundles.flatMap((bundle) => bundle.skills));
+    const skillNames = uniqueSorted(bundles.flatMap((bundle) => bundleSkillNames(bundle)));
     for (const skillName of skillNames) {
       if (!(await skillExists(context.homeDir, skillName))) {
-        const bundle = bundles.find((candidate) => candidate.skills.includes(skillName));
+        const bundle = bundles.find((candidate) => bundleSkillNames(candidate).includes(skillName));
         throw new Error(`Bundle ${bundle?.name ?? "(unknown)"} references unknown skill: ${skillName}`);
       }
     }

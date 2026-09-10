@@ -1,5 +1,8 @@
 name: literature-verification
 skills:
-  - citation-management
-  - citation-verifier
-  - paper-lookup
+  - name: citation-management
+    source: K-Dense-AI/scientific-agent-skills
+  - name: citation-verifier
+    source: Boom5426/Nature-Paper-Skills
+  - name: paper-lookup
+    source: K-Dense-AI/scientific-agent-skills

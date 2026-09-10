@@ -1,11 +1,20 @@
 name: global
 skills:
-  - 1password-1.0.1
-  - docx
-  - markitdown
-  - pdf
-  - rtk
-  - skill-creator-0.1.0
-  - tmux-1.0.0
-  - xlsx
-  - gh-cli
+  - name: 1password-1.0.1
+    source: null
+  - name: docx
+    source: anthropics/skills
+  - name: gh-cli
+    source: null
+  - name: markitdown
+    source: null
+  - name: pdf
+    source: anthropics/skills
+  - name: rtk
+    source: null
+  - name: skill-creator-0.1.0
+    source: null
+  - name: tmux-1.0.0
+    source: null
+  - name: xlsx
+    source: anthropics/skills

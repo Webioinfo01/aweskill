@@ -1,15 +1,12 @@
 name: caveman
 skills:
-  - caveman
-  - caveman-commit
-  - compress
-  - caveman-help
-  - caveman-review
-sources:
-  - source: JuliusBrussee/caveman
-    skills:
-      - caveman
-      - caveman-commit
-      - compress
-      - caveman-help
-      - caveman-review
+  - name: caveman
+    source: JuliusBrussee/caveman
+  - name: caveman-commit
+    source: JuliusBrussee/caveman
+  - name: caveman-help
+    source: JuliusBrussee/caveman
+  - name: caveman-review
+    source: JuliusBrussee/caveman
+  - name: compress
+    source: JuliusBrussee/caveman

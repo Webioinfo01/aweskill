@@ -14,10 +14,13 @@ describe("storage modules", () => {
     await addSkillToBundle(workspace.homeDir, "frontend", "pr-review");
     await addSkillToBundle(workspace.homeDir, "frontend", "frontend-design");
 
-    expect((await readBundle(workspace.homeDir, "frontend")).skills).toEqual(["frontend-design", "pr-review"]);
+    expect((await readBundle(workspace.homeDir, "frontend")).skills).toEqual([
+      { name: "frontend-design", source: null },
+      { name: "pr-review", source: null },
+    ]);
 
     await removeSkillFromBundle(workspace.homeDir, "frontend", "frontend-design");
-    expect((await listBundles(workspace.homeDir))[0].skills).toEqual(["pr-review"]);
+    expect((await listBundles(workspace.homeDir))[0].skills).toEqual([{ name: "pr-review", source: null }]);
   });
 
   it("rejects bundle skills that do not exist in the central repository", async () => {

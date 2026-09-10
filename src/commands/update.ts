@@ -385,7 +385,7 @@ export async function runUpdate(context: RuntimeContext, options: UpdateOptions 
   if (options.bundle) {
     const bundle = await readBundle(context.homeDir, options.bundle);
     for (const skill of bundle.skills) {
-      selectedNames.add(skill);
+      selectedNames.add(skill.name);
     }
   }
   const entries = Object.entries(lock.skills).filter(([name, entry]) => {

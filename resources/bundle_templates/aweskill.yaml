@@ -1,11 +1,8 @@
 name: aweskill
 skills:
-  - aweskill
-  - aweskill-doctor
-  - aweskill-creator
-sources:
-  - source: Webioinfo01/aweskill
-    skills:
-      - aweskill
-      - aweskill-doctor
-      - aweskill-creator
+  - name: aweskill
+    source: Webioinfo01/aweskill
+  - name: aweskill-creator
+    source: Webioinfo01/aweskill
+  - name: aweskill-doctor
+    source: Webioinfo01/aweskill

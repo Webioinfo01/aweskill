@@ -11,6 +11,8 @@
 
 ## Unreleased
 
+Bundle definitions now record the source repo per skill instead of a separate `sources` group list: `skills: [{name, source}]` with `source: null` for skills without one. Reading accepts the old format (plain name list plus `sources` groups, merged in) and writing always emits the new format. All 15 bundle templates were migrated, and the five templates that previously had no sources now carry verified sources where one could be confirmed (K-Dense-AI/scientific-agent-skills, Boom5426/Nature-Paper-Skills, mugpeng/droma_ai_v3, anthropics/skills); skills without a confirmable source stay `null` and keep the existing install-time warning.
+
 ## v0.4.5 - 2026-09-09
 
 ### Features

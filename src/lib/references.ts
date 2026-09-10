@@ -27,7 +27,7 @@ export async function findSkillReferences(options: {
   const { skillsDir } = getAweskillPaths(options.homeDir);
 
   const bundles = (await listBundles(options.homeDir))
-    .filter((bundle) => bundle.skills.includes(normalizedSkill))
+    .filter((bundle) => bundle.skills.some((skill) => skill.name === normalizedSkill))
     .map((bundle) => bundle.name);
 
   const agentProjections: string[] = [];
@@ -68,10 +68,10 @@ export async function removeSkillWithReferences(options: {
   // Strip from bundle definitions
   const bundles = await listBundles(options.homeDir);
   for (const bundle of bundles) {
-    if (!bundle.skills.includes(normalizedSkill)) {
+    if (!bundle.skills.some((skill) => skill.name === normalizedSkill)) {
       continue;
     }
-    bundle.skills = bundle.skills.filter((skill) => skill !== normalizedSkill);
+    bundle.skills = bundle.skills.filter((skill) => skill.name !== normalizedSkill);
     await writeBundle(options.homeDir, bundle);
   }
 

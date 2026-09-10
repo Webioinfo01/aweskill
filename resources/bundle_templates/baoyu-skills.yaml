@@ -1,53 +1,50 @@
 name: baoyu-skills
 skills:
-  - baoyu-article-illustrator
-  - baoyu-comic
-  - baoyu-compress-image
-  - baoyu-cover-image
-  - baoyu-danger-gemini-web
-  - baoyu-danger-x-to-markdown
-  - baoyu-diagram
-  - baoyu-electron-extract
-  - baoyu-format-markdown
-  - baoyu-image-cards
-  - baoyu-image-gen
-  - baoyu-imagine
-  - baoyu-infographic
-  - baoyu-markdown-to-html
-  - baoyu-post-to-wechat
-  - baoyu-post-to-weibo
-  - baoyu-post-to-x
-  - baoyu-slide-deck
-  - baoyu-translate
-  - baoyu-url-to-markdown
-  - baoyu-wechat-summary
-  - baoyu-xhs-images
-  - baoyu-youtube-transcript
-  - release-skills
-sources:
-  - source: JimLiu/baoyu-skills
-    skills:
-      - baoyu-article-illustrator
-      - baoyu-comic
-      - baoyu-compress-image
-      - baoyu-cover-image
-      - baoyu-danger-gemini-web
-      - baoyu-danger-x-to-markdown
-      - baoyu-diagram
-      - baoyu-electron-extract
-      - baoyu-format-markdown
-      - baoyu-image-cards
-      - baoyu-image-gen
-      - baoyu-imagine
-      - baoyu-infographic
-      - baoyu-markdown-to-html
-      - baoyu-post-to-wechat
-      - baoyu-post-to-weibo
-      - baoyu-post-to-x
-      - baoyu-slide-deck
-      - baoyu-translate
-      - baoyu-url-to-markdown
-      - baoyu-wechat-summary
-      - baoyu-xhs-images
-      - baoyu-youtube-transcript
-      - release-skills
+  - name: baoyu-article-illustrator
+    source: JimLiu/baoyu-skills
+  - name: baoyu-comic
+    source: JimLiu/baoyu-skills
+  - name: baoyu-compress-image
+    source: JimLiu/baoyu-skills
+  - name: baoyu-cover-image
+    source: JimLiu/baoyu-skills
+  - name: baoyu-danger-gemini-web
+    source: JimLiu/baoyu-skills
+  - name: baoyu-danger-x-to-markdown
+    source: JimLiu/baoyu-skills
+  - name: baoyu-diagram
+    source: JimLiu/baoyu-skills
+  - name: baoyu-electron-extract
+    source: JimLiu/baoyu-skills
+  - name: baoyu-format-markdown
+    source: JimLiu/baoyu-skills
+  - name: baoyu-image-cards
+    source: JimLiu/baoyu-skills
+  - name: baoyu-image-gen
+    source: JimLiu/baoyu-skills
+  - name: baoyu-imagine
+    source: JimLiu/baoyu-skills
+  - name: baoyu-infographic
+    source: JimLiu/baoyu-skills
+  - name: baoyu-markdown-to-html
+    source: JimLiu/baoyu-skills
+  - name: baoyu-post-to-wechat
+    source: JimLiu/baoyu-skills
+  - name: baoyu-post-to-weibo
+    source: JimLiu/baoyu-skills
+  - name: baoyu-post-to-x
+    source: JimLiu/baoyu-skills
+  - name: baoyu-slide-deck
+    source: JimLiu/baoyu-skills
+  - name: baoyu-translate
+    source: JimLiu/baoyu-skills
+  - name: baoyu-url-to-markdown
+    source: JimLiu/baoyu-skills
+  - name: baoyu-wechat-summary
+    source: JimLiu/baoyu-skills
+  - name: baoyu-xhs-images
+    source: JimLiu/baoyu-skills
+  - name: baoyu-youtube-transcript
+    source: JimLiu/baoyu-skills
+  - name: release-skills
+    source: JimLiu/baoyu-skills
