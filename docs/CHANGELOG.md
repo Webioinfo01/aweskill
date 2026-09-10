@@ -1,5 +1,15 @@
 # change log
 
+## v0.4.7 - 2026-09-10
+
+### Refactor
+
+- Migrate bundle definitions to per-skill source format (`skills: [{name, source}]`), replacing the legacy `sources` group list
+- Accept the legacy format on reads (name list + `sources` groups merged in) and always emit the new format on writes
+- Migrate all 15 bundle templates to the new format; five previously source-less templates now carry verified sources where confirmable
+- Add `bundleSkillNames` and `groupSkillsBySource` helpers, and update commands (`bundle`, `enable`, `disable`, `list`, `update`), hygiene, and references to use the new shape
+- Preserve install-time warnings for skills without a confirmable source (`source: null`)
+
 ## v0.4.6 - 2026-09-09
 
 `v0.4.6` is a docs-alignment patch for the v0.4.5 release: the README version badges were still on 0.4.4, a leftover empty `## Unreleased` heading sat between the v0.4.5 and v0.4.4 entries, and the v0.4.3 overview still opened with "`Unreleased`" instead of the version number.
