@@ -42,7 +42,7 @@ export interface GitHubDevCommit {
 
 export async function getGitHubDevCommit(): Promise<GitHubDevCommit> {
   const token = getGitHubToken();
-  const response = await fetch("https://api.github.com/repos/mugpeng/aweskill/commits?sha=dev&per_page=1", {
+  const response = await fetch("https://api.github.com/repos/Webioinfo01/aweskill/commits?sha=dev&per_page=1", {
     headers: {
       Accept: "application/vnd.github+json",
       "User-Agent": "aweskill",
@@ -83,7 +83,7 @@ export async function gitCloneDev(tmpDir: string): Promise<void> {
     "dev",
     "--depth",
     "1",
-    "https://github.com/mugpeng/aweskill.git",
+    "https://github.com/Webioinfo01/aweskill.git",
     tmpDir,
   ]);
 }

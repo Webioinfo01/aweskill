@@ -7,8 +7,8 @@ import { ensureHomeLayout, getSkillPath } from "../lib/skills.js";
 import type { RuntimeContext } from "../types.js";
 import { formatScanSummary } from "./scan.js";
 
-const BUILTIN_SKILLS_SOURCE = "mugpeng/aweskill";
-const BUILTIN_SKILLS_SOURCE_URL = "https://github.com/mugpeng/aweskill.git";
+const BUILTIN_SKILLS_SOURCE = "Webioinfo01/aweskill";
+const BUILTIN_SKILLS_SOURCE_URL = "https://github.com/Webioinfo01/aweskill.git";
 const BUILTIN_SKILLS_REF = "main";
 const BUILTIN_SKILLS_SUBPATH = "resources/skills";
 
