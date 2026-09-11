@@ -24,7 +24,8 @@
     "prepare": "npm run build",
     "prepack": "npm run build",
     "test": "vitest run --config config/vitest.config.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run lint && npm run test && npm run build"
   },
   "engines": {
     "node": ">=20"

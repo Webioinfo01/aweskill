@@ -234,25 +234,25 @@ describe("commands", () => {
     ).resolves.toContain("name: aweskill-creator");
     const lock = await readSkillLock(workspace.homeDir);
     expect(lock.skills.aweskill).toMatchObject({
-      source: "mugpeng/aweskill",
+      source: "Webioinfo01/aweskill",
       sourceType: "github",
-      sourceUrl: "https://github.com/mugpeng/aweskill.git",
+      sourceUrl: "https://github.com/Webioinfo01/aweskill.git",
       ref: "main",
       subpath: "resources/skills/aweskill",
       computedHash: await computeDirectoryHash(getSkillPath(workspace.homeDir, "aweskill")),
     });
     expect(lock.skills["aweskill-doctor"]).toMatchObject({
-      source: "mugpeng/aweskill",
+      source: "Webioinfo01/aweskill",
       sourceType: "github",
-      sourceUrl: "https://github.com/mugpeng/aweskill.git",
+      sourceUrl: "https://github.com/Webioinfo01/aweskill.git",
       ref: "main",
       subpath: "resources/skills/aweskill-doctor",
       computedHash: await computeDirectoryHash(getSkillPath(workspace.homeDir, "aweskill-doctor")),
     });
     expect(lock.skills["aweskill-creator"]).toMatchObject({
-      source: "mugpeng/aweskill",
+      source: "Webioinfo01/aweskill",
       sourceType: "github",
-      sourceUrl: "https://github.com/mugpeng/aweskill.git",
+      sourceUrl: "https://github.com/Webioinfo01/aweskill.git",
       ref: "main",
       subpath: "resources/skills/aweskill-creator",
       computedHash: await computeDirectoryHash(getSkillPath(workspace.homeDir, "aweskill-creator")),

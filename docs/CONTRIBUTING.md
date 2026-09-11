@@ -32,7 +32,7 @@ Keep setup simple and reproducible:
 
 ```bash
 # Clone the repository
-git clone https://github.com/mugpeng/aweskill.git
+git clone https://github.com/Webioinfo01/aweskill.git
 cd aweskill
 
 # Install dependencies
@@ -190,13 +190,13 @@ please update the relevant docs in the same change:
 
 ## Testing
 
-Before opening a PR, run:
+Before committing or opening a PR, run the full gate:
 
 ```bash
-npm run lint
-npm test
-npm run build
+npm run verify   # lint (biome + typecheck) → test → build; stops at the first failure
 ```
+
+CI runs the same steps on pushes to `main` and `dev` and on pull requests to `main`.
 
 If you changed command behavior, add or update command-level tests in `tests/commands.test.ts`.
 

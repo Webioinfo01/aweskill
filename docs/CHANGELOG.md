@@ -1,5 +1,17 @@
 # change log
 
+## Unreleased
+
+### Fixes
+
+- Point built-in skill sources and self-update at `Webioinfo01/aweskill` (the repository moved from `mugpeng/aweskill`), and update the tests and the contributing guide's clone URL that still pinned the old location
+- Disable the npm update check in the test environment; the two `main()`-based integration tests that intermittently timed out were waiting on that registry call
+
+### DX
+
+- Add `npm run verify` (lint → test → build, stops at the first failure) as the single pre-commit gate, documented in `docs/CONTRIBUTING.md`
+- Run CI on pushes to `dev` as well as `main`, so changes are checked before they reach a release
+
 ## v0.4.7 - 2026-09-10
 
 ### Refactor
@@ -18,10 +30,6 @@
 
 - Sync the version badges in `README.md` and `README.zh-CN.md` to the released version
 - Move the empty `## Unreleased` heading back to the top of the changelog and fix the stale "`Unreleased`" wording in the v0.4.3 entry
-
-## Unreleased
-
-Bundle definitions now record the source repo per skill instead of a separate `sources` group list: `skills: [{name, source}]` with `source: null` for skills without one. Reading accepts the old format (plain name list plus `sources` groups, merged in) and writing always emits the new format. All 15 bundle templates were migrated, and the five templates that previously had no sources now carry verified sources where one could be confirmed (K-Dense-AI/scientific-agent-skills, Boom5426/Nature-Paper-Skills, mugpeng/droma_ai_v3, anthropics/skills); skills without a confirmable source stay `null` and keep the existing install-time warning.
 
 ## v0.4.5 - 2026-09-09
 
