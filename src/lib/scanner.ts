@@ -6,6 +6,7 @@ import type { AgentId } from "./agents.js";
 import { isAgentId, listSupportedAgentIds, resolveAgentSkillsDir, supportsScope } from "./agents.js";
 import { pathExists } from "./fs.js";
 import { sanitizeName, uniqueSorted } from "./path.js";
+import { readExternalOwner } from "./skills.js";
 
 async function hasSkillReadme(skillDir: string): Promise<boolean> {
   try {
@@ -59,6 +60,7 @@ async function scanDirectory(
       if (!(await hasSkillReadme(fullPath)) && !symlinkInfo.isBroken) {
         continue;
       }
+      const externalOwner = !isSymlink && entry.isDirectory() ? await readExternalOwner(fullPath) : null;
       candidates.push({
         agentId,
         name: sanitizeName(entry.name),
@@ -68,6 +70,7 @@ async function scanDirectory(
         isSymlink,
         symlinkSourcePath: symlinkInfo.sourcePath,
         isBrokenSymlink: symlinkInfo.isBroken,
+        ...(externalOwner ? { externalOwner } : {}),
       });
     }
     return candidates;

@@ -1,13 +1,22 @@
 import { cp, lstat, mkdir, readdir, readFile, readlink, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { pathExists } from "./fs.js";
+import { computeDirectoryHash } from "./hash.js";
 import { isPathSafe } from "./path.js";
 
-const COPY_MARKER = ".aweskill-projection.json";
+export const COPY_MARKER_FILE = ".aweskill-projection.json";
+const COPY_MARKER = COPY_MARKER_FILE;
 
 interface CopyMarker {
   managedBy: "aweskill";
   sourcePath: string;
+  /**
+   * Hash of the store content at projection time. Lets doctor tell "store
+   * moved on, copy is pristine" (safe to refresh) from "someone edited the
+   * copy" (never overwrite). Absent in markers written before this field.
+   */
+  contentHash?: string;
 }
 
 export type ProjectionTargetStatus =
@@ -21,6 +30,8 @@ export type ProjectionTargetStatus =
 export interface ProjectionResult {
   status: "created" | "skipped";
   mode: "symlink" | "copy";
+  /** True when a replaced managed copy contained edits that did not come from the store. */
+  hadLocalEdits?: boolean;
 }
 
 type DirectoryLinkCreator = (sourcePath: string, targetPath: string, useAbsolute?: boolean) => Promise<void>;
@@ -41,6 +52,26 @@ async function readCopyMarker(targetPath: string): Promise<CopyMarker | null> {
   } catch {
     return null;
   }
+}
+
+function computeCopyBaseline(targetPath: string): Promise<string> {
+  return computeDirectoryHash(targetPath, { excludedFileNames: new Set([COPY_MARKER_FILE]) });
+}
+
+async function detectLocalEdits(targetPath: string, marker: CopyMarker | null): Promise<boolean> {
+  if (!marker?.contentHash) {
+    return false;
+  }
+  return (await computeCopyBaseline(targetPath)) !== marker.contentHash;
+}
+
+async function writeCopyMarker(sourcePath: string, targetPath: string): Promise<void> {
+  const marker: CopyMarker = {
+    managedBy: "aweskill",
+    sourcePath: path.resolve(sourcePath),
+    contentHash: await computeDirectoryHash(sourcePath),
+  };
+  await writeFile(path.join(targetPath, COPY_MARKER), JSON.stringify(marker, null, 2), "utf8");
 }
 
 export function getDirectoryLinkTypeForPlatform(platform = process.platform): "dir" | "junction" {
@@ -171,20 +202,24 @@ export async function createSkillSymlink(
 ): Promise<ProjectionResult> {
   await mkdir(path.dirname(targetPath), { recursive: true });
   const existing = await tryLstat(targetPath);
+  let hadLocalEdits = false;
 
   if (existing?.isSymbolicLink()) {
     const currentTarget = await readlink(targetPath);
     const resolvedCurrent = path.resolve(path.dirname(targetPath), currentTarget);
-    if (resolvedCurrent === path.resolve(sourcePath)) {
+    // Without force, re-projecting the same source is an idempotent no-op;
+    // with force the caller asked for a real recreate.
+    if (resolvedCurrent === path.resolve(sourcePath) && !options.allowReplaceExisting) {
       return { status: "skipped", mode: "symlink" };
     }
     await unlink(targetPath);
   } else if (existing) {
     if (existing.isDirectory()) {
       const marker = await readCopyMarker(targetPath);
-      if (marker?.sourcePath === path.resolve(sourcePath)) {
+      if (marker?.sourcePath === path.resolve(sourcePath) && !options.allowReplaceExisting) {
         return { status: "skipped", mode: "copy" };
       }
+      hadLocalEdits = await detectLocalEdits(targetPath, marker);
     }
 
     if (!options.allowReplaceExisting) {
@@ -193,15 +228,17 @@ export async function createSkillSymlink(
     await rm(targetPath, { force: true, recursive: true });
   }
 
+  let result: ProjectionResult;
   try {
     await directoryLinkCreator(sourcePath, targetPath, options.absolute);
-    return { status: "created", mode: "symlink" };
+    result = { status: "created", mode: "symlink" };
   } catch (error) {
     if (!shouldFallbackToCopy(error)) {
       throw error;
     }
-    return createSkillCopy(sourcePath, targetPath, options);
+    result = await createSkillCopy(sourcePath, targetPath, options);
   }
+  return hadLocalEdits ? { ...result, hadLocalEdits: true } : result;
 }
 
 export async function createSkillCopy(
@@ -211,24 +248,26 @@ export async function createSkillCopy(
 ): Promise<ProjectionResult> {
   await mkdir(path.dirname(targetPath), { recursive: true });
   const existing = await tryLstat(targetPath);
+  let hadLocalEdits = false;
 
   if (existing?.isSymbolicLink()) {
     await unlink(targetPath);
   } else if (existing) {
     const marker = await readCopyMarker(targetPath);
-    if (marker?.sourcePath === path.resolve(sourcePath)) {
+    const matchesSource = marker?.sourcePath === path.resolve(sourcePath);
+    if (matchesSource && !options.allowReplaceExisting) {
       return { status: "skipped", mode: "copy" };
     }
     if (!marker && !options.allowReplaceExisting) {
       throw new Error(`Refusing to overwrite unmanaged directory: ${targetPath}`);
     }
+    hadLocalEdits = await detectLocalEdits(targetPath, marker);
     await rm(targetPath, { force: true, recursive: true });
   }
 
   await cp(sourcePath, targetPath, { recursive: true });
-  const marker: CopyMarker = { managedBy: "aweskill", sourcePath: path.resolve(sourcePath) };
-  await writeFile(path.join(targetPath, COPY_MARKER), JSON.stringify(marker, null, 2), "utf8");
-  return { status: "created", mode: "copy" };
+  await writeCopyMarker(sourcePath, targetPath);
+  return hadLocalEdits ? { status: "created", mode: "copy", hadLocalEdits: true } : { status: "created", mode: "copy" };
 }
 
 export async function removeManagedProjection(targetPath: string): Promise<boolean> {
@@ -353,6 +392,61 @@ export async function listBrokenSymlinkNames(skillsDir: string): Promise<Set<str
       } catch {
         result.add(entry.name);
       }
+    }
+  } catch {
+    return result;
+  }
+
+  return result;
+}
+
+export type CopyProjectionStatus =
+  | { kind: "current" }
+  /** The store moved on; `legacy` markers predate content hashes, so a refresh cannot be proven safe. */
+  | { kind: "stale"; legacy: boolean }
+  | { kind: "locally-modified" }
+  | { kind: "orphaned" };
+
+/**
+ * Compare every managed copy projection against its store source. Symlink
+ * projections stay in sync by construction and are not evaluated here.
+ */
+export async function evaluateCopyProjections(
+  skillsDir: string,
+  centralSkillsDir: string,
+): Promise<Map<string, CopyProjectionStatus>> {
+  const result = new Map<string, CopyProjectionStatus>();
+
+  try {
+    const entries = await readdir(skillsDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const targetPath = path.join(skillsDir, entry.name);
+      const stats = await tryLstat(targetPath);
+      if (!stats?.isDirectory()) {
+        continue;
+      }
+
+      const marker = await readCopyMarker(targetPath);
+      if (!marker || !isPathSafe(centralSkillsDir, path.resolve(marker.sourcePath))) {
+        continue;
+      }
+
+      if (!(await pathExists(marker.sourcePath))) {
+        result.set(entry.name, { kind: "orphaned" });
+        continue;
+      }
+
+      const copyHash = await computeCopyBaseline(targetPath);
+      const storeHash = await computeDirectoryHash(marker.sourcePath);
+      if (!marker.contentHash) {
+        result.set(entry.name, copyHash === storeHash ? { kind: "current" } : { kind: "stale", legacy: true });
+        continue;
+      }
+      if (copyHash !== marker.contentHash) {
+        result.set(entry.name, { kind: "locally-modified" });
+        continue;
+      }
+      result.set(entry.name, copyHash === storeHash ? { kind: "current" } : { kind: "stale", legacy: false });
     }
   } catch {
     return result;

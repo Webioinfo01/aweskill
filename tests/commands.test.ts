@@ -9,6 +9,7 @@ import { resolveAgentSkillsDir } from "../src/lib/agents.js";
 import { computeDirectoryHash } from "../src/lib/hash.js";
 import { readSkillLock, writeSkillLock } from "../src/lib/lock.js";
 import { getSkillPath } from "../src/lib/skills.js";
+import { createSkillCopy } from "../src/lib/symlink.js";
 import { getTemplateBundlesDir } from "../src/lib/templates.js";
 import { AWESKILL_VERSION } from "../src/lib/version.js";
 import { createTempWorkspace, writeSkill } from "./helpers.js";
@@ -1509,7 +1510,7 @@ describe("commands", () => {
     await program.parseAsync(["node", "aweskill", "agent", "list", "--agent", "codex"], { from: "node" });
 
     expect(lines.join("\n")).toContain(
-      "Re-run with aweskill doctor sync --apply to repair broken projections and relink duplicate/matched entries.",
+      "Re-run with aweskill doctor sync --apply to repair broken projections, relink duplicate/matched entries, and refresh stale copy projections.",
     );
     expect(lines.join("\n")).toContain(
       "Suspicious agent skill entries were reported only. Re-run with aweskill doctor sync --apply --remove-suspicious to remove them.",
@@ -3745,11 +3746,97 @@ describe("commands", () => {
     await program.parseAsync(["node", "aweskill", "doctor", "sync", "--global", "--agent", "codex"], { from: "node" });
 
     expect(lines.join("\n")).toContain(
-      "Re-run with aweskill doctor sync --apply to repair broken projections and relink duplicate/matched entries.",
+      "Re-run with aweskill doctor sync --apply to repair broken projections, relink duplicate/matched entries, and refresh stale copy projections.",
     );
     expect(lines.join("\n")).toContain(
       "Suspicious agent skill entries were reported only. Re-run with aweskill doctor sync --apply --remove-suspicious to remove them.",
     );
+  });
+
+  it("doctor sync refreshes stale copy projections and never touches locally-modified ones", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+
+    await program.parseAsync(["node", "aweskill", "store", "init"], { from: "node" });
+    await writeSkill(getSkillPath(workspace.homeDir, "copy-skill"), "Copy Skill v1");
+    await writeSkill(getSkillPath(workspace.homeDir, "edited-skill"), "Edited Skill v1");
+    const skillsDir = resolveAgentSkillsDir("codex", "global", workspace.homeDir);
+    await mkdir(skillsDir, { recursive: true });
+    await createSkillCopy(getSkillPath(workspace.homeDir, "copy-skill"), path.join(skillsDir, "copy-skill"));
+    await createSkillCopy(getSkillPath(workspace.homeDir, "edited-skill"), path.join(skillsDir, "edited-skill"));
+    await writeFile(path.join(getSkillPath(workspace.homeDir, "copy-skill"), "SKILL.md"), "# Copy Skill v2\n", "utf8");
+    await writeFile(path.join(skillsDir, "edited-skill", "SKILL.md"), "# user edit\n", "utf8");
+
+    await program.parseAsync(["node", "aweskill", "doctor", "sync", "--global", "--agent", "codex"], { from: "node" });
+    expect(lines.join("\n")).toContain("  stale: 1");
+    expect(lines.join("\n")).toContain("  locally-modified: 1");
+    expect(lines.join("\n")).toContain("Locally-modified copy projections were reported only");
+
+    lines.length = 0;
+    await program.parseAsync(["node", "aweskill", "doctor", "sync", "--global", "--agent", "codex", "--apply"], {
+      from: "node",
+    });
+    expect(lines.join("\n")).toContain("Refreshed 1 stale copy projection.");
+    await expect(readFile(path.join(skillsDir, "copy-skill", "SKILL.md"), "utf8")).resolves.toContain("Copy Skill v2");
+    await expect(readFile(path.join(skillsDir, "edited-skill", "SKILL.md"), "utf8")).resolves.toContain("user edit");
+  });
+
+  it("reports externally managed skill entries as external without suggesting an import", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+
+    const ctxDir = path.join(resolveAgentSkillsDir("codex", "global", workspace.homeDir), "ctx");
+    await mkdir(ctxDir, { recursive: true });
+    await writeFile(path.join(ctxDir, "SKILL.md"), "# ctx\n", "utf8");
+    await writeFile(path.join(ctxDir, ".ctx-skill.json"), "{}", "utf8");
+
+    await program.parseAsync(["node", "aweskill", "doctor", "sync", "--global", "--agent", "codex"], { from: "node" });
+    expect(lines.join("\n")).toContain("  external: 1");
+    expect(lines.join("\n")).toContain("◇ ctx");
+    expect(lines.join("\n")).toContain("(managed by ctx)");
+    expect(lines.join("\n")).not.toContain("New agent skill entries");
+    expect(lines.join("\n")).toContain("External entries are managed by another tool");
+  });
+
+  it("store scan --import skips externally managed entries", async () => {
+    const workspace = await createTempWorkspace();
+    const lines: string[] = [];
+    const program = createProgram({
+      cwd: workspace.projectDir,
+      homeDir: workspace.homeDir,
+      write: (message) => lines.push(message),
+      error: () => undefined,
+    });
+
+    const skillsDir = resolveAgentSkillsDir("codex", "global", workspace.homeDir);
+    const ctxDir = path.join(skillsDir, "ctx");
+    const plainDir = path.join(skillsDir, "plain");
+    await mkdir(ctxDir, { recursive: true });
+    await mkdir(plainDir, { recursive: true });
+    await writeFile(path.join(ctxDir, "SKILL.md"), "# ctx\n", "utf8");
+    await writeFile(path.join(ctxDir, ".ctx-skill.json"), "{}", "utf8");
+    await writeFile(path.join(plainDir, "SKILL.md"), "# Plain\n", "utf8");
+
+    await program.parseAsync(["node", "aweskill", "store", "scan", "--import", "--global", "--agent", "codex"], {
+      from: "node",
+    });
+
+    expect(lines.join("\n")).toContain("Skipped 1 externally managed entries: codex:ctx");
+    expect(lines.join("\n")).toContain("Imported 1 skills");
+    expect((await lstat(ctxDir)).isSymbolicLink()).toBe(false);
+    await expect(readFile(path.join(ctxDir, "SKILL.md"), "utf8")).resolves.toContain("ctx");
   });
 
   it("doctor sync reports detected agents for global and project scopes when --agent is omitted", async () => {

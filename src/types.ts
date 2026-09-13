@@ -65,6 +65,8 @@ export interface ScanCandidate {
   isSymlink: boolean;
   symlinkSourcePath?: string;
   isBrokenSymlink?: boolean;
+  /** Owner label when another tool (e.g. ctx) claims this skill directory. */
+  externalOwner?: string;
 }
 
 export interface ImportResult {
@@ -78,4 +80,6 @@ export interface SkillEntry {
   name: string;
   path: string;
   hasSKILLMd: boolean;
+  /** Owner label when another tool (e.g. ctx) claims this skill directory. */
+  externalOwner?: string;
 }

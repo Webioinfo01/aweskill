@@ -27,7 +27,8 @@ export function formatScanSummary(candidates: ScanCandidate[], verbose = false):
     lines.push(`  ${groupLabel(sorted[0])} ${sorted.length}`);
     if (verbose) {
       for (const candidate of sorted) {
-        lines.push(`    ✓ ${candidate.name} ${candidate.path}`);
+        const suffix = candidate.externalOwner ? ` (external: managed by ${candidate.externalOwner})` : "";
+        lines.push(`    ✓ ${candidate.name} ${candidate.path}${suffix}`);
       }
     }
   }
@@ -60,9 +61,18 @@ export async function runScan(
     return candidates;
   }
 
+  // Externally managed skills (e.g. installed by ctx) have their own update
+  // lifecycle; importing them would hand aweskill a directory another tool
+  // keeps rewriting.
+  const externalCandidates = candidates.filter((candidate) => candidate.externalOwner);
+  if (externalCandidates.length > 0) {
+    const labeled = externalCandidates.map((candidate) => `${candidate.agentId}:${candidate.name}`);
+    context.write(`Skipped ${labeled.length} externally managed entries: ${labeled.join(", ")}`);
+  }
+
   const result = await importScannedSkills({
     homeDir: context.homeDir,
-    candidates,
+    candidates: candidates.filter((candidate) => !candidate.externalOwner),
     override: options.override,
     linkSource: !options.keepSource,
   });

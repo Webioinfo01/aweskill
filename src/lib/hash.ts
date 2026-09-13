@@ -10,6 +10,7 @@ async function collectFiles(
   baseDir: string,
   currentDir: string,
   files: Array<{ relativePath: string; content: Buffer }>,
+  excludedFileNames?: Set<string>,
 ): Promise<void> {
   const entries = await readdir(currentDir, { withFileTypes: true });
 
@@ -20,11 +21,11 @@ async function collectFiles(
 
     const fullPath = path.join(currentDir, entry.name);
     if (entry.isDirectory()) {
-      await collectFiles(baseDir, fullPath, files);
+      await collectFiles(baseDir, fullPath, files, excludedFileNames);
       continue;
     }
 
-    if (entry.isFile()) {
+    if (entry.isFile() && !excludedFileNames?.has(entry.name)) {
       files.push({
         relativePath: path.relative(baseDir, fullPath).split(path.sep).join("/"),
         content: await readFile(fullPath),
@@ -33,9 +34,12 @@ async function collectFiles(
   }
 }
 
-export async function computeDirectoryHash(directoryPath: string): Promise<string> {
+export async function computeDirectoryHash(
+  directoryPath: string,
+  options: { excludedFileNames?: Set<string> } = {},
+): Promise<string> {
   const files: Array<{ relativePath: string; content: Buffer }> = [];
-  await collectFiles(directoryPath, directoryPath, files);
+  await collectFiles(directoryPath, directoryPath, files, options.excludedFileNames);
   files.sort((left, right) => left.relativePath.localeCompare(right.relativePath));
 
   const hash = createHash("sha256");

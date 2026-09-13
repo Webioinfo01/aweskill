@@ -96,17 +96,19 @@ export async function runEnable(
         continue;
       }
       if (status.kind === "managed_symlink" || status.kind === "managed_copy") {
-        if (status.matchesSource) {
-          // Re-projecting the same source is an idempotent no-op, so repeated
-          // setup commands succeed instead of failing mid-workflow.
-          alreadyProjected.push(`${agentId}:${skillName}`);
+        if (!status.matchesSource) {
+          if (!options.force) {
+            throw new Error(
+              `Target path is already an aweskill-managed projection pointing at a different source: ${targetPath}. ` +
+                `Re-run with --force to replace it.`,
+            );
+          }
           continue;
         }
         if (!options.force) {
-          throw new Error(
-            `Target path is already an aweskill-managed projection pointing at a different source: ${targetPath}. ` +
-              `Re-run with --force to replace it.`,
-          );
+          // Re-projecting the same source is an idempotent no-op, so repeated
+          // setup commands succeed instead of failing mid-workflow.
+          alreadyProjected.push(`${agentId}:${skillName}`);
         }
         continue;
       }
@@ -148,6 +150,11 @@ export async function runEnable(
           : await createSkillCopy(sourcePath, targetPath, { allowReplaceExisting: options.force });
       if (result.status === "created") {
         created.push(`${agentId}:${skillName}`);
+      }
+      if (result.hadLocalEdits) {
+        context.write(
+          `Warning: replaced ${agentId}:${skillName} projection that had local edits not present in the store.`,
+        );
       }
     }
   }

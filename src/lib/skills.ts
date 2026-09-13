@@ -7,6 +7,22 @@ import { getAweskillPaths, sanitizeName } from "./path.js";
 
 export type SkillSuspicionReason = "missing-skill-md" | "reserved-name";
 
+// Marker files other tools drop into a skill directory to claim ownership,
+// mirroring aweskill's own .aweskill-projection.json. aweskill reports these
+// entries but never imports, cleans, or re-projects them.
+export const FOREIGN_OWNERSHIP_MARKERS: ReadonlyArray<{ fileName: string; owner: string }> = [
+  { fileName: ".ctx-skill.json", owner: "ctx" },
+];
+
+export async function readExternalOwner(skillPath: string): Promise<string | null> {
+  for (const marker of FOREIGN_OWNERSHIP_MARKERS) {
+    if (await pathExists(path.join(skillPath, marker.fileName))) {
+      return marker.owner;
+    }
+  }
+  return null;
+}
+
 export async function ensureHomeLayout(homeDir: string): Promise<void> {
   const paths = getAweskillPaths(homeDir);
   await mkdir(paths.rootDir, { recursive: true });
@@ -38,10 +54,12 @@ export async function listSkillEntriesInDirectory(skillsDir: string): Promise<Sk
       .filter((entry) => (entry.isDirectory() || entry.isSymbolicLink()) && entry.name !== ".system")
       .map(async (entry) => {
         const skillPath = path.join(skillsDir, entry.name);
+        const externalOwner = entry.isDirectory() ? await readExternalOwner(skillPath) : null;
         return {
           name: entry.name,
           path: skillPath,
           hasSKILLMd: await pathExists(path.join(skillPath, "SKILL.md")),
+          ...(externalOwner ? { externalOwner } : {}),
         } satisfies SkillEntry;
       }),
   );

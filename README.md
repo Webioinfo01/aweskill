@@ -442,7 +442,7 @@ Yes. `aweskill` ships built-in management skills for `aweskill` and `aweskill-do
 
 `aweskill` does not stop at install-and-project. It also gives you a repair path when local state drifts:
 
-- **`doctor sync`** inspects or repairs broken, duplicate, matched, new, and suspicious agent entries
+- **`doctor sync`** inspects or repairs broken, stale, duplicate, matched, new, external, and suspicious agent entries
 - **`doctor clean`** finds suspicious non-store files in managed areas before they silently accumulate
 - **`doctor dedup`** helps reconcile duplicate skills without forcing blind deletion
 - **`doctor fix-skills`** repairs malformed `SKILL.md` frontmatter and can back up originals first
@@ -559,7 +559,7 @@ Top-level convenience commands are available for high-frequency search and track
 | `aweskill store where [--verbose]` | Show the `~/.aweskill` location and summarize core store directories |
 | `aweskill store backup [archive] [--skills-only]` | Archive the central store; by default includes both skills and bundles |
 | `aweskill store restore <archive> [--override] [--skills-only]` | Restore from a backup archive or unpacked backup directory |
-| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--override] [--keep-source] [--verbose]` | Scan supported agent skill directories; add `--import` to import discovered skills into the central store |
+| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--override] [--keep-source] [--verbose]` | Scan supported agent skill directories; add `--import` to import discovered skills into the central store; entries carrying another tool's ownership marker (e.g. `.ctx-skill.json`) are reported as external and skipped on import |
 | `aweskill store find <query> [--provider <skills-sh\|sciskill\|local>] [--local] [--limit <n>] [--domain <domain>] [--stage <stage>]` | Search `skills.sh` and `sciskill` by default, or search the local central store with `--local` / `--provider local`; remote results print installable `source` values or discover-only notes, while local results print skill paths and `store show` hints |
 | `aweskill store install <source> [--list] [--skill <name>] [--all] [--ref <ref>] [--as <name>] [--override]` | Install skills from a local path, GitHub source, or `sciskill:<skill-id>` into the central store and record them for future `store update` runs |
 | `aweskill store update [skill...] [--check] [--prune] [--source <source>] [--override] [--verbose]` | Check or refresh tracked skills from their recorded source while treating the central store copy as the protected local state; `--prune` removes tracking for local-store entries that were already deleted |
@@ -577,9 +577,9 @@ Top-level convenience commands are available for high-frequency search and track
 | `aweskill agent supported` | List all supported agent ids, mark global install status with `✓` / `x`, and show detected global skills paths |
 | `aweskill agent add bundle\|skill ...` | Project managed skills into agent directories |
 | `aweskill agent remove bundle\|skill ... [--force]` | Remove managed projections |
-| `aweskill agent list [--global\|--project [dir]] [--agent <agent>] [--verbose]` | Read-only dry-run view of `doctor sync`: inspect `linked`, `broken`, `duplicate`, `matched`, `new`, and `suspicious` entries; when `--agent` is omitted, print the detected agent set for that scope before the grouped results |
+| `aweskill agent list [--global\|--project [dir]] [--agent <agent>] [--verbose]` | Read-only dry-run view of `doctor sync`: inspect `linked`, `broken`, `stale`, `locally-modified`, `duplicate`, `matched`, `new`, `external`, and `suspicious` entries (`external` marks directories another tool such as ctx manages; reported, never touched); when `--agent` is omitted, print the detected agent set for that scope before the grouped results |
 | `aweskill agent recover` | Convert managed symlinks into full directories |
-| `aweskill doctor sync [--apply] [--remove-suspicious] [--global\|--project [dir]] [--agent <agent>] [--verbose]` | Dry-run by default; add `--apply` to repair broken entries and relink duplicate / matched ones, and `--apply --remove-suspicious` to also remove suspicious ones; when `--agent` is omitted, print the detected agent set for that scope first |
+| `aweskill doctor sync [--apply] [--remove-suspicious] [--global\|--project [dir]] [--agent <agent>] [--verbose]` | Dry-run by default; add `--apply` to repair broken entries, relink duplicate / matched ones, and refresh stale copy projections (`locally-modified` copies are reported only and never overwritten; `external` entries are left alone), and `--apply --remove-suspicious` to also remove suspicious ones; when `--agent` is omitted, print the detected agent set for that scope first |
 | `aweskill doctor clean [--apply] [--skills-only] [--bundles-only] [--verbose]` | Find suspicious non-store entries, grouped by `skills` and `bundles`, and optionally remove them |
 | `aweskill doctor dedup [--apply] [--backup] [--delete]` | Find duplicate skills and optionally move or delete them; `--backup` copies the duplicates into `~/.aweskill/backup/dedup/` first |
 | `aweskill doctor fix-skills [--apply] [--backup] [--include-info] [--skill <skill>] [--verbose]` | Inspect malformed `SKILL.md` frontmatter; actionable fixes include missing closing fences, invalid YAML rebuilds, added frontmatter, normalized names, and normalized descriptions; `--backup` copies original files into `~/.aweskill/backup/fix_skills/` before rewriting, `--include-info` adds non-rewritten informational checks, and `--apply` rewrites actionable fixes only |

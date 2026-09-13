@@ -15,7 +15,9 @@ import { resolveCanonicalSkillName } from "../lib/rmdup.js";
 import { listSkillToggles } from "../lib/skill-toggles.js";
 import { getSkillPath, listSkillEntriesInDirectory, listSkills } from "../lib/skills.js";
 import {
+  createSkillCopy,
   createSkillSymlink,
+  evaluateCopyProjections,
   listBrokenSymlinkNames,
   listManagedSkillNames,
   removeManagedProjection,
@@ -25,7 +27,17 @@ import { buildCentralCanonicalSkills, classifyCheckedSkill } from "./agent-inspe
 
 const DEFAULT_PREVIEW_COUNT = 5;
 
-type SyncCategory = "broken" | "duplicate" | "matched" | "new" | "suspicious" | "linked" | "shared";
+type SyncCategory =
+  | "broken"
+  | "duplicate"
+  | "matched"
+  | "new"
+  | "suspicious"
+  | "linked"
+  | "shared"
+  | "external"
+  | "stale"
+  | "locally-modified";
 
 interface SyncEntry {
   name: string;
@@ -109,9 +121,12 @@ function formatSkillBlockWithSummary(title: string, skills: SyncEntry[], verbose
     { title: "  linked", marker: "✓", key: "linked" },
     { title: "  shared", marker: "◆", key: "shared" },
     { title: "  broken", marker: "!", key: "broken" },
+    { title: "  stale", marker: "!", key: "stale" },
+    { title: "  locally-modified", marker: "~", key: "locally-modified" },
     { title: "  duplicate", marker: "!", key: "duplicate" },
     { title: "  matched", marker: "~", key: "matched" },
     { title: "  new", marker: "+", key: "new" },
+    { title: "  external", marker: "◇", key: "external" },
     { title: "  suspicious", marker: "?", key: "suspicious" },
   ];
 
@@ -173,6 +188,7 @@ export async function runSync(
       removedBroken: [],
       removedForeignBroken: [],
       removedSuspicious: [],
+      refreshedCopies: [],
       newEntries: [],
     };
   }
@@ -191,14 +207,18 @@ export async function runSync(
   const removedBroken: string[] = [];
   const removedForeignBroken: string[] = [];
   const removedSuspicious: string[] = [];
+  const refreshedCopies: string[] = [];
   const newEntries: string[] = [];
   let suspiciousCount = 0;
+  let locallyModifiedCount = 0;
+  let externalCount = 0;
   let repairableCount = 0;
 
   for (const agentId of agents) {
     const skillsDir = resolveAgentSkillsDir(agentId, options.scope, baseDir);
     const managed = await listManagedSkillNames(skillsDir, centralSkillsDir);
     const brokenSymlinks = await listBrokenSymlinkNames(skillsDir);
+    const copyStatuses = await evaluateCopyProjections(skillsDir, centralSkillsDir);
     const skills = await listSkillEntriesInDirectory(skillsDir);
     const entries: SyncEntry[] = [];
 
@@ -237,11 +257,36 @@ export async function runSync(
         continue;
       }
 
-      const checkedSkill = classifyCheckedSkill(skill, managed, canonicalSkillNames);
-      entries.push({ name: checkedSkill.name, path: checkedSkill.path, category: checkedSkill.category });
+      const checkedSkill = classifyCheckedSkill(skill, managed, canonicalSkillNames, copyStatuses);
+      if (copyStatuses.get(skill.name)?.kind === "orphaned") {
+        // The store source is gone; the managed-source loop below reports it as broken.
+        continue;
+      }
+
+      const copyStatus = copyStatuses.get(checkedSkill.name);
+      let note: string | undefined;
+      if (checkedSkill.category === "stale" && copyStatus?.kind === "stale") {
+        note = copyStatus.legacy
+          ? "no baseline hash; rebuild with aweskill agent add skill <name> --force"
+          : "store moved on; refresh with --apply";
+      } else if (checkedSkill.category === "locally-modified") {
+        note = "local edits; never overwritten";
+      } else if (checkedSkill.category === "external") {
+        note = `managed by ${checkedSkill.externalOwner ?? "another tool"}`;
+      }
+      entries.push({ name: checkedSkill.name, path: checkedSkill.path, category: checkedSkill.category, note });
 
       if (checkedSkill.category === "duplicate" || checkedSkill.category === "matched") {
         repairableCount += 1;
+      }
+      if (checkedSkill.category === "stale" && copyStatus?.kind === "stale" && !copyStatus.legacy) {
+        repairableCount += 1;
+      }
+      if (checkedSkill.category === "locally-modified") {
+        locallyModifiedCount += 1;
+      }
+      if (checkedSkill.category === "external") {
+        externalCount += 1;
       }
       if (checkedSkill.category === "suspicious") {
         suspiciousCount += 1;
@@ -263,6 +308,14 @@ export async function runSync(
           },
         );
         relinked.push(`${agentId}:${checkedSkill.name}`);
+        continue;
+      }
+
+      if (checkedSkill.category === "stale" && copyStatus?.kind === "stale" && !copyStatus.legacy) {
+        await createSkillCopy(path.join(centralSkillsDir, checkedSkill.name), checkedSkill.path, {
+          allowReplaceExisting: true,
+        });
+        refreshedCopies.push(`${agentId}:${checkedSkill.name}`);
         continue;
       }
 
@@ -321,13 +374,19 @@ export async function runSync(
   if (!options.apply) {
     if (repairableCount > 0) {
       lines.push(
-        "Re-run with aweskill doctor sync --apply to repair broken projections and relink duplicate/matched entries.",
+        "Re-run with aweskill doctor sync --apply to repair broken projections, relink duplicate/matched entries, and refresh stale copy projections.",
       );
     }
     if (suspiciousCount > 0) {
       lines.push(
         "Suspicious agent skill entries were reported only. Re-run with aweskill doctor sync --apply --remove-suspicious to remove them.",
       );
+    }
+    if (locallyModifiedCount > 0) {
+      lines.push("Locally-modified copy projections were reported only; --apply never overwrites them.");
+    }
+    if (externalCount > 0) {
+      lines.push("External entries are managed by another tool; aweskill reports them and leaves them alone.");
     }
     if (newEntries.length > 0) {
       lines.push(
@@ -345,6 +404,11 @@ export async function runSync(
     lines.push(
       `Relinked ${relinked.length} duplicate or matched agent skill entr${relinked.length === 1 ? "y" : "ies"}.`,
     );
+    if (refreshedCopies.length > 0) {
+      lines.push(
+        `Refreshed ${refreshedCopies.length} stale copy projection${refreshedCopies.length === 1 ? "" : "s"}.`,
+      );
+    }
     if (options.removeSuspicious) {
       lines.push(
         `Removed ${removedSuspicious.length} suspicious agent skill entr${removedSuspicious.length === 1 ? "y" : "ies"}.`,
@@ -354,6 +418,12 @@ export async function runSync(
         "Suspicious agent skill entries were reported only. Re-run with --apply --remove-suspicious to remove them.",
       );
     }
+    if (locallyModifiedCount > 0) {
+      lines.push("Locally-modified copy projections were reported only; --apply never overwrites them.");
+    }
+    if (externalCount > 0) {
+      lines.push("External entries are managed by another tool; aweskill reports them and leaves them alone.");
+    }
     if (newEntries.length > 0) {
       lines.push(
         "New agent skill entries were found. Use aweskill store scan --import with same scope and agent filters to import them.",
@@ -362,5 +432,13 @@ export async function runSync(
   }
 
   context.write(lines.join("\n").trim());
-  return { relinked, repairedBroken, removedBroken, removedForeignBroken, removedSuspicious, newEntries };
+  return {
+    relinked,
+    repairedBroken,
+    removedBroken,
+    removedForeignBroken,
+    removedSuspicious,
+    refreshedCopies,
+    newEntries,
+  };
 }

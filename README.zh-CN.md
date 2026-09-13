@@ -431,7 +431,7 @@ aweskill doctor sync --global --agent codex --apply --remove-suspicious
 
 `aweskill` 不只负责 install 和 project，也提供本地状态漂移后的修复路径：
 
-- **`doctor sync`**：检查或修复 broken、duplicate、matched、new、suspicious 等 agent 条目
+- **`doctor sync`**：检查或修复 broken、stale、duplicate、matched、new、external、suspicious 等 agent 条目
 - **`doctor clean`**：在受管区域里找出不规范的非 store 文件，避免越积越多
 - **`doctor dedup`**：帮助处理重复 skill，不要求你直接盲删
 - **`doctor fix-skills`**：修复损坏的 `SKILL.md` frontmatter，并可先备份原文件
@@ -548,7 +548,7 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 | `aweskill store where [--verbose]` | 显示 `~/.aweskill` 位置，并汇总核心 store 目录 |
 | `aweskill store backup [archive] [--skills-only]` | 归档中央仓库；默认同时包含 skills 和 bundles |
 | `aweskill store restore <archive> [--override] [--skills-only]` | 从备份归档或已解包目录恢复 |
-| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--override] [--keep-source] [--verbose]` | 扫描支持的 agent skill 目录；加上 `--import` 会把发现的 skill 导入中央仓库 |
+| `aweskill store scan [--global\|--project [dir]] [--agent <agent>] [--import] [--override] [--keep-source] [--verbose]` | 扫描支持的 agent skill 目录；加上 `--import` 会把发现的 skill 导入中央仓库；带其他工具所有权标记（如 `.ctx-skill.json`）的条目视为外部托管，扫描可见但导入时跳过 |
 | `aweskill store find <query> [--provider <skills-sh\|sciskill\|local>] [--local] [--limit <n>] [--domain <domain>] [--stage <stage>]` | 默认搜索 `skills.sh` 和 `sciskill`，也可用 `--local` / `--provider local` 只搜索本地中央仓库；远程结果输出可安装 `source` 或 discover-only 提示，本地结果输出 skill 路径和 `store show` 提示 |
 | `aweskill store install <source> [--list] [--skill <name>] [--all] [--ref <ref>] [--as <name>] [--override]` | 从本地路径、GitHub source 或 `sciskill:<skill-id>` 安装 skill 到中央仓库，并为后续 `store update` 建立追踪记录 |
 | `aweskill store update [skill...] [--check] [--prune] [--source <source>] [--override] [--verbose]` | 从已记录的 source 检查或刷新 tracked skill，并把中央仓库中的副本当作受保护的本地状态；`--prune` 会清理本地已删除 skill 的追踪记录 |
@@ -566,9 +566,9 @@ skill 目录结构与设计原则见 [docs/DESIGN.md](docs/DESIGN.md)。
 | `aweskill agent supported` | 列出全部支持的 agent id，用 `✓` / `x` 标记 global 安装状态，并显示已检测到的 global skills 路径 |
 | `aweskill agent add bundle\|skill ...` | 把托管 skill 投影到 agent 目录 |
 | `aweskill agent remove bundle\|skill ... [--force]` | 删除托管投影 |
-| `aweskill agent list [--global\|--project [dir]] [--agent <agent>] [--verbose]` | `doctor sync` 的只读 dry-run 视图：检查 `linked`、`broken`、`duplicate`、`matched`、`new`、`suspicious` 状态；省略 `--agent` 时，先输出当前 scope 检测到的 agent 集合，再输出分组结果 |
+| `aweskill agent list [--global\|--project [dir]] [--agent <agent>] [--verbose]` | `doctor sync` 的只读 dry-run 视图：检查 `linked`、`broken`、`stale`、`locally-modified`、`duplicate`、`matched`、`new`、`external`、`suspicious` 状态（`external` 表示由其他工具（如 ctx）托管，只报告不动）；省略 `--agent` 时，先输出当前 scope 检测到的 agent 集合，再输出分组结果 |
 | `aweskill agent recover` | 把托管 symlink 恢复为完整目录 |
-| `aweskill doctor sync [--apply] [--remove-suspicious] [--global\|--project [dir]] [--agent <agent>] [--verbose]` | 默认 dry run；加上 `--apply` 修复 broken 并重连 duplicate / matched，`--apply --remove-suspicious` 额外删除 suspicious；省略 `--agent` 时，先输出当前 scope 检测到的 agent 集合 |
+| `aweskill doctor sync [--apply] [--remove-suspicious] [--global\|--project [dir]] [--agent <agent>] [--verbose]` | 默认 dry run；加上 `--apply` 修复 broken、重连 duplicate / matched、刷新 stale copy 投影（`locally-modified` 只报告，永不覆盖；`external` 完全不处理），`--apply --remove-suspicious` 额外删除 suspicious；省略 `--agent` 时，先输出当前 scope 检测到的 agent 集合 |
 | `aweskill doctor clean [--apply] [--skills-only] [--bundles-only] [--verbose]` | 按 `skills` / `bundles` 分组查找不规范的 store 条目，并可选清理 |
 | `aweskill doctor dedup [--apply] [--backup] [--delete]` | 查找重复 skill，并可选移动或删除；`--backup` 会先复制到 `~/.aweskill/backup/dedup/` |
 | `aweskill doctor fix-skills [--apply] [--backup] [--include-info] [--skill <skill>] [--verbose]` | 检查 `SKILL.md` frontmatter 异常；真修复项包括补结束分隔线、重建无效 YAML、补 frontmatter、规范 name 和 description；`--backup` 会在改写前先复制原文件到 `~/.aweskill/backup/fix_skills/`，`--include-info` 会附带不改写的信息项，`--apply` 只会改写真修复项 |
