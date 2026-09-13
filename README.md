@@ -21,7 +21,7 @@
   </p>
   <p>
     <img src="https://img.shields.io/badge/status-beta-c96a3d?style=flat-square" alt="Status">
-    <img src="https://img.shields.io/badge/agents-47_supported-0ea5a4?style=flat-square" alt="Supported agents">
+    <img src="https://img.shields.io/badge/agents-48_supported-0ea5a4?style=flat-square" alt="Supported agents">
     <img src="https://img.shields.io/badge/projection-symlink-1f2328?style=flat-square" alt="Projection mode">
 		<img src="https://img.shields.io/badge/platform-ubuntu%20%7C%20macOS%20%7C%20windows-334155?style=flat-square" alt="Platform">
     <img src="https://img.shields.io/npm/dt/aweskill?style=flat-square" alt="npm downloads">
@@ -643,9 +643,9 @@ For a shareable archive collection maintained outside this repository, see [oh-m
 
 ## Supported Agents
 
-Works with 47 agents including:
+Works with 48 agents including:
 
-**Claude Code** · **Cursor** · **Windsurf** · **Codex** · **GitHub Copilot** · **Gemini CLI** · **OpenCode** · **Goose** · **Amp** · **Roo Code** · **Kiro CLI** · **Kilo Code** · **Trae** · **Cline** · **Antigravity** · **Droid** · **Augment** · **OpenClaw** · **CodeBuddy** · **Command Code** · **Crush** · **Kode** · **Mistral Vibe** · **Mux** · **OpenClaude IDE** · **OpenHands** · **Qoder** · **Qwen Code** · **Replit** · **Trae CN** · **Neovate** · **AdaL**
+**Claude Code** · **Cursor** · **Windsurf** · **Codex** · **GitHub Copilot** · **Gemini CLI** · **OpenCode** · **Goose** · **Amp** · **Roo Code** · **Kiro CLI** · **Kilo Code** · **Trae** · **Cline** · **Antigravity** · **Droid** · **Augment** · **OpenClaw** · **CodeBuddy** · **Command Code** · **Crush** · **Kode** · **Mistral Vibe** · **Mux** · **OpenClaude IDE** · **OpenHands** · **Qoder** · **Qwen Code** · **Replit** · **Trae CN** · **Neovate** · **AdaL** · **WorkBuddy AI**
 
 <details>
 <summary>All supported agents</summary>
@@ -698,6 +698,7 @@ Works with 47 agents including:
 | `trae-cn` | `~/.trae-cn/skills/` | `<project>/.trae-cn/skills/` |
 | `warp` | `~/.warp/skills/` | `<project>/.warp/skills/` |
 | `windsurf` | `~/.codeium/windsurf/skills/` | `<project>/.codeium/windsurf/skills/` |
+| `workbuddy` | `~/.workbuddy-ai/skills/` | `<project>/.workbuddy-ai/skills/` |
 | `zencoder` | `~/.zencoder/skills/` | `<project>/.zencoder/skills/` |
 
 </details>
@@ -750,7 +751,7 @@ aweskill agent add bundle awe --agent claude-code
 
 ### CLI Tools
 
-- **[aweskill](https://aweskill.webioinfo.top/)** — CLI-first skill package manager supporting 47+ AI coding agents.
+- **[aweskill](https://aweskill.webioinfo.top/)** — CLI-first skill package manager supporting 48+ AI coding agents.
 - **[aweswitch](https://github.com/Webioinfo01/aweswitch)** — Agent profile switcher for Claude Code, Codex, and OpenCode.
 - **[awerouter](https://github.com/wehuman01/awerouter)** — Smart router that splits requests between Flash and Pro models using structural signals, cutting unnecessary model spend.
 - **[awecompress](https://github.com/wehuman01/awecompress)** — Transparent context-compression proxy for coding agents: frozen summaries for long sessions, stackable with awerouter.

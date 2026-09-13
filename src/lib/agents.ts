@@ -268,6 +268,11 @@ const AGENTS = {
     globalSkillsDir: (homeDir) => path.join(homeDir, ".codeium", "windsurf", "skills"),
     projectSkillsDir: (projectDir) => path.join(projectDir, ".codeium", "windsurf", "skills"),
   }),
+  workbuddy: defineAgent("workbuddy", "WorkBuddy AI", {
+    rootDir: (homeDir) => path.join(homeDir, ".workbuddy-ai"),
+    globalSkillsDir: (homeDir) => path.join(homeDir, ".workbuddy-ai", "skills"),
+    projectSkillsDir: (projectDir) => path.join(projectDir, ".workbuddy-ai", "skills"),
+  }),
   zencoder: defineAgent("zencoder", "Zencoder", {
     rootDir: (homeDir) => path.join(homeDir, ".zencoder"),
     globalSkillsDir: (homeDir) => path.join(homeDir, ".zencoder", "skills"),

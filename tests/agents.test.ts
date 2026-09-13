@@ -12,7 +12,7 @@ import { createTempWorkspace } from "./helpers.js";
 describe("agents", () => {
   it("defines the full supported agent list", () => {
     const ids = listSupportedAgentIds();
-    expect(ids.length).toBeGreaterThanOrEqual(47);
+    expect(ids.length).toBeGreaterThanOrEqual(48);
     expect(ids).toContain("claude-code");
     expect(ids).toContain("cursor");
     expect(ids).toContain("zencoder");
@@ -30,6 +30,7 @@ describe("agents", () => {
     expect(resolveAgentSkillsDir("deepagents", "global", "/tmp/home")).toContain(`.deepagents${sep}agent${sep}skills`);
     expect(resolveAgentSkillsDir("replit", "project", "/tmp/project")).toContain(`.agent${sep}skills`);
     expect(resolveAgentSkillsDir("windsurf", "global", "/tmp/home")).toContain(`.codeium${sep}windsurf${sep}skills`);
+    expect(resolveAgentSkillsDir("workbuddy", "global", "/tmp/home")).toContain(`.workbuddy-ai${sep}skills`);
   });
 
   it("detects installed agents from root directories", async () => {

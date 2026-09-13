@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Features
+
+- Add `workbuddy` (WorkBuddy AI) as a supported agent, reading skills from `~/.workbuddy-ai/skills/` globally and `<project>/.workbuddy-ai/skills/` per project; supported-agent counts in both READMEs move from 47 to 48
+
 ### Fixes
 
 - Point built-in skill sources and self-update at `Webioinfo01/aweskill` (the repository moved from `mugpeng/aweskill`), and update the tests and the contributing guide's clone URL that still pinned the old location
