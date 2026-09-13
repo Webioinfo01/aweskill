@@ -2,9 +2,16 @@
 
 ## Unreleased
 
+## v0.4.8 - 2026-09-13
+
+`v0.4.8` adds WorkBuddy AI as a supported agent, finishes the move to `Webioinfo01/aweskill`, and teaches `doctor` the difference between a copy projection that drifted and a skill another tool owns.
+
 ### Features
 
 - Add `workbuddy` (WorkBuddy AI) as a supported agent, reading skills from `~/.workbuddy-ai/skills/` globally and `<project>/.workbuddy-ai/skills/` per project; supported-agent counts in both READMEs move from 47 to 48
+- Copy projections (the Windows fallback) now record a content-hash baseline, so `doctor` classifies them as linked, stale, locally-modified, or orphaned, and `doctor sync --apply` refreshes only proven-pristine copies instead of letting store updates silently never reach the agent
+- `--force` now recreates an existing matching projection instead of skipping it, and warns when the replaced copy carried local edits
+- Skills installed by another tool (foreign ownership markers such as `.ctx-skill.json`) are reported as external in `agent list` and `doctor sync`, excluded from import advice, and skipped by `store scan --import`
 
 ### Fixes
 
