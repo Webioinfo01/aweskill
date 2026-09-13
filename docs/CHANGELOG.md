@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### DX
+
+- Bump `actions/checkout` to `v7`, `actions/setup-node` to `v7`, and `softprops/action-gh-release` to `v3` in both workflows, clearing the Node 20 runtime deprecation warning on every run
+
 ## v0.4.8 - 2026-09-13
 
 `v0.4.8` adds WorkBuddy AI as a supported agent, finishes the move to `Webioinfo01/aweskill`, and teaches `doctor` the difference between a copy projection that drifted and a skill another tool owns.
